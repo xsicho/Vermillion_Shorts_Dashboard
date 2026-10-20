@@ -1,0 +1,902 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vermillion Shorts — Master Script Dashboard</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body { background-color: #0b0e14; color: #e2e8f0; font-family: system-ui, -apple-system, sans-serif; }
+        .card { background: #131722; border: 1px solid #232a3b; transition: border-color 0.2s ease; }
+        .card:hover { border-color: #3b82f6; }
+        .tag-a { background: #1e3a8a; color: #93c5fd; }
+        .tag-b { background: #14532d; color: #86efac; }
+        .tag-c { background: #701a75; color: #f0abfc; }
+        .tag-d { background: #7c2d12; color: #fdba74; }
+        .tag-f { background: #312e81; color: #c7d2fe; }
+        .tag-g { background: #365314; color: #bef264; }
+        .tag-h { background: #831843; color: #f472b6; }
+        .tag-i { background: #134e4a; color: #99f6e4; }
+        .tag-j { background: #4c1d95; color: #ddd6fe; }
+        .tag-l { background: #3f6212; color: #d9f99d; }
+    </style>
+</head>
+<body class="p-6 max-w-[1800px] mx-auto">
+    <!-- Header Controls -->
+    <header class="flex flex-col md:flex-row md:items-center justify-between pb-6 mb-8 border-b border-gray-800 gap-4">
+        <div>
+            <div class="flex items-center gap-3">
+                <h1 class="text-2xl font-bold text-white tracking-wide">VERMILLION SHORTS — MASTER SCRIPT DASHBOARD</h1>
+                <span class="bg-red-900/50 text-red-400 border border-red-700/50 text-xs px-2.5 py-0.5 rounded-full font-semibold">35 CLIPS ACTIVE</span>
+            </div>
+            <p class="text-sm text-gray-400 mt-1">Live content matrix and recording status tracking (Clips 01–35)</p>
+        </div>
+        <div class="flex flex-wrap items-center gap-3">
+            <input type="text" id="searchInput" onkeyup="filterScripts()" placeholder="Search scripts, keywords..." class="bg-gray-900 border border-gray-700 text-sm rounded-lg px-4 py-2 text-white w-64 focus:outline-none focus:border-blue-500">
+            <select id="categoryFilter" onchange="filterScripts()" class="bg-gray-900 border border-gray-700 text-sm rounded-lg px-3 py-2 text-white focus:outline-none focus:border-blue-500">
+                <option value="all">All Categories (A–L)</option>
+                <option value="A">Cat A: Personal Journey</option>
+                <option value="B">Cat B: Steam & Publishing</option>
+                <option value="C">Cat C: Team & HR</option>
+                <option value="D">Cat D: Design Philosophy</option>
+                <option value="F">Cat F: Engine & Tech</option>
+                <option value="G">Cat G: Money & Runway</option>
+                <option value="H">Cat H: News & Industry</option>
+                <option value="I">Cat I: Career & Education</option>
+                <option value="J">Cat J: Mindset</option>
+                <option value="L">Cat L: Events & Business</option>
+            </select>
+        </div>
+    </header>
+
+    <!-- Script Cards Grid -->
+    <main class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6" id="scriptGrid">
+        
+        <!-- Clip 01 -->
+        <div class="card rounded-xl p-5 flex flex-col justify-between script-card" data-category="A" data-title="อยากทำเกม แต่ไม่รู้จะเริ่มยังไง">
+            <div>
+                <div class="flex items-center justify-between mb-3">
+                    <span class="text-xs font-semibold px-2.5 py-1 rounded tag-a">Cat A: Personal Journey</span>
+                    <span class="text-xs text-emerald-400 border border-emerald-500/30 px-2 py-0.5 rounded">READY TO RECORD</span>
+                </div>
+                <h3 class="text-base font-bold text-white mb-2">Clip 01 — อยากทำเกม แต่ไม่รู้จะเริ่มยังไง</h3>
+                <p class="text-sm text-gray-300 leading-relaxed mb-4 whitespace-pre-line">อยากทำเกมแต่ไม่รู้อะไรเลย วิธีเริ่มที่ง่ายที่สุด คือเปิดยูทูปแล้วทำตามคลิปสอนยาวๆ ให้จบสักคลิปครับ
+
+ตอนผมเริ่มฝึกทำเกม ผมก็ใช้วิธีนี้เลย พิมพ์ใน YouTube ไปเลยว่า Making ตามด้วยแนวเกมที่อยากทำ ต่อด้วยคำว่า game tutorial เช่น Making FPS game tutorial Unreal
+
+เลือกคลิปที่ยาวเกินหนึ่งชั่วโมง แล้วเปิดทำตามไปเรื่อยๆ คุณจะได้เกมแรกของตัวเองทันที[cite: 3]
+
+จากนั้นค่อยลองซนดูครับ ลองแก้ตัวเลข ลองย้ายของ ลองใช้ asset ฟรี พังก็ไม่เป็นไรครับ ตรงนั้นแหละคือจุดที่เราได้เรียนรู้จริงๆ ว่ากดอะไรตรงไหนแล้วเกิดผลยังไง[cite: 3]
+
+ทำถึงตรงนี้เมื่อไหร่ ยินดีด้วยครับ คุณกลายเป็นนักพัฒนาเกมแล้ว[cite: 3]</p>
+            </div>
+            <div class="pt-4 border-t border-gray-800 flex items-center justify-between text-xs text-gray-400">
+                <span>137 words (~45s)[cite: 3]</span>
+                <span class="text-gray-500">Onboarding[cite: 3]</span>
+            </div>
+        </div>
+
+        <!-- Clip 02 -->
+        <div class="card rounded-xl p-5 flex flex-col justify-between script-card" data-category="L" data-title="ทำไมผมกลับไปออกบูธ Taipei Game Show ถึงสามปี">
+            <div>
+                <div class="flex items-center justify-between mb-3">
+                    <span class="text-xs font-semibold px-2.5 py-1 rounded tag-l">Cat L: Events</span>
+                    <span class="text-xs text-pink-400 border border-pink-500/30 px-2 py-0.5 rounded">TIME-SENSITIVE ⚠️[cite: 3]</span>
+                </div>
+                <h3 class="text-base font-bold text-white mb-2">Clip 02 — ทำไมผมกลับไปออกบูธ Taipei Game Show ถึงสามปี</h3>
+                <p class="text-sm text-gray-300 leading-relaxed mb-4 whitespace-pre-line">Taipei Game Show คือเทศกาลเกมไต้หวันที่น่าไปออกบูธมาก และค่าใช้จ่ายถูกจนแทบไม่ต่างจากงานใหญ่ในไทยเลยครับ[cite: 3]
+
+ผมบินไปออกงานนี้ซ้ำถึงสามปีติด เพราะเหตุผลแรก ผู้จัดวางโซนอินดี้ไว้ใกล้ทางเดินหลัก คนผ่านเยอะ แถมเกมเมอร์ไต้หวันเปิดใจลองเล่นจริง ให้ feedback เต็มที่ ฟังไม่ออกก็จ้างล่ามรายวันได้[cite: 3]
+
+เหตุผลที่สอง ค่าบูธหมื่นห้า ตั๋วเครื่องบินพร้อมที่พักสองคนราวๆ สองหมื่น คุ้มค่ามากครับ[cite: 3]
+
+เหตุผลที่สาม Publisher เจ้าใหญ่ๆ มากันเยอะ แต่นัดคุยง่าย ไม่ต้องไปแย่งใครเหมือนงานฝั่งยุโรป[cite: 3]
+
+งานจัดปลายมกราคมครับ แต่รอบสมัครจะปิดช่วงตุลาคมนี้แล้ว ใครมีเกมพร้อมโชว์ อย่ารอนาทีสุดท้ายครับ[cite: 3]</p>
+            </div>
+            <div class="pt-4 border-t border-gray-800 flex items-center justify-between text-xs text-gray-400">
+                <span>138 words (~45s)[cite: 3]</span>
+                <span class="text-gray-500">Taipei Game Show[cite: 3]</span>
+            </div>
+        </div>
+
+        <!-- Clip 03 -->
+        <div class="card rounded-xl p-5 flex flex-col justify-between script-card" data-category="D" data-title="คำถามข้อเดียว ก่อนเริ่มทำเกม">
+            <div>
+                <div class="flex items-center justify-between mb-3">
+                    <span class="text-xs font-semibold px-2.5 py-1 rounded tag-d">Cat D: Design Philosophy</span>
+                    <span class="text-xs text-emerald-400 border border-emerald-500/30 px-2 py-0.5 rounded">READY TO RECORD</span>
+                </div>
+                <h3 class="text-base font-bold text-white mb-2">Clip 03 — คำถามข้อเดียว ก่อนเริ่มทำเกม</h3>
+                <p class="text-sm text-gray-300 leading-relaxed mb-4 whitespace-pre-line">ก่อนเริ่มทำเกม คุณต้องตอบให้ได้ก่อนว่า อะไรคือความสนุกหนึ่งเดียวที่จะทำให้คนเล่นอยากกลับมาเล่นซ้ำ[cite: 3]
+
+ทีมผมใช้คำถามนี้เช็คทุกไอเดียก่อนเริ่มจริงครับ พอมีไอเดียเยอะ ทุกอย่างต้องหยุดรอจนกว่าจะตอบข้อนี้ได้[cite: 3]
+
+อย่างเกม mech ของทีม คำตอบคือการแต่งหุ่นให้เป็นของเราเองทุกชิ้นส่วน พอได้คำตอบ ระบบที่เหลือทั้งหมดก็สร้างมาเพื่อเสิร์ฟความสนุกตัวนี้ อะไรที่ไม่ช่วยเสิร์ฟ ตัดทิ้งได้เลยไม่ต้องเสียดาย[cite: 3]
+
+ผลคือ scope ไม่บาน ทีมไม่หลงทาง เวลาอธิบายเกมให้ใครฟังก็จบในประโยคเดียว[cite: 3]
+
+ถ้ายังตอบไม่ได้ แปลว่าเรามีแค่ไอเดียแต่ยังไม่มีเกม หาคำตอบให้เจอก่อน แล้วค่อยลงมือครับ[cite: 3]</p>
+            </div>
+            <div class="pt-4 border-t border-gray-800 flex items-center justify-between text-xs text-gray-400">
+                <span>138 words (~45s)[cite: 3]</span>
+                <span class="text-gray-500">Core Loop[cite: 3]</span>
+            </div>
+        </div>
+
+        <!-- Clip 04 -->
+        <div class="card rounded-xl p-5 flex flex-col justify-between script-card" data-category="G" data-title="ทำเกมขายบน Steam ด้วยโปรแกรมฟรี ทำได้จริง">
+            <div>
+                <div class="flex items-center justify-between mb-3">
+                    <span class="text-xs font-semibold px-2.5 py-1 rounded tag-g">Cat G: Budget</span>
+                    <span class="text-xs text-emerald-400 border border-emerald-500/30 px-2 py-0.5 rounded">READY TO RECORD</span>
+                </div>
+                <h3 class="text-base font-bold text-white mb-2">Clip 04 — ทำเกมขายบน Steam ด้วยโปรแกรมฟรี ทำได้จริง</h3>
+                <p class="text-sm text-gray-300 leading-relaxed mb-4 whitespace-pre-line">คุณสามารถทำเกมด้วยโปรแกรมฟรีเกือบทั้งหมด แล้วเอาขึ้นไปขายบน Steam ได้จริง โดยไม่ต้องเสียเงินซื้อซอฟต์แวร์แพงๆ[cite: 3]
+
+เกมของผมก็ทำแบบนั้นครับ โมเดลสามมิติใช้ Blender เอกสารในทีมใช้ชุดออฟฟิศฟรี ส่วน engine หลักๆ ทุกวันนี้ใช้ฟรีจนกว่าจะมีรายได้ แล้วระบบไหนที่ต้องซื้อแพงๆ เราเขียนเองซะเลย อย่างระบบสุ่มด่าน ทีมเราก็เขียนกันเอง[cite: 3]
+
+หลักคิดมีข้อเดียวครับ ก่อนจ่ายเงิน ให้ถามก่อนว่ามีของฟรีที่ทำได้สักเจ็ดสิบแปดสิบเปอร์เซ็นต์มั้ย ถ้ามี ใช้ของฟรีก่อน เก็บเงินไว้จ่ายเงินเดือนคนดีกว่าครับ เพราะคนน่ะหาแทนยาก โปรแกรมน่ะเปลี่ยนเมื่อไหร่ก็ได้[cite: 3]</p>
+            </div>
+            <div class="pt-4 border-t border-gray-800 flex items-center justify-between text-xs text-gray-400">
+                <span>138 words (~45s)[cite: 3]</span>
+                <span class="text-gray-500">Free Tools[cite: 3]</span>
+            </div>
+        </div>
+
+        <!-- Clip 05 -->
+        <div class="card rounded-xl p-5 flex flex-col justify-between script-card" data-category="L" data-title="งานธุรกิจเกมระดับโลกมาถึงกรุงเทพแล้ว แถมเข้าฟรี">
+            <div>
+                <div class="flex items-center justify-between mb-3">
+                    <span class="text-xs font-semibold px-2.5 py-1 rounded tag-l">Cat L: Events</span>
+                    <span class="text-xs text-pink-400 border border-pink-500/30 px-2 py-0.5 rounded">TIME-SENSITIVE ⚠️[cite: 3]</span>
+                </div>
+                <h3 class="text-base font-bold text-white mb-2">Clip 05 — งานธุรกิจเกมระดับโลกมาถึงกรุงเทพแล้ว แถมเข้าฟรี</h3>
+                <p class="text-sm text-gray-300 leading-relaxed mb-4 whitespace-pre-line">gamescom asia งานธุรกิจเกมระดับโลกกำลังจะมาจัดที่กรุงเทพปลายเดือนตุลาคมนี้ และเปิดให้คนสายเกมลงทะเบียนเข้าฟรีครับ[cite: 3]
+
+งานจัดร่วมกับ Thailand Game Show ที่ศูนย์สิริกิติ์ แต่โซนที่อยากให้นักพัฒนาสนใจที่สุดคือโซน Business สองวันแรกเป็นวัน B2B รวม Publisher นักลงทุน และสตูดิโอต่างชาติมาไว้ในฮอลล์เดียว ถ้าทำงานสายเกมอยู่แล้ว ลงทะเบียน business visitor ล่วงหน้าเข้าฟรีได้เลย ไปสมัครหน้างานเสียเงินครับ[cite: 3]
+
+ไม่ต้องมีบูธ ไม่ต้องมีนัดก็เดินได้ ไปดูว่าเขาคุยธุรกิจและซื้อขายเกมกันยังไง วงการนี้เล็กกว่าที่คิด เพื่อนร่วมวงการหลายคนผมก็เจอครั้งแรกในงานแบบนี้แหละครับ[cite: 3]</p>
+            </div>
+            <div class="pt-4 border-t border-gray-800 flex items-center justify-between text-xs text-gray-400">
+                <span>138 words (~45s)[cite: 3]</span>
+                <span class="text-gray-500">gamescom asia[cite: 3]</span>
+            </div>
+        </div>
+
+        <!-- Clip 06 -->
+        <div class="card rounded-xl p-5 flex flex-col justify-between script-card" data-category="D" data-title="คอมเมนต์เดียวที่เปลี่ยนวิธีออกแบบเกมของทีมผม">
+            <div>
+                <div class="flex items-center justify-between mb-3">
+                    <span class="text-xs font-semibold px-2.5 py-1 rounded tag-d">Cat D: Design Philosophy</span>
+                    <span class="text-xs text-emerald-400 border border-emerald-500/30 px-2 py-0.5 rounded">READY TO RECORD</span>
+                </div>
+                <h3 class="text-base font-bold text-white mb-2">Clip 06 — คอมเมนต์เดียวที่เปลี่ยนวิธีออกแบบเกมของทีมผม</h3>
+                <p class="text-sm text-gray-300 leading-relaxed mb-4 whitespace-pre-line">คอมเมนต์เดียวจากผู้เล่นที่บอกว่า "เกมนี้ซับซ้อนเกินกว่าจะเรียนรู้" เปลี่ยนวิธีออกแบบเกมของผมไปตลอดกาล[cite: 3]
+
+ตอนทำ MMORPG เกมแรก ทีมผมงงมาก เพราะพวกเราอยู่กับเกมทุกวันจนเห็นว่าทุกอย่างมันง่าย แต่นั่นแหละครับคือกับดัก ของที่เราว่าง่าย สำหรับคนเปิดเกมครั้งแรกมันคือเขาวงกตดีๆ นี่เอง[cite: 3]
+
+บทเรียนคือ ผู้เล่นต้องถูกสอนทุกอย่าง อย่าเชื่อความรู้สึกตัวเอง ให้เอาเกมไปให้คนที่ไม่เคยเห็นลองเล่น แล้วนั่งดูเงียบๆ ว่าเขาติดตรงไหน สิบนาทีแรกบอกความจริงทั้งหมด[cite: 3]
+
+คุณจะทำเกมง่ายเพื่อทุกคน หรือซับซ้อนเพื่อสายฮาร์ดคอร์ เลือกได้ทั้งคู่ครับ แค่ขอให้เลือกแบบรู้ตัว[cite: 3]</p>
+            </div>
+            <div class="pt-4 border-t border-gray-800 flex items-center justify-between text-xs text-gray-400">
+                <span>139 words (~45s)[cite: 3]</span>
+                <span class="text-gray-500">Playtesting[cite: 3]</span>
+            </div>
+        </div>
+
+        <!-- Clip 07 -->
+        <div class="card rounded-xl p-5 flex flex-col justify-between script-card" data-category="G" data-title="วิธีคิดง่ายๆ ว่าสตูดิโอจะรอดอีกกี่เดือน">
+            <div>
+                <div class="flex items-center justify-between mb-3">
+                    <span class="text-xs font-semibold px-2.5 py-1 rounded tag-g">Cat G: Money / Runway</span>
+                    <span class="text-xs text-emerald-400 border border-emerald-500/30 px-2 py-0.5 rounded">READY TO RECORD</span>
+                </div>
+                <h3 class="text-base font-bold text-white mb-2">Clip 07 — วิธีคิดง่ายๆ ว่าสตูดิโอจะรอดอีกกี่เดือน</h3>
+                <p class="text-sm text-gray-300 leading-relaxed mb-4 whitespace-pre-line">สตูดิโอเกมของเราจะรอดได้อีกกี่เดือน คำนวณแบบง่ายๆได้ด้วยการเอาเงินเก็บที่มีมาหารกับรายได้ในเดือนที่แย่ที่สุด[cite: 3]
+
+นี่คือสูตรที่ทีมผมใช้จริงครับ เริ่มจากลิสต์ค่าเช่า เงินเดือน ค่าน้ำค่าไฟ ทุกบาทที่ต้องจ่ายแน่ๆ แล้วบวกค่าใช้จ่ายเผื่อไว้อีกสิบห้าเปอร์เซ็นต์ครับ เผื่อคอมพัง เผื่อคนป่วย เผื่ออะไรไม่คาดคิด[cite: 3]
+
+แล้วจากนั้น เอาตัวเลขเดือนที่แย่ที่สุดที่เคยเจอ ให้คิดแบบเลวร้ายที่สุด มาลองหักออกไป จะได้ประเมินได้ว่าทุกเดือน เรามีโอกาสเสียเงินไปเท่าไหร่[cite: 3]
+
+แล้วพอเอาเงินเก็บมาหาร ตัวเลขที่ออกมาคือจำนวนเดือนที่อยู่ได้จริง พอรู้เลขนี้ จะรับงานเสริมมั้ย จะขยายทีมมั้ย ตัดสินใจง่ายขึ้นเยอะเลยครับ[cite: 3]</p>
+            </div>
+            <div class="pt-4 border-t border-gray-800 flex items-center justify-between text-xs text-gray-400">
+                <span>138 words (~45s)[cite: 3]</span>
+                <span class="text-gray-500">Runway Formula[cite: 3]</span>
+            </div>
+        </div>
+
+        <!-- Clip 08 -->
+        <div class="card rounded-xl p-5 flex flex-col justify-between script-card" data-category="F" data-title="ทำไมผมเทสต์เกมบนโน้ตบุ๊คอายุสิบปี">
+            <div>
+                <div class="flex items-center justify-between mb-3">
+                    <span class="text-xs font-semibold px-2.5 py-1 rounded tag-f">Cat F: Engine & Tech</span>
+                    <span class="text-xs text-emerald-400 border border-emerald-500/30 px-2 py-0.5 rounded">READY TO RECORD</span>
+                </div>
+                <h3 class="text-base font-bold text-white mb-2">Clip 08 — ทำไมผมเทสต์เกมบนโน้ตบุ๊คอายุสิบปี</h3>
+                <p class="text-sm text-gray-300 leading-relaxed mb-4 whitespace-pre-line">เกมของผมบน Steam ถูกเทสต์บนโน้ตบุ๊คอายุสิบปี การ์ดจอ 1050 เพราะถ้ามันรันบนเครื่องนี้ได้ลื่น มันจะรันได้ลื่นบนเครื่องของผู้เล่นทุกคน[cite: 3]
+
+บทเรียนนี้ได้มาจากยุคทำเกมมือถือครับ เครื่องผู้เล่นไม่ได้มีแค่เกมเรา แต่มีโปรแกรมอื่นกินทรัพยากรอยู่เบื้องหลังไปครึ่งเครื่องแล้ว เกมมือถือเกมคอม ยังไงทรัพยากรเขาไม่ได้ให้เราทั้งหมด[cite: 3]
+
+ทีมเลยตั้งกฎเหล็กเลยว่า ต้องเทสต์บนเครื่องที่สเปคต่ำสุดเท่าที่จะหาได้[cite: 3]
+
+ผมชอบเทสต์บนเครื่องนี้มากนะครับ ลุ้นทุกครั้งว่าจะไหวมั้ย เจ้าเครื่องนี้รับใช้ทีมมาหลายปีและยังเป็นที่ใช้งานอยู่เรื่อยๆ[cite: 3]
+
+เครื่องเก่าที่บ้านอย่าเพิ่งขายทิ้งครับ มันคือเครื่องเทสต์ที่ซื่อสัตย์ที่สุดสำหรับคนทำเกม[cite: 3]</p>
+            </div>
+            <div class="pt-4 border-t border-gray-800 flex items-center justify-between text-xs text-gray-400">
+                <span>139 words (~45s)[cite: 3]</span>
+                <span class="text-gray-500">Min Spec QA[cite: 3]</span>
+            </div>
+        </div>
+
+        <!-- Clip 09 -->
+        <div class="card rounded-xl p-5 flex flex-col justify-between script-card" data-category="B" data-title="5 คำถามที่ Publisher ถามจริง">
+            <div>
+                <div class="flex items-center justify-between mb-3">
+                    <span class="text-xs font-semibold px-2.5 py-1 rounded tag-b">Cat B: Publishing</span>
+                    <span class="text-xs text-emerald-400 border border-emerald-500/30 px-2 py-0.5 rounded">READY TO RECORD</span>
+                </div>
+                <h3 class="text-base font-bold text-white mb-2">Clip 09 — 5 คำถามที่ Publisher ถามจริง</h3>
+                <p class="text-sm text-gray-300 leading-relaxed mb-4 whitespace-pre-line">นี่คือ 5 คำถามจริงที่คุณต้องเจอเวลาได้นัดคุยกับ Publisher[cite: 3]
+
+1. ตั้งราคาเกมไว้เท่าไหร่ ทำไมถึงราคานี้ /[cite: 3]
+2. ต้องใช้เงินอีกเท่าไหร่เกมถึงเสร็จ แล้วถ้าเราไม่ช่วย คุณอยู่ได้อีกนานแค่ไหน /[cite: 3]
+3. ถ้าลงทุนให้ แต่ไม่ได้ market ให้ คุณจะหา wishlist จากไหน /[cite: 3]
+4. เกมคล้ายๆ กันมีเต็มตลาด ทำไมของคุณถึงจะขายได้ /[cite: 3]
+5. คุณศึกษาบริษัทเรามาดีแค่ไหน[cite: 3]
+
+เวลาไปคุยกับ Publisher สิ่งที่เขาถามไม่ใช่เรื่องของเกมคุณ แต่เขาดูว่าทำธุรกิจด้วยแล้วรอดมั้ย[cite: 3]
+
+จากที่ผมเคยนั่งคุยมาหลายสิบนัด หน้าตาเกมคือใบเบิกทางให้ได้เข้าห้องครับ แต่พอนั่งลงแล้ว มันคือเรื่องธุรกิจล้วนๆ เตรียมคำตอบไปให้พร้อมครับ[cite: 3]</p>
+            </div>
+            <div class="pt-4 border-t border-gray-800 flex items-center justify-between text-xs text-gray-400">
+                <span>139 words (~45s)[cite: 3]</span>
+                <span class="text-gray-500">B2B Pitching[cite: 3]</span>
+            </div>
+        </div>
+
+        <!-- Clip 10 -->
+        <div class="card rounded-xl p-5 flex flex-col justify-between script-card" data-category="I" data-title="ทำไมวัยเรียนคือช่วงที่ดีที่สุดในการเริ่มทำเกม">
+            <div>
+                <div class="flex items-center justify-between mb-3">
+                    <span class="text-xs font-semibold px-2.5 py-1 rounded tag-i">Cat I: Education</span>
+                    <span class="text-xs text-emerald-400 border border-emerald-500/30 px-2 py-0.5 rounded">READY TO RECORD</span>
+                </div>
+                <h3 class="text-base font-bold text-white mb-2">Clip 10 — ทำไมวัยเรียนคือช่วงที่ดีที่สุดในการเริ่มทำเกม</h3>
+                <p class="text-sm text-gray-300 leading-relaxed mb-4 whitespace-pre-line">ตอนยังเรียนอยู่คือช่วงเวลาที่ดีที่สุดในการเริ่มทำเกมแรก เพราะนั่นคือช่วงเดียวในชีวิตที่คุณ "ล้มแล้วเจ็บน้อยที่สุด" ลองนับภาระตอนเรียนดูครับ ยังไม่มีลูก ยังไม่มีผ่อนบ้านผ่อนรถ ครอบครัวยังช่วยซัพพอร์ตให้ได้[cite: 3]
+
+ถ้าเกมแรกไม่รอด สิ่งที่เสียไปคือเวลาและเงินเก็บก้อนนึง แล้วชีวิตก็เดินต่อได้[cite: 3]
+
+แต่พอโตขึ้น มีภาระมากมาย จะแบ่งเวลามาลองทำเกมสักปี ต้องคิดหนักกว่าเดิมหลายสิบเท่า[cite: 3]
+
+ล้มทีนึงเจ็บกว่าเยอะครับ[cite: 3]
+
+ผมเองเริ่มตอนอายุยังไม่ถึงยี่สิบ เจ๊งมาแล้วรอบสองรอบ ที่ลุกได้ไวเพราะยังไม่มีภาระเท่าไหร่[cite: 3]
+
+ไม่ได้ชวนให้ทิ้งการเรียนนะครับ เรียนไปด้วยทำไปด้วยได้ แค่อย่ารอให้พร้อม เพราะวันที่พร้อมที่สุด อาจเป็นวันนี้แล้วครับ[cite: 3]</p>
+            </div>
+            <div class="pt-4 border-t border-gray-800 flex items-center justify-between text-xs text-gray-400">
+                <span>140 words (~45s)[cite: 3]</span>
+                <span class="text-gray-500">Student Advantage[cite: 3]</span>
+            </div>
+        </div>
+
+        <!-- Clip 11 -->
+        <div class="card rounded-xl p-5 flex flex-col justify-between script-card" data-category="H" data-title="เมื่อคนทำเกมกลัว AI เลียนแบบจนต้องยกเลิก Demo">
+            <div>
+                <div class="flex items-center justify-between mb-3">
+                    <span class="text-xs font-semibold px-2.5 py-1 rounded tag-h">Cat H: News / AI</span>
+                    <span class="text-xs text-pink-400 border border-pink-500/30 px-2 py-0.5 rounded">TIME-SENSITIVE ⚠️[cite: 3]</span>
+                </div>
+                <h3 class="text-base font-bold text-white mb-2">Clip 11 — เมื่อคนทำเกมกลัว AI เลียนแบบจนต้องยกเลิก Demo</h3>
+                <p class="text-sm text-gray-300 leading-relaxed mb-4 whitespace-pre-line">ทีมพัฒนาเกม Drunken Goddess Reflux ประกาศยกเลิก Public Demo บน Steam เพราะกลัวว่า AI ยุคนี้จะถูกนำมาใช้ก๊อปปี้ทุกอย่างในเกมแล้วชิงตัดหน้าวางขายก่อน[cite: 3]
+
+เดิมทีเกมมีแผนเปิดเดโมฟรี แต่ทีมงานยอมรับว่ากลัวมาก เพราะเครื่องมือ AI และ Vibe-coding ตอนนี้ไม่ได้ก๊อปแค่ Asset ภาพ แต่ลามไปถึงแนวเกม ระบบเกม สูตรคำนวน ทั้งหมด ซึ่งเอาไปสร้างตัวเลียนแบบได้ในเวลาไม่กี่วัน[cite: 3]
+
+ทำให้พวกเขาต้องเปลี่ยนแผนไปเปิดทดสอบแบบระบบปิดที่ต้องลงทะเบียนและเซ็นสัญญาแทน[cite: 3]
+
+ในมุมคนทำเกม มันสะท้อนเลยว่าความเสี่ยงเรื่องโดนก๊อปปี้ด้วย AI มันชิดติดหน้าประตูบ้านเราจริงๆ วงการเรากำลังเข้าสู่ยุคที่ต้องระวังตัวกันมากขึ้นเยอะเลยครับ[cite: 3]</p>
+            </div>
+            <div class="pt-4 border-t border-gray-800 flex items-center justify-between text-xs text-gray-400">
+                <span>140 words (~45s)[cite: 3]</span>
+                <span class="text-gray-500">AI Cloning[cite: 3]</span>
+            </div>
+        </div>
+
+        <!-- Clip 12 -->
+        <div class="card rounded-xl p-5 flex flex-col justify-between script-card" data-category="L" data-title="โอกาสธุรกิจเกม B2B ที่ Gamescom Asia x Thailand Game Show">
+            <div>
+                <div class="flex items-center justify-between mb-3">
+                    <span class="text-xs font-semibold px-2.5 py-1 rounded tag-l">Cat L: Business</span>
+                    <span class="text-xs text-pink-400 border border-pink-500/30 px-2 py-0.5 rounded">TIME-SENSITIVE ⚠️[cite: 3]</span>
+                </div>
+                <h3 class="text-base font-bold text-white mb-2">Clip 12 — โอกาสธุรกิจเกม B2B ที่ Gamescom Asia x Thailand Game Show</h3>
+                <p class="text-sm text-gray-300 leading-relaxed mb-4 whitespace-pre-line">29 ตุลาคม ถึง 1 พฤศจิกายนนี้ งาน gamescom asia x Thailand Game Show ที่ศูนย์สิริกิติ์ คือโอกาสทองของนักพัฒนาเกมไทย ในการเจรจาธุรกิจกับ Publisher ระดับโลก[cite: 3]
+
+โดยเฉพาะวันที่ 29 ถึง 30 ตุลาคม ซึ่งเป็นโซน B2B จากประสบการณ์ที่ผมเคยเดินงานและนัดเจอ Dev ต่างชาติ การคุยธุรกิจมันไม่ได้ยากอย่างที่คิดครับ[cite: 3]
+
+ยิ่งปีนี้สมาคม GIVA จับมือกับ MeetToMatch จัดพื้นที่ GIVA Business Lounge ให้คนทำเกมไทยเข้ามานั่งคุยจับคู่ธุรกิจได้สะดวกมาก[cite: 3]
+
+คุณไม่ต้องมีบูธใหญ่ ไม่ต้องเสียเงินบินไปต่างประเทศ แค่สมัครบัตร Business Visitor หรือใช้ระบบ MeetToMatch นัดเวลา แล้วเดินเข้าไป Pitch งานแลกเปลี่ยนความเห็นได้เลย[cite: 3]
+
+โอกาสเจอนักลงทุนอยู่อยู่หน้าบ้านเราแล้ว ไปลงทะเบียนกันไว้ก่อนเลยครับ[cite: 3]</p>
+            </div>
+            <div class="pt-4 border-t border-gray-800 flex items-center justify-between text-xs text-gray-400">
+                <span>140 words (~45s)[cite: 3]</span>
+                <span class="text-gray-500">TGS x GIVA[cite: 3]</span>
+            </div>
+        </div>
+
+        <!-- Clip 13 -->
+        <div class="card rounded-xl p-5 flex flex-col justify-between script-card" data-category="A" data-title="เรียน 7 ปีเพราะทำงานไปด้วย">
+            <div>
+                <div class="flex items-center justify-between mb-3">
+                    <span class="text-xs font-semibold px-2.5 py-1 rounded tag-a">Cat A: Personal Journey</span>
+                    <span class="text-xs text-emerald-400 border border-emerald-500/30 px-2 py-0.5 rounded">READY TO RECORD</span>
+                </div>
+                <h3 class="text-base font-bold text-white mb-2">Clip 13 — เรียน 7 ปีเพราะทำงานไปด้วย</h3>
+                <p class="text-sm text-gray-300 leading-relaxed mb-4 whitespace-pre-line">ผมใช้เวลาเรียนมหาลัยถึง 7 ปีเต็มกว่าจะจบ ไม่ใช่เพราะเรียนไม่เก่ง แต่เพราะผมเลือกทำงานหาเงินควบคู่ไปด้วยตลอด[cite: 3]
+
+ตอนนั้นผมลงเรียนแค่อาทิตย์ละสองวัน ส่วนเวลาที่เหลือคือการทำงานหาเงินมาเลี้ยงตัวเองและเก็บเป็นทุนทำเกม[cite: 3]
+
+ช่วงนั้นเหนื่อยมากครับ แต่บทเรียนที่ได้กลับมาคุ้มค่าสุดๆ มันทำให้ผมเข้าใจเรื่องการบริหารเวลา รู้จักคุณค่าของเงิน และเรียนรู้ระบบธุรกิจจริงตั้งแต่ยังเรียนไม่จบ[cite: 3]
+
+การเรียนจบช้ากว่าเพื่อนไม่ใช่เรื่องน่าอายเลยครับ ถ้าเวลาที่เสียไป เราเอาไปแลกกับประสบการณ์และทักษะชีวิตที่หาไม่ได้ในห้องเรียน[cite: 3]
+
+อย่าเอาบรรทัดฐานคนอื่นมาวัดความสำเร็จของเราครับ เดินในจังหวะของตัวเองดีที่สุด[cite: 3]</p>
+            </div>
+            <div class="pt-4 border-t border-gray-800 flex items-center justify-between text-xs text-gray-400">
+                <span>138 words (~45s)[cite: 3]</span>
+                <span class="text-gray-500">7-Year Degree[cite: 3]</span>
+            </div>
+        </div>
+
+        <!-- Clip 14 -->
+        <div class="card rounded-xl p-5 flex flex-col justify-between script-card" data-category="C" data-title="จาก 18 เหลือ 7 คน วงจรการลดขนาดทีม">
+            <div>
+                <div class="flex items-center justify-between mb-3">
+                    <span class="text-xs font-semibold px-2.5 py-1 rounded tag-c">Cat C: Team & HR</span>
+                    <span class="text-xs text-emerald-400 border border-emerald-500/30 px-2 py-0.5 rounded">READY TO RECORD</span>
+                </div>
+                <h3 class="text-base font-bold text-white mb-2">Clip 14 — จาก 18 เหลือ 7 คน วงจรการลดขนาดทีม</h3>
+                <p class="text-sm text-gray-300 leading-relaxed mb-4 whitespace-pre-line">การลดขนาดทีมจากสิบแปดคนเหลือเจ็ดคน ไม่ใช่เรื่องล้มเหลว แต่เป็นการคัดคนเพื่อให้บริษัทรอด[cite: 3]
+
+ช่วงเริ่มตั้งสตูดิโอใหม่ๆ เรามีคนเยอะมาก แต่พอเงินทุนเริ่มลดลง และเป้าหมายไม่ตรงกัน คนก็ค่อยๆ แยกย้ายไปตามทาง[cite: 3]
+
+มีทั้งคนที่ลาออกเอง คนที่ต้องเชิญออก และคนที่รับความเสี่ยงร่วมกันไม่ไหว[cite: 3]
+
+บทเรียนที่ได้คือ ทีมขนาดเจ็ดคนที่มีเป้าหมายเดียวกัน และพร้อมสู้ไปด้วยกัน ทำงานได้เร็วกว่าทีมสิบแปดคนที่เดินกันคนละทิศคนละทาง[cite: 3]
+
+ยิ่งทีมเล็ก การสื่อสารยิ่งชัด ความคล่องตัวยิ่งสูง บริษัทไม่ได้วัดความสำเร็จที่จำนวนคน แต่ดูที่งานที่ปล่อยออกมาครับ[cite: 3]</p>
+            </div>
+            <div class="pt-4 border-t border-gray-800 flex items-center justify-between text-xs text-gray-400">
+                <span>138 words (~45s)[cite: 3]</span>
+                <span class="text-gray-500">Downsizing[cite: 3]</span>
+            </div>
+        </div>
+
+        <!-- Clip 15 -->
+        <div class="card rounded-xl p-5 flex flex-col justify-between script-card" data-category="A" data-title="วันที่แย่ที่สุดในการเป็น Founder">
+            <div>
+                <div class="flex items-center justify-between mb-3">
+                    <span class="text-xs font-semibold px-2.5 py-1 rounded tag-a">Cat A: Personal Journey</span>
+                    <span class="text-xs text-emerald-400 border border-emerald-500/30 px-2 py-0.5 rounded">READY TO RECORD</span>
+                </div>
+                <h3 class="text-base font-bold text-white mb-2">Clip 15 — วันที่แย่ที่สุดในการเป็น Founder</h3>
+                <p class="text-sm text-gray-300 leading-relaxed mb-4 whitespace-pre-line">วันที่แย่ที่สุดในชีวิตการเป็น Founder ของผม ไม่ใช่โดนผู้เล่นด่า แต่คือวันที่ต้องไปนั่งรอลูกค้าในห้างคนเดียว[cite: 3]
+
+ช่วงที่ต้องหาเงินมาจ่ายเงินเดือนทีม ผมต้องรับหน้าที่เป็นเซลล์ออกไปเสนอขายงาน วันไหนที่นัดลูกค้าไม่ได้เลย ผมจะไปนั่งอยู่ในห้าง มองกาแฟเย็นชืด แล้วถามตัวเองว่าทำอะไรอยู่[cite: 3]
+
+ตอนนั้นผมเขียนโค้ดไม่เก่ง วาดรูปไม่ได้ สิ่งเดียวที่ทำได้ดีที่สุดคือออกไปหาเงิน เพื่อให้คนที่เก่งกว่าผม ไม่ต้องหยุดทำเกม[cite: 3]
+
+วันนั้นสอนให้ผมรู้ว่า หน้าที่ของผู้นำไม่ใช่การโชว์อีโก้ แต่คือการทำทุกอย่างให้ทีมมีกินและได้ทำสิ่งที่รักต่อไปครับ[cite: 3]</p>
+            </div>
+            <div class="pt-4 border-t border-gray-800 flex items-center justify-between text-xs text-gray-400">
+                <span>139 words (~45s)[cite: 3]</span>
+                <span class="text-gray-500">Mall Day[cite: 3]</span>
+            </div>
+        </div>
+
+        <!-- Clip 16 -->
+        <div class="card rounded-xl p-5 flex flex-col justify-between script-card" data-category="G" data-title="บทเรียนจากเงินล้านแรกที่ทำหายไป">
+            <div>
+                <div class="flex items-center justify-between mb-3">
+                    <span class="text-xs font-semibold px-2.5 py-1 rounded tag-g">Cat G: Money & Survival</span>
+                    <span class="text-xs text-emerald-400 border border-emerald-500/30 px-2 py-0.5 rounded">READY TO RECORD</span>
+                </div>
+                <h3 class="text-base font-bold text-white mb-2">Clip 16 — บทเรียนจากเงินล้านแรกที่ทำหายไป</h3>
+                <p class="text-sm text-gray-300 leading-relaxed mb-4 whitespace-pre-line">เงินล้านแรกที่ผมยืมญาติมาทำธุรกิจเกมล้มเหลวไม่เป็นท่า แต่มันคือวิชาบริหารธุรกิจที่คุ้มค่าที่สุดในชีวิต[cite: 3]
+
+ตอนอายุยี่สิบ ผมได้โอกาสทำบริษัทเกมครั้งแรกด้วยเงินกู้จากผู้ใหญ่ แต่เพราะความอ่อนหละหลวมและไม่มีประสบการณ์ เงินก้อนนั้นละลายหายไปในเวลาไม่นาน[cite: 3]
+
+สิ่งที่ผู้ใหญ่สอนผมหลังจากนั้นคือ ทำธุรกิจอย่าใช้แต่ Passion ให้มองเรื่อง Cashflow และสัญญาเป็นหลัก[cite: 3]
+
+ข้อดีของการล้มเหลวตั้งแต่ยังเด็กคือ เรายังมีเวลาลุกขึ้นใหม่ และบทเรียนนั้นทำให้ผมระวังเรื่องเงินทุกบาทใน M.A.S.S. Builder มาจนถึงทุกวันนี้[cite: 3]
+
+ล้มได้ครับ แค่ต้องจำให้ได้ว่าล้มเพราะอะไร[cite: 3]</p>
+            </div>
+            <div class="pt-4 border-t border-gray-800 flex items-center justify-between text-xs text-gray-400">
+                <span>139 words (~45s)[cite: 3]</span>
+                <span class="text-gray-500">First Failed Loan[cite: 3]</span>
+            </div>
+        </div>
+
+        <!-- Clip 17 -->
+        <div class="card rounded-xl p-5 flex flex-col justify-between script-card" data-category="A" data-title="จากจุดเริ่มต้นแอปพ่นสี สู่ M.A.S.S. Builder">
+            <div>
+                <div class="flex items-center justify-between mb-3">
+                    <span class="text-xs font-semibold px-2.5 py-1 rounded tag-a">Cat A: Personal Journey</span>
+                    <span class="text-xs text-emerald-400 border border-emerald-500/30 px-2 py-0.5 rounded">READY TO RECORD</span>
+                </div>
+                <h3 class="text-base font-bold text-white mb-2">Clip 17 — จากจุดเริ่มต้นแอปพ่นสี สู่ M.A.S.S. Builder</h3>
+                <p class="text-sm text-gray-300 leading-relaxed mb-4 whitespace-pre-line">เกม M.A.S.S. Builder ที่ขายบน Steam ในวันนี้ ไม่ได้เริ่มจากการคิดจะทำเกม แต่เริ่มจากแอปทดลองพ่นสีโมเดลพลาสติก[cite: 3]
+
+ทีมผมเป็นพวกชอบต่อ Gunpla มาก เราเลยอยากทำซอฟต์แวร์จำลองการทำสีโมเดลไว้ดูเป็นตัวอย่างก่อนพ่นจริง[cite: 3]
+
+ทำไปทำมา พวกเราก็คิดกันว่า ถ้าเอาหุ่นพวกนี้มาขยับได้ ใส่ vũกิษ ได้ และบินยิงกันได้ มันน่าจะสนุกกว่าแค่พ่นสีแน่ๆ[cite: 3]
+
+นั่นคือจุดเปลี่ยนที่ทำให้แอปเล็กๆ กลายมาเป็นโปรเจกต์ใหญ่ที่ใช้เวลาทำหลายปี[cite: 3]
+
+บางทีไอเดียทำเกมที่ดีที่สุด อาจไม่ได้มาจากหน้ากระดาษว่างๆ แต่มาจาก Passion เล็กๆ ในชีวิตประจำวันของเราครับ[cite: 3]</p>
+            </div>
+            <div class="pt-4 border-t border-gray-800 flex items-center justify-between text-xs text-gray-400">
+                <span>138 words (~45s)[cite: 3]</span>
+                <span class="text-gray-500">Gunpla App Origin[cite: 3]</span>
+            </div>
+        </div>
+
+        <!-- Clip 18 -->
+        <div class="card rounded-xl p-5 flex flex-col justify-between script-card" data-category="J" data-title="ความรู้สึก Impostor Syndrome ของคนทำเกม">
+            <div>
+                <div class="flex items-center justify-between mb-3">
+                    <span class="text-xs font-semibold px-2.5 py-1 rounded tag-j">Cat J: Mindset</span>
+                    <span class="text-xs text-emerald-400 border border-emerald-500/30 px-2 py-0.5 rounded">READY TO RECORD</span>
+                </div>
+                <h3 class="text-base font-bold text-white mb-2">Clip 18 — ความรู้สึก Impostor Syndrome ของคนทำเกม</h3>
+                <p class="text-sm text-gray-300 leading-relaxed mb-4 whitespace-pre-line">ต่อให้คุณทำเกมมาห้าปี คุณก็ยังรู้สึกว่าตัวเองไม่ใช่ Dev ตัวจริง จนกว่าวันที่เกมจะได้ Ship ขายบน Steam[cite: 3]
+
+สภาพจิตใจที่เรียกว่า Impostor Syndrome หรือการรู้สึกว่าตัวเองไม่เก่งจริง มันเกิดขึ้นกับคนทำเกมทุกคนครับ[cite: 3]
+
+ตอนทำเกม เราจะคอยตั้งคำถามตลอดเวลาว่า งานเราดีพอรึยัง คนเล่นจะชอบมั้ย หรือเรากำลังหลอกตัวเองอยู่[cite: 3]
+
+ความรู้สึกนี้จะหายไปก็ต่อเมื่อเกมถูกปล่อยออกไปสู่โลกจริง มีผู้เล่นซื้อไปเล่น และส่ง Feedback กลับมา[cite: 3]
+
+ถ้าคุณกำลังรู้สึกแบบนี้อยู่ ไม่ต้องตกใจครับ คุณไม่ได้เป็นคนเดียว ทำงานต่อไป ส่งเกมออกไป แล้วให้ผลงานเป็นตัวตอบครับ[cite: 3]</p>
+            </div>
+            <div class="pt-4 border-t border-gray-800 flex items-center justify-between text-xs text-gray-400">
+                <span>138 words (~45s)[cite: 3]</span>
+                <span class="text-gray-500">Impostor Syndrome[cite: 3]</span>
+            </div>
+        </div>
+
+        <!-- Clip 19 -->
+        <div class="card rounded-xl p-5 flex flex-col justify-between script-card" data-category="C" data-title="ทำไมสตูดิโอเราถึงเลิกรับงาน Outsource 100%">
+            <div>
+                <div class="flex items-center justify-between mb-3">
+                    <span class="text-xs font-semibold px-2.5 py-1 rounded tag-c">Cat C: Team & HR</span>
+                    <span class="text-xs text-emerald-400 border border-emerald-500/30 px-2 py-0.5 rounded">READY TO RECORD</span>
+                </div>
+                <h3 class="text-base font-bold text-white mb-2">Clip 19 — ทำไมสตูดิโอเราถึงเลิกรับงาน Outsource 100%</h3>
+                <p class="text-sm text-gray-300 leading-relaxed mb-4 whitespace-pre-line">การตัดท่อน้ำเลี้ยงจากงาน Outsource แล้วทุ่มทำเกมตัวเองร้อยเปอร์เซ็นต์ คือการตัดสินใจที่เสี่ยงที่สุด แต่นั่นทำให้ M.A.S.S. Builder เสร็จได้จริง[cite: 3]
+
+ช่วงแรกเราใช้วิธีรับงานนอกมาเลี้ยงทีม แต่งานนอกมักจะดูดเวลาและพลังงานไปจนหมด จนไม่มีแรงเหลือมาทำเกมตัวเอง[cite: 3]
+
+สุดท้ายเราเลยประชุมกัน แล้วตัดสินใจตัดงาน Outsource ทิ้งทั้งหมด เพื่อเอาเวลามาดันเกมหลักให้เสร็จ[cite: 3]
+
+มันทำให้เงินสตูดิโอตึงมาก แต่ผลลัพธ์คือทีมมี Focus เดียว งานเดินเร็วขึ้นสิบเท่า[cite: 3]
+
+ถ้าคุณอยากทำเกมตัวเองให้เสร็จจริงๆ วันนึงคุณต้องกล้าละทิ้งงานนอก แล้วทุ่มสุดตัวครับ[cite: 3]</p>
+            </div>
+            <div class="pt-4 border-t border-gray-800 flex items-center justify-between text-xs text-gray-400">
+                <span>139 words (~45s)[cite: 3]</span>
+                <span class="text-gray-500">No More Outsource[cite: 3]</span>
+            </div>
+        </div>
+
+        <!-- Clip 20 -->
+        <div class="card rounded-xl p-5 flex flex-col justify-between script-card" data-category="D" data-title="ฝันอยากทำ MMORPG vs ความจริงที่ได้ทำ">
+            <div>
+                <div class="flex items-center justify-between mb-3">
+                    <span class="text-xs font-semibold px-2.5 py-1 rounded tag-d">Cat D: Design Philosophy</span>
+                    <span class="text-xs text-emerald-400 border border-emerald-500/30 px-2 py-0.5 rounded">READY TO RECORD</span>
+                </div>
+                <h3 class="text-base font-bold text-white mb-2">Clip 20 — ฝันอยากทำ MMORPG vs ความจริงที่ได้ทำ</h3>
+                <p class="text-sm text-gray-300 leading-relaxed mb-4 whitespace-pre-line">เด็กทำเกมทุกคนฝันอยากทำ MMORPG แต่ความจริงจะตบหน้าคุณด้วยเรื่อง Cost และการดูแล Server ที่ไม่มีวันจบสิ้น[cite: 3]
+
+เกมแรกของทีมผมเริ่มด้วยความฝันอยากทำ MMORPG ครับ เราใส่ทุกระบบที่อยากได้ลงไป ผลคือเหนื่อยมาก และเจอปัญหารอบด้าน[cite: 3]
+
+การทำเกมออนไลน์ไม่ได้จบแค่สร้างเกมเสร็จ แต่ต้องรับมือกับความเสี่ยงเรื่อง Server บั๊กสำรองข้อมูล และการบาลานซ์เกมสดๆ ตลอดเวลา[cite: 3]
+
+บทเรียนนี้ทำให้เราเปลี่ยนมาทำเกม Single-player และ Co-op ใน M.A.S.S. Builder แทน[cite: 3]
+
+ฝันใหญ่ได้ครับ แต่ต้องเลือกขอบเขตงานให้เหมาะกับกำลังทีม เพื่อให้เราทำจบได้จริงๆ[cite: 3]</p>
+            </div>
+            <div class="pt-4 border-t border-gray-800 flex items-center justify-between text-xs text-gray-400">
+                <span>139 words (~45s)[cite: 3]</span>
+                <span class="text-gray-500">MMORPG Scope Trap[cite: 3]</span>
+            </div>
+        </div>
+
+        <!-- Clip 21 -->
+        <div class="card rounded-xl p-5 flex flex-col justify-between script-card" data-category="B" data-title="ขายเกมได้ 1,000 บาท บน Steam เหลือเข้ากระเป๋าจริงเท่าไหร่">
+            <div>
+                <div class="flex items-center justify-between mb-3">
+                    <span class="text-xs font-semibold px-2.5 py-1 rounded tag-b">Cat B: Steam & Publishing</span>
+                    <span class="text-xs text-emerald-400 border border-emerald-500/30 px-2 py-0.5 rounded">READY TO RECORD</span>
+                </div>
+                <h3 class="text-base font-bold text-white mb-2">Clip 21 — ขายเกมได้ 1,000 บาท บน Steam เหลือเข้ากระเป๋าจริงเท่าไหร่</h3>
+                <p class="text-sm text-gray-300 leading-relaxed mb-4 whitespace-pre-line">ขายเกมได้ 1,000 บาทบน Steam เงินไม่ได้เข้าบัญชีสตูดิโอเต็มจำนวน แต่จะเหลือจริงๆ แค่ประมาณ 50 ถึง 65 เปอร์เซ็นต์เท่านั้น[cite: 3]
+
+ตัวเลขหายไปไหนบ้าง? หักอย่างแรกคือหักส่วนแบ่ง Platform ของ Steam 30 เปอร์เซ็นต์[cite: 3]
+
+หักอย่างที่สอง คือเรื่องภาษี ณ ที่จ่าย และภาษีระหว่างประเทศ ซึ่งขึ้นอยู่กับว่าผู้เล่นซื้อจากประเทศไหน และสตูดิโอทำเอกสารภาษีไว้อย้อนหลังยังไง[cite: 3]
+
+หักอย่างที่สาม คือค่าธรรมเนียมการโอนเงินและอัตราแลกเปลี่ยน[cite: 3]
+
+เพราะฉะนั้นเวลาทำแผนการเงิน อย่าคำนวณจาก Gross Revenue ครับ ให้คิดจาก Net ในช่วง 50 ถึง 65 เปอร์เซ็นต์ไว้ก่อน จะได้ไม่คำนวณพลาด[cite: 3]</p>
+            </div>
+            <div class="pt-4 border-t border-gray-800 flex items-center justify-between text-xs text-gray-400">
+                <span>139 words (~45s)[cite: 3]</span>
+                <span class="text-gray-500">Steam Revenue Cut[cite: 3]</span>
+            </div>
+        </div>
+
+        <!-- Clip 22 -->
+        <div class="card rounded-xl p-5 flex flex-col justify-between script-card" data-category="B" data-title="3 ข้อต้องเช็ก ก่อนเซ็นสัญญา Publisher">
+            <div>
+                <div class="flex items-center justify-between mb-3">
+                    <span class="text-xs font-semibold px-2.5 py-1 rounded tag-b">Cat B: Steam & Publishing</span>
+                    <span class="text-xs text-emerald-400 border border-emerald-500/30 px-2 py-0.5 rounded">READY TO RECORD</span>
+                </div>
+                <h3 class="text-base font-bold text-white mb-2">Clip 22 — 3 ข้อต้องเช็ก ก่อนเซ็นสัญญา Publisher</h3>
+                <p class="text-sm text-gray-300 leading-relaxed mb-4 whitespace-pre-line">อย่าเพิ่งรีบเซ็นสัญญา Publisher ถ้ายังไม่ได้เช็ก 3 ข้อนี้ให้ชัวร์ จะได้ไม่เสียใจทีหลัง[cite: 3]
+
+ข้อแรก เช็กเงื่อนไข Recoupment ให้ดีว่า Publisher จะหักเงินคืนจากยอดขายแรกยังไง หักกี่เปอร์เซ็นต์ และเราจะเริ่มได้ส่วนแบ่งเมื่อไหร่[cite: 3]
+
+ข้อสอง สิทธิ์ใน IP เกมยังเป็นของเรามั้ย หลีกเลี่ยงสัญญาที่ยึดสิทธิ์ในตัวเกมหรือชื่อแบรนด์ไปถาวร[cite: 3]
+
+ข้อสาม กำหนด Minimum Marketing Budget ให้ชัดเจน ไม่ใช่แค่สัญญาว่าจะช่วยโปรโมต แต่ต้องระบุตัวเลขหรือกิจกรรมจริง[cite: 3]
+
+สัญญาที่ดีต้องแฟร์ทั้งสองฝ่าย อย่าปล่อยให้ความดีใจทำให้เรามองข้ามตัวหนังสือครับ[cite: 3]</p>
+            </div>
+            <div class="pt-4 border-t border-gray-800 flex items-center justify-between text-xs text-gray-400">
+                <span>138 words (~45s)[cite: 3]</span>
+                <span class="text-gray-500">Publisher Contracts[cite: 3]</span>
+            </div>
+        </div>
+
+        <!-- Clip 23 -->
+        <div class="card rounded-xl p-5 flex flex-col justify-between script-card" data-category="B" data-title="ทำไม Wishlist 60,000 คน ถึงยังชะล่าใจไม่ได้">
+            <div>
+                <div class="flex items-center justify-between mb-3">
+                    <span class="text-xs font-semibold px-2.5 py-1 rounded tag-b">Cat B: Steam & Publishing</span>
+                    <span class="text-xs text-emerald-400 border border-emerald-500/30 px-2 py-0.5 rounded">READY TO RECORD</span>
+                </div>
+                <h3 class="text-base font-bold text-white mb-2">Clip 23 — ทำไม Wishlist 60,000 คน ถึงยังชะล่าใจไม่ได้</h3>
+                <p class="text-sm text-gray-300 leading-relaxed mb-4 whitespace-pre-line">ยอด Wishlist 60,000 คนบน Steam ฟังดูเยอะ แต่วันเปิดตัวจริง คนที่กดซื้อทันทีอาจมีแค่ 10 ถึง 15 เปอร์เซ็นต์เท่านั้น[cite: 3]
+
+นี่คือเรื่องจริงของ Conversion Rate ในวงการครับ คนกด Wishlist ไว้เพราะสนใจ แต่ไม่ได้แปลว่าเขาพร้อมจะจ่ายเงินในวันแรก[cite: 3]
+
+ยอด Wishlist ที่สะสมมานาน บางส่วนอาจเป็นคนที่ไม่Activeแล้ว หรือรอช่วงลดราคา[cite: 3]
+
+หน้าที่ของ Dev ไม่ใช่แค่นับตัวเลข Wishlist แต่คือการทำกิจกรรมอัปเดตเดโม ปล่อย Devlog และกระตุ้นให้คนที่สนใจเปลี่ยนมาเป็นผู้ซื้อในสัปดาห์แรก[cite: 3]
+
+ตัวเลขบนกระดาษกินไม่ได้ ยอดขายจริงสัปดาห์แรกต่างหากคือของจริง[cite: 3]</p>
+            </div>
+            <div class="pt-4 border-t border-gray-800 flex items-center justify-between text-xs text-gray-400">
+                <span>139 words (~45s)[cite: 3]</span>
+                <span class="text-gray-500">Wishlist Conversion[cite: 3]</span>
+            </div>
+        </div>
+
+        <!-- Clip 24 -->
+        <div class="card rounded-xl p-5 flex flex-col justify-between script-card" data-category="B" data-title="เงินกู้ Forgivable Loan ที่ช่วยชีวิตสตูดิโอ">
+            <div>
+                <div class="flex items-center justify-between mb-3">
+                    <span class="text-xs font-semibold px-2.5 py-1 rounded tag-b">Cat B: Steam & Publishing</span>
+                    <span class="text-xs text-emerald-400 border border-emerald-500/30 px-2 py-0.5 rounded">READY TO RECORD</span>
+                </div>
+                <h3 class="text-base font-bold text-white mb-2">Clip 24 — เงินกู้ Forgivable Loan ที่ช่วยชีวิตสตูดิโอ</h3>
+                <p class="text-sm text-gray-300 leading-relaxed mb-4 whitespace-pre-line">เงินกู้แบบ Forgivable Loan จาก Publisher คือตัวช่วยที่ทำให้สตูดิโอเรามีเงินจ่ายเงินเดือนทีม จนทำเกมขึ้น Kickstarter ได้สำเร็จ[cite: 3]
+
+ตอนนั้นทีมเราเงินหมดเกลี้ยง Sekai Project ยื่นข้อเสนอจ่ายเงินสำรองเลี้ยงทีมรายเดือน โดยมีเงื่อนไขว่า เงินก้อนนี้จะคืนก็ต่อเมื่อ Kickstarter ประสบความสำเร็จเท่านั้น[cite: 3]
+
+ถ้าแคมเปญล้มเหลว หหนี้ก้อนนี้จะถูกยกเลิกทันที ไม่ต้องตามชดใช้[cite: 3]
+
+ข้อตกลงนี้ลดความกดดันให้ทีมเราได้มหาศาล ทำให้เรามีสมาธิตกแต่งเกมตัวอย่างให้ดีที่สุด จนแคมเปญระดมทุนผ่านเป้าไปได้ด้วยดี[cite: 3]
+
+การหา Partner ที่เข้าใจและพร้อมรับความเสี่ยงร่วมกัน คือโชคดีใหญ่ของคนทำเกมครับ[cite: 3]</p>
+            </div>
+            <div class="pt-4 border-t border-gray-800 flex items-center justify-between text-xs text-gray-400">
+                <span>139 words (~45s)[cite: 3]</span>
+                <span class="text-gray-500">Forgivable Loan[cite: 3]</span>
+            </div>
+        </div>
+
+        <!-- Clip 25 -->
+        <div class="card rounded-xl p-5 flex flex-col justify-between script-card" data-category="B" data-title="ตราบาปจากการรับปากเกินตัวบน Kickstarter">
+            <div>
+                <div class="flex items-center justify-between mb-3">
+                    <span class="text-xs font-semibold px-2.5 py-1 rounded tag-b">Cat B: Steam & Publishing</span>
+                    <span class="text-xs text-emerald-400 border border-emerald-500/30 px-2 py-0.5 rounded">READY TO RECORD</span>
+                </div>
+                <h3 class="text-base font-bold text-white mb-2">Clip 25 — ตราบาปจากการรับปากเกินตัวบน Kickstarter</h3>
+                <p class="text-sm text-gray-300 leading-relaxed mb-4 whitespace-pre-line">บทเรียนที่แพงที่สุดจากการทำ Kickstarter คืออย่ารับปากสิ่งที่เราไม่แน่ใจว่าจะทำได้ เพียงเพื่ออยากได้ยอดระดมทุนเพิ่ม[cite: 3]
+
+ตอนทำแคมเปญ M.A.S.S. Builder เราสัญญา Reward ไว้เยอะมาก ทั้งเสียงพากย์เต็มรูปแบบ และของแถมคัสตอมรายบุคคล[cite: 3]
+
+พอระดมทุนได้จริง เงินก้อนนั้นถูกกลืนไปกับค่าผลิตของสัญญากว่าครึ่ง และกลายเป็นภาระงานที่ตามหลอกหลอนทีมหลังเกมวางขายไปหลายปี[cite: 3]
+
+คำสัญญาต่อผู้สนับสนุนคือสิ่งศักดิ์สิทธิ์ครับ อะไรทำไม่ได้หรือยังไม่ชัวร์ อย่าใส่ลงใน Stretch Goal เด็ดขาด[cite: 3]
+
+ระดมทุนได้น้อยกว่าเดิมหน่อย แต่ทำได้จริง สบายใจกว่าเยอะครับ[cite: 3]</p>
+            </div>
+            <div class="pt-4 border-t border-gray-800 flex items-center justify-between text-xs text-gray-400">
+                <span>138 words (~45s)[cite: 3]</span>
+                <span class="text-gray-500">KS Overpromising[cite: 3]</span>
+            </div>
+        </div>
+
+        <!-- Clip 26 -->
+        <div class="card rounded-xl p-5 flex flex-col justify-between script-card" data-category="J" data-title="ทำไมผมถึงแบนตัวเองจากการอ่านรีวิวบน Steam">
+            <div>
+                <div class="flex items-center justify-between mb-3">
+                    <span class="text-xs font-semibold px-2.5 py-1 rounded tag-j">Cat J: Mindset</span>
+                    <span class="text-xs text-emerald-400 border border-emerald-500/30 px-2 py-0.5 rounded">READY TO RECORD</span>
+                </div>
+                <h3 class="text-base font-bold text-white mb-2">Clip 26 — ทำไมผมถึงแบนตัวเองจากการอ่านรีวิวบน Steam</h3>
+                <p class="text-sm text-gray-300 leading-relaxed mb-4 whitespace-pre-line">การแบนตัวเองไม่อ่านรีวิวบน Steam ด้วยตัวเอง คือคำสั่งของทีมงานที่ช่วยเซฟสภาพจิตใจผมไว้ได้มากที่สุด[cite: 3]
+
+ผมเป็นคนเอฟเฟกต์กับคอมเมนต์แง่ลบง่ายมาก พอด่านไหนมีคนบ่น หรือมีคนด่าเรื่องบาลานซ์ ผมจะรู้สึกนอยด์จนทำงานต่อไม่ได้ไปเป็นวันๆ[cite: 3]
+
+ทีมงานเลยตั้งกฎ ห้ามผมเปิดอ่านรีวิวบน Steam โดยตรง แต่ให้หัวหน้าทีมทำหน้าที่คัดกรอง สรุปเฉพาะเนื้อหาสาระและปัญหาจริงมาเป็น Report ให้ผมแก้[cite: 3]
+
+วิธีนี้ทำให้ผมได้รับการปรับปรุงเกมตาม Feedback จริง โดยไม่ต้องรับแรงกระแทกทางอารมณ์ที่ไม่จำเป็น[cite: 3]
+
+ถ้าคุณรู้ตัวว่าเป็นคนจิตอ่อน ลองให้เพื่อนร่วมทีมช่วยกรองข้อความดูครับ[cite: 3]</p>
+            </div>
+            <div class="pt-4 border-t border-gray-800 flex items-center justify-between text-xs text-gray-400">
+                <span>139 words (~45s)[cite: 3]</span>
+                <span class="text-gray-500">Steam Review Firewall[cite: 3]</span>
+            </div>
+        </div>
+
+        <!-- Clip 27 -->
+        <div class="card rounded-xl p-5 flex flex-col justify-between script-card" data-category="B" data-title="ตั้งราคาขายแบบ Regional Pricing บน Steam">
+            <div>
+                <div class="flex items-center justify-between mb-3">
+                    <span class="text-xs font-semibold px-2.5 py-1 rounded tag-b">Cat B: Steam & Publishing</span>
+                    <span class="text-xs text-emerald-400 border border-emerald-500/30 px-2 py-0.5 rounded">READY TO RECORD</span>
+                </div>
+                <h3 class="text-base font-bold text-white mb-2">Clip 27 — ตั้งราคาขายแบบ Regional Pricing บน Steam</h3>
+                <p class="text-sm text-gray-300 leading-relaxed mb-4 whitespace-pre-line">การตั้งราคาขายแบบ Regional Pricing บน Steam ต้องคิดให้ถี่ถ้วน ไม่ใช่แค่กดตามราคาแนะนำของระบบอย่างเดียว[cite: 3]
+
+Steam มีระบบแนะนำราคาตามกำลังซื้อของแต่ละประเทศ ซึ่งช่วยให้คนในประเทศนั้นๆ เข้าถึงเกมเราได้ง่ายขึ้น[cite: 3]
+
+แต่ข้อควรระวังคือ ถ้าเราตั้งราคาในบางภูมิภาคต่ำเกินไป อาจมีผู้เล่นมุด VPN ไปซื้อในราคาถูกจนทำลายรายได้หลักของเราได้[cite: 3]
+
+กลยุทธ์คือ ยึดราคาฐานฝั่งอเมริกาเป็นหลัก แล้วปรับลดให้เหมาะสมในตลาดเกิดใหม่ โดยไม่ให้ส่วนต่างห่างกันจนเกิดการมุดซื้อ[cite: 3]
+
+ตั้งราคาให้แฟร์กับคนเล่น และแฟร์กับค่าน้ำค่าไฟของคนทำเกมด้วยครับ[cite: 3]</p>
+            </div>
+            <div class="pt-4 border-t border-gray-800 flex items-center justify-between text-xs text-gray-400">
+                <span>138 words (~45s)[cite: 3]</span>
+                <span class="text-gray-500">Regional Pricing[cite: 3]</span>
+            </div>
+        </div>
+
+        <!-- Clip 28 -->
+        <div class="card rounded-xl p-5 flex flex-col justify-between script-card" data-category="B" data-title="วิธีขึ้นราคาช่วง 1.0.0 โดยไม่โดนด่า">
+            <div>
+                <div class="flex items-center justify-between mb-3">
+                    <span class="text-xs font-semibold px-2.5 py-1 rounded tag-b">Cat B: Steam & Publishing</span>
+                    <span class="text-xs text-emerald-400 border border-emerald-500/30 px-2 py-0.5 rounded">READY TO RECORD</span>
+                </div>
+                <h3 class="text-base font-bold text-white mb-2">Clip 28 — วิธีขึ้นราคาช่วง 1.0.0 โดยไม่โดนด่า</h3>
+                <p class="text-sm text-gray-300 leading-relaxed mb-4 whitespace-pre-line">การปรับราคาเกมขึ้นเมื่อออกจาก Early Access เป็น 1.0.0 ทำได้ทันทีโดยที่ผู้เล่นไม่โกรธ แค่ต้องแจ้งล่วงหน้าและทำให้เห็นคุณค่าที่เพิ่มขึ้น[cite: 3]
+
+เกม M.A.S.S. Builder ของเรามีการปรับราคาขึ้นเมื่อเวอร์ชันเต็มเสร็จสมบูรณ์[cite: 3]
+
+สิ่งที่เราทำคือ ประกาศข่าวล่วงหน้าอย่างน้อย 1-2 เดือน บอกชัดเจนว่าจะปรับราคาขึ้นวันไหน พร้อมชี้แจงว่ามีคอนเทนต์ใหม่ ระบบใหม่ อะไรเพิ่มเข้ามาบ้าง[cite: 3]
+
+นี่เป็นการให้เกียรติคนที่อุดหนุนเราตั้งแต่ช่วง Early Access ให้รู้สึกว่าเขาได้ซื้อในราคาคุ้มค่า[cite: 3]
+
+และเปิดโอกาสให้คนที่เล็งอยู่ได้ตัดสินใจซื้อก่อนปรับราคาขึ้น ทุกคนเข้าใจได้ถ้าเราสื่อสารตรงไปตรงมาครับ[cite: 3]</p>
+            </div>
+            <div class="pt-4 border-t border-gray-800 flex items-center justify-between text-xs text-gray-400">
+                <span>138 words (~45s)[cite: 3]</span>
+                <span class="text-gray-500">1.0.0 Price Increase[cite: 3]</span>
+            </div>
+        </div>
+
+        <!-- Clip 29 -->
+        <div class="card rounded-xl p-5 flex flex-col justify-between script-card" data-category="C" data-title="ทำไมเงินเดือนผู้ก่อตั้งถึงตั้งไว้ต่ำที่สุด">
+            <div>
+                <div class="flex items-center justify-between mb-3">
+                    <span class="text-xs font-semibold px-2.5 py-1 rounded tag-c">Cat C: Team & HR</span>
+                    <span class="text-xs text-emerald-400 border border-emerald-500/30 px-2 py-0.5 rounded">READY TO RECORD</span>
+                </div>
+                <h3 class="text-base font-bold text-white mb-2">Clip 29 — ทำไมเงินเดือนผู้ก่อตั้งถึงตั้งไว้ต่ำที่สุด</h3>
+                <p class="text-sm text-gray-300 leading-relaxed mb-4 whitespace-pre-line">เงินเดือนของ Founder ในสตูดิโอเรา ตั้งไว้ต่ำที่สุดเท่าที่กฎหมายกำหนด เพื่อเอาเงินส่วนใหญ่ไปจ่ายให้ทีมงาน[cite: 3]
+
+ช่วงแรกที่ตั้งบริษัท เราไม่ได้มีเงินทุนมหาศาล สิ่งแรกที่ต้องตัดลดคือเงินเดือนของตัวผมเองและผู้ก่อตั้ง[cite: 3]
+
+เราเอาเงินก้อนใหญ่ไปจ่ายเงินเดือนให้โปรแกรมเมอร์ อาร์ตติส และซื้ออาหารโกรเซอรีเข้ามาไว้ในออฟฟิศ เพื่อให้ทีมงานอยู่ได้โดยไม่ต้องกังวลเรื่องค่ากิน[cite: 3]
+
+Founder คือคนรับความเสี่ยงสูงสุด แต่ความรอดของบริษัทขึ้นอยู่กับทีมงาน[cite: 3]
+
+ทำให้ทีมงานอิ่มท้อง มีอุปกรณ์ดีๆ ใช้ แล้วงานที่ดีจะตามมาเองครับ เงินส่วนของเราค่อยไปหวังผลตอนเกมขายได้[cite: 3]</p>
+            </div>
+            <div class="pt-4 border-t border-gray-800 flex items-center justify-between text-xs text-gray-400">
+                <span>138 words (~45s)[cite: 3]</span>
+                <span class="text-gray-500">Founder Salary[cite: 3]</span>
+            </div>
+        </div>
+
+        <!-- Clip 30 -->
+        <div class="card rounded-xl p-5 flex flex-col justify-between script-card" data-category="C" data-title="การเชิญสมาชิกคนที่ 8 ออกจากทีม">
+            <div>
+                <div class="flex items-center justify-between mb-3">
+                    <span class="text-xs font-semibold px-2.5 py-1 rounded tag-c">Cat C: Team & HR</span>
+                    <span class="text-xs text-emerald-400 border border-emerald-500/30 px-2 py-0.5 rounded">READY TO RECORD</span>
+                </div>
+                <h3 class="text-base font-bold text-white mb-2">Clip 30 — การเชิญสมาชิกคนที่ 8 ออกจากทีม</h3>
+                <p class="text-sm text-gray-300 leading-relaxed mb-4 whitespace-pre-line">การตัดสินใจแยกทางกับสมาชิกคนที่แปด คือการตัดสินใจที่เจ็บปวดที่สุด แต่จำเป็นที่สุดเพื่ออนาคตของสตูดิโอ[cite: 3]
+
+ตอนนั้นออฟฟิศกำลังย้ายสถานที่ สมาชิกท่านนั้นมีเงื่อนไขชีวิตที่เปลี่ยนไป ทั้งเรื่องครอบครัวและการเดินทาง ทำให้ไม่สามารถทำงานแบบเต็มที่ร่วมกับทีมได้อีกต่อไป[cite: 3]
+
+เรานั่งคุยกันตรงๆ ด้วยเหตุและผล ตกลงจ่ายค่าชดเชยอย่างสมเกียรติ แล้วแยกย้ายกันด้วยดี[cite: 3]
+
+แม้จะรู้สึกแย่ แต่หน้าที่ของผู้นำคือการรักษาทิศทางและจังหวะการทำงานของทีมส่วนใหญ่ไว้[cite: 3]
+
+เรื่องบางเรื่องไม่ได้มีใครผิด แค่ทิศทางชีวิตไม่ตรงกัน การคุยกันตรงๆ คือทางออกที่ดีที่สุดครับ[cite: 3]</p>
+            </div>
+            <div class="pt-4 border-t border-gray-800 flex items-center justify-between text-xs text-gray-400">
+                <span>139 words (~45s)[cite: 3]</span>
+                <span class="text-gray-500">8th Member Separation[cite: 3]</span>
+            </div>
+        </div>
+
+        <!-- Clip 31 -->
+        <div class="card rounded-xl p-5 flex flex-col justify-between script-card" data-category="C" data-title="Soft Skills สำคัญกว่า Hard Skills ในทีมเล็ก">
+            <div>
+                <div class="flex items-center justify-between mb-3">
+                    <span class="text-xs font-semibold px-2.5 py-1 rounded tag-c">Cat C: Team & HR</span>
+                    <span class="text-xs text-emerald-400 border border-emerald-500/30 px-2 py-0.5 rounded">READY TO RECORD</span>
+                </div>
+                <h3 class="text-base font-bold text-white mb-2">Clip 31 — Soft Skills สำคัญกว่า Hard Skills ในทีมเล็ก</h3>
+                <p class="text-sm text-gray-300 leading-relaxed mb-4 whitespace-pre-line">ในทีมทำเกมขนาด 7 คน คนที่ทักษะ Soft Skills ดี ปรับตัวง่าย และคุยรู้เรื่อง มีค่ามากกว่าคนเก่งขั้นเทพที่ทำงานร่วมกับคนอื่นไม่ได้[cite: 3]
+
+ทีมเล็กไม่มีพื้นที่สำหรับ Ego ครับ ถ้ามีโปรแกรมเมอร์เก่งระดับเทพ แต่ไม่ยอมรับฟังความคิดเห็นคนอื่น หรืออาร์ตติสที่เปลี่ยนงานตาม Feedback ไม่ได้ งานทั้งทีมจะสะงักทันที[cite: 3]
+
+เราเลือกคนที่สื่อสารชัดเจน พร้อมเรียนรู้ และเปิดใจรับฟังก่อนเสมอ[cite: 3]
+
+ทักษะการทำเกมหัดกันได้ เขียนโค้ดฝึกกันได้ แต่ทัศนคติและการทำงานเป็นทีมคือสิ่งที่ดัดยาก[cite: 3]
+
+อยากได้ทีมที่เดินไปได้ไกล ให้เลือกคนที่คุยกันรู้เรื่องครับ[cite: 3]</p>
+            </div>
+            <div class="pt-4 border-t border-gray-800 flex items-center justify-between text-xs text-gray-400">
+                <span>139 words (~45s)[cite: 3]</span>
+                <span class="text-gray-500">Soft Skills vs Ego[cite: 3]</span>
+            </div>
+        </div>
+
+        <!-- Clip 32 -->
+        <div class="card rounded-xl p-5 flex flex-col justify-between script-card" data-category="C" data-title="ออฟฟิศ 7 คนที่เลิกใช้ Trello แล้วใช้ระบบตะโกนข้ามโต๊ะ">
+            <div>
+                <div class="flex items-center justify-between mb-3">
+                    <span class="text-xs font-semibold px-2.5 py-1 rounded tag-c">Cat C: Team & HR</span>
+                    <span class="text-xs text-emerald-400 border border-emerald-500/30 px-2 py-0.5 rounded">READY TO RECORD</span>
+                </div>
+                <h3 class="text-base font-bold text-white mb-2">Clip 32 — ออฟฟิศ 7 คนที่เลิกใช้ Trello แล้วใช้ระบบตะโกนข้ามโต๊ะ</h3>
+                <p class="text-sm text-gray-300 leading-relaxed mb-4 whitespace-pre-line">ออฟฟิศทำเกมขนาดเจ็ดคนของเรา เลิกใช้ Trello และ Stand-up meeting แล้วหันมาใช้ระบบตะโกนข้ามโต๊ะแทน[cite: 3]
+
+ตอนทีมยังเล็ก การนั่งคีย์การ์ดลงบอร์ด หรือจัดประชุมทุกเช้า มันกลายเป็น Overhead ที่กินเวลาโดยไม่จำเป็น[cite: 3]
+
+ในเมื่อเรานั่งอยู่ในห้องเดียวกัน อยากได้ asset อะไร อยากแก้บั๊กตรงไหน ก็แค่ตะโกนถามหรือเดินไปดูหน้าจอเพื่อนตรงๆ[cite: 3]
+
+เราจะประชุมก็ต่อเมื่อมีเรื่องสำคัญที่ต้องตัดสินใจร่วมกันจริงๆ เท่านั้น[cite: 3]
+
+เครื่องมือจัดการงานจำเป็นสำหรับทีมใหญ่ครับ แต่ถ้าทีมคุณนั่งมองหน้ากันอยู่แล้ว ใช้การสื่อสารตรงๆ ที่เร็วที่สุดดีกว่าครับ[cite: 3]</p>
+            </div>
+            <div class="pt-4 border-t border-gray-800 flex items-center justify-between text-xs text-gray-400">
+                <span>138 words (~45s)[cite: 3]</span>
+                <span class="text-gray-500">Desk Shouting System[cite: 3]</span>
+            </div>
+        </div>
+
+        <!-- Clip 33 -->
+        <div class="card rounded-xl p-5 flex flex-col justify-between script-card" data-category="H" data-title="เมื่อโปรระดับโลกโดนแบนเพราะไม่สับกองการ์ด (Riftbound TCG)">
+            <div>
+                <div class="flex items-center justify-between mb-3">
+                    <span class="text-xs font-semibold px-2.5 py-1 rounded tag-h">Cat H: News / TCG</span>
+                    <span class="text-xs text-pink-400 border border-pink-500/30 px-2 py-0.5 rounded">TIME-SENSITIVE ⚠️[cite: 3]</span>
+                </div>
+                <h3 class="text-base font-bold text-white mb-2">Clip 33 — เมื่อโปรระดับโลกโดนแบนเพราะไม่สับกองการ์ด (Riftbound TCG)</h3>
+                <p class="text-sm text-gray-300 leading-relaxed mb-4 whitespace-pre-line">Koko Lopez โปรระดับโลกของเกม Riftbound TCG โดนสั่งแบนยาวถึงปี 2029 จากข้อหาเรียงกอง Rune โดยไม่สับการ์ดก่อนแข่ง[cite: 3]
+
+กรณีนี้กลายเป็นประเด็นใหญ่ทันที เมื่อคลิปการแข่งย้อนหลังแสดงให้เห็นชัดเจนว่า เขาตั้งใจจัดเรียง Order Rune ให้อยู่ในตำแหน่งที่ต้องการ เพื่อดึงมาใช้งานได้เป๊ะๆ ทุกรอบ[cite: 3]
+
+ตอนแรกเจ้าตัวอ้างว่าเป็นความเข้าใจผิด แต่พอหลักฐานมัดแน่นจากหลายทัวร์นาเมนต์ จนทีมต้นสังกัดสั่งปลด สุดท้าย Riot ก็ออกบทลงโทษแบนยาวถึง 3 ปี[cite: 3]
+
+เรื่องนี้สอนคนทำเกมและคนแข่งเกมชัดเจนครับว่า วงการการ์ดเกมต่อให้กลไกสนุกแค่ไหน แต่ถ้าไร้ความโปร่งใสและขาด Fair Play สังคมก็พร้อมจะถอดคุณออกจากวงการทันทีครับ[cite: 3]</p>
+            </div>
+            <div class="pt-4 border-t border-gray-800 flex items-center justify-between text-xs text-gray-400">
+                <span>138 words (~45s)[cite: 3]</span>
+                <span class="text-gray-500">Riftbound Cheating[cite: 3]</span>
+            </div>
+        </div>
+
+        <!-- Clip 34 -->
+        <div class="card rounded-xl p-5 flex flex-col justify-between script-card" data-category="H" data-title="เมื่อสตรีมเมอร์ระดับโลก Ludwig ถอดใจเพราะนโยบาย Esports">
+            <div>
+                <div class="flex items-center justify-between mb-3">
+                    <span class="text-xs font-semibold px-2.5 py-1 rounded tag-h">Cat H: News / Esports</span>
+                    <span class="text-xs text-pink-400 border border-pink-500/30 px-2 py-0.5 rounded">TIME-SENSITIVE ⚠️[cite: 3]</span>
+                </div>
+                <h3 class="text-base font-bold text-white mb-2">Clip 34 — เมื่อสตรีมเมอร์ระดับโลก Ludwig ถอดใจเพราะนโยบาย Esports</h3>
+                <p class="text-sm text-gray-300 leading-relaxed mb-4 whitespace-pre-line">Ludwig สตรีมเมอร์ชื่อดังเจ้าของทีม Esports ออกมาเปรยว่าอาจต้องยุบทีมและถอยออกจากวงการ เพราะทนรับนโยบายและการตัดสินใจแย่ๆ ไม่ไหว[cite: 3]
+
+การทำทีม Esports ยุคนี้ใช้เงินมหาศาลครับ แต่สิ่งที่ทีมต้องเจอสวนทางกัน คือนโยบายของทางค่ายเกมที่ปรับเปลี่ยนตามใจชอบ กฎเกณฑ์ที่ไม่เอื้อให้คนทำทีมอยู่รอด และการสื่อสารที่ย่ำแย่[cite: 3]
+
+พอคนที่มีทั้งเงิน Passion และฐานแฟนคลับแน่นอย่าง Ludwig ยังออกมาตัดพ้อว่าเริ่มไม่คุ้มที่จะสู้ต่อ มันส่งสัญญาณเตือนคนทำเกมทั่วโลกลอยมาเลยครับ[cite: 3]
+
+การสร้างระบบแข่งขันถ้าคิดแต่จะดึงเค้กเข้าฝั่งตัวเอง โดยไม่เหลียวมองคนลงทุนทำทีม วันนึงจะไม่มีใครเหลือมาช่วยแบกวงการให้ครับ[cite: 3]</p>
+            </div>
+            <div class="pt-4 border-t border-gray-800 flex items-center justify-between text-xs text-gray-400">
+                <span>139 words (~45s)[cite: 3]</span>
+                <span class="text-gray-500">Ludwig Esports[cite: 3]</span>
+            </div>
+        </div>
+
+        <!-- Clip 35 -->
+        <div class="card rounded-xl p-5 flex flex-col justify-between script-card" data-category="D" data-title="เมื่อมอดเดอร์ใช้ AI แก้เกมเก่า หรือเราแค่คิดถึงวันวาน">
+            <div>
+                <div class="flex items-center justify-between mb-3">
+                    <span class="text-xs font-semibold px-2.5 py-1 rounded tag-d">Cat D: Design & Tech</span>
+                    <span class="text-xs text-emerald-400 border border-emerald-500/30 px-2 py-0.5 rounded">READY TO RECORD</span>
+                </div>
+                <h3 class="text-base font-bold text-white mb-2">Clip 35 — เมื่อมอดเดอร์ใช้ AI แก้เกมเก่า หรือเราแค่คิดถึงวันวาน</h3>
+                <p class="text-sm text-gray-300 leading-relaxed mb-4 whitespace-pre-line">ยุคนี้ AI ช่วยให้มอดเดอร์รังสรรค์ Client และแก้เกมเก่าอายุยี่สิบปีได้อย่างทะลุขอบเขต จนเกิดคำถามว่า เรากำลังสนุกกับเกม หรือแค่อาparentคิดถึงอดีตกันแน่[cite: 3]
+
+เครื่องมือ Coding Agent ยุคนี้ช่วยทะลายขีดจำกัดเดิมๆ งานที่เคยต้องใช้เวลาเป็นปี มอดเดอร์สามารถเสกให้เสร็จได้ในไม่กี่วัน[cite: 3]
+
+แต่พอเราสามารถแก้เกมเก่าให้กลายเป็นอะไรก็ได้ตามใจชอบ บางทีสิ่งที่เราโหยหาอาจไม่ใช่แค่ระบบที่ทันสมัยขึ้น แต่คือความรู้สึกสมัยเด็กที่ได้นั่งเล่นเกมนั้นเป็นครั้งแรก[cite: 3]
+
+AI ช่วยเติมเต็มจินตนาการและสร้างสิ่งใหม่ในเกมเก่าได้จริงครับ แต่เสน่ห์ที่แท้จริงคือการรักษาสมดุลระหว่าง Nostalgia กับความสดใหม่ให้อยู่คู่กันอย่างลงตัวครับ[cite: 3]</p>
+            </div>
+            <div class="pt-4 border-t border-gray-800 flex items-center justify-between text-xs text-gray-400">
+                <span>140 words (~45s)[cite: 3]</span>
+                <span class="text-gray-500">AI Modding x Nostalgia[cite: 3]</span>
+            </div>
+        </div>
+
+    </main>
+
+    <script>
+        function filterScripts() {
+            const searchVal = document.getElementById('searchInput').value.toLowerCase();
+            const catVal = document.getElementById('categoryFilter').value;
+            const cards = document.querySelectorAll('.script-card');
+
+            cards.forEach(card => {
+                const title = card.getAttribute('data-title').toLowerCase();
+                const text = card.textContent.toLowerCase();
+                const category = card.getAttribute('data-category');
+
+                const matchesSearch = title.includes(searchVal) || text.includes(searchVal);
+                const matchesCategory = (catVal === 'all') || (category === catVal);
+
+                if (matchesSearch && matchesCategory) {
+                    card.style.display = 'flex';
+                } else {
+                    card.style.display = 'none';
+                }
+            });
+        }
+    </script>
+</body>
+</html>
