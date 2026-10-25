@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Vermillion Shorts — Master Script Dashboard</title>
+    <title>Vermillion Shorts — Master Content & Topic Dashboard</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         body { background-color: #0b0e14; color: #e2e8f0; font-family: system-ui, -apple-system, sans-serif; }
@@ -27,15 +27,25 @@
     <header class="flex flex-col md:flex-row md:items-center justify-between pb-6 mb-8 border-b border-gray-800 gap-4">
         <div>
             <div class="flex items-center gap-3">
-                <h1 class="text-2xl font-bold text-white tracking-wide">VERMILLION SHORTS — CONTENT DASHBOARD</h1>
-                <span id="counterBadge" class="bg-blue-900/50 text-blue-400 border border-blue-700/50 text-xs px-2.5 py-0.5 rounded-full font-semibold">35 CLIPS ACTIVE</span>
+                <h1 class="text-2xl font-bold text-white tracking-wide">VERMILLION SHORTS — CONTENT & TOPIC DASHBOARD</h1>
+                <span id="counterBadge" class="bg-blue-900/50 text-blue-400 border border-blue-700/50 text-xs px-2.5 py-0.5 rounded-full font-semibold">40 CLIPS ACTIVE</span>
             </div>
-            <p class="text-sm text-gray-400 mt-1">Live tracking, fast editing, teleprompter mode, and status completion</p>
+            <p class="text-sm text-gray-400 mt-1">Live tracking, fast editing, teleprompter mode, script drafting, and topic backlog management</p>
         </div>
 
         <div class="flex flex-wrap items-center gap-3">
+            <!-- Add Topic Idea Button -->
+            <button onclick="openAddTopicModal()" class="bg-amber-600 hover:bg-amber-500 text-white font-semibold text-sm px-3.5 py-2 rounded-lg transition flex items-center gap-1.5 shadow-lg shadow-amber-900/30">
+                <span>💡</span> Add Topic Idea
+            </button>
+
+            <!-- Add Full Script Button -->
+            <button onclick="openAddModal()" class="bg-blue-600 hover:bg-blue-500 text-white font-semibold text-sm px-3.5 py-2 rounded-lg transition flex items-center gap-1.5 shadow-lg shadow-blue-900/30">
+                <span>➕</span> Add New Script
+            </button>
+
             <!-- Search -->
-            <input type="text" id="searchInput" onkeyup="filterScripts()" placeholder="Search scripts..." class="bg-gray-900 border border-gray-700 text-sm rounded-lg px-4 py-2 text-white w-52 focus:outline-none focus:border-blue-500">
+            <input type="text" id="searchInput" onkeyup="filterScripts()" placeholder="Search scripts..." class="bg-gray-900 border border-gray-700 text-sm rounded-lg px-4 py-2 text-white w-44 focus:outline-none focus:border-blue-500">
             
             <!-- Category Filter -->
             <select id="categoryFilter" onchange="filterScripts()" class="bg-gray-900 border border-gray-700 text-sm rounded-lg px-3 py-2 text-white focus:outline-none focus:border-blue-500">
@@ -61,8 +71,8 @@
 
             <!-- Sorting Options -->
             <select id="sortOrder" onchange="sortScripts()" class="bg-gray-900 border border-gray-700 text-sm rounded-lg px-3 py-2 text-white focus:outline-none focus:border-blue-500">
-                <option value="clip-asc">Sort: Clip 1 ➔ 35</option>
-                <option value="clip-desc">Sort: Clip 35 ➔ 1</option>
+                <option value="clip-asc">Sort: Clip 1 ➔ Max</option>
+                <option value="clip-desc">Sort: Clip Max ➔ 1</option>
                 <option value="words-desc">Sort: Longest Word Count</option>
                 <option value="words-asc">Sort: Shortest Word Count</option>
             </select>
@@ -74,7 +84,7 @@
         <!-- Cards generated dynamically via JavaScript -->
     </main>
 
-    <!-- Modal: Quick Teleprompter / Direct Editor -->
+    <!-- Modal: Edit / Teleprompter -->
     <div id="editorModal" class="fixed inset-0 bg-black/80 backdrop-blur-sm hidden items-center justify-center p-4 z-50">
         <div class="bg-gray-900 border border-gray-700 rounded-2xl max-w-3xl w-full p-6 flex flex-col gap-4 shadow-2xl">
             <div class="flex items-center justify-between border-b border-gray-800 pb-3">
@@ -92,8 +102,112 @@
         </div>
     </div>
 
+    <!-- Modal: Add New Full Script -->
+    <div id="addModal" class="fixed inset-0 bg-black/80 backdrop-blur-sm hidden items-center justify-center p-4 z-50">
+        <div class="bg-gray-900 border border-gray-700 rounded-2xl max-w-2xl w-full p-6 flex flex-col gap-4 shadow-2xl">
+            <div class="flex items-center justify-between border-b border-gray-800 pb-3">
+                <h2 class="text-lg font-bold text-white">➕ Add New Script Card</h2>
+                <button onclick="closeAddModal()" class="text-gray-400 hover:text-white font-bold">✕ Close</button>
+            </div>
+            
+            <div class="grid grid-cols-2 gap-4">
+                <div>
+                    <label class="block text-xs text-gray-400 mb-1">Clip Number</label>
+                    <input type="number" id="newClipNumber" class="w-full bg-gray-950 border border-gray-800 rounded-lg p-2.5 text-white text-sm focus:outline-none focus:border-blue-500">
+                </div>
+                <div>
+                    <label class="block text-xs text-gray-400 mb-1">Category</label>
+                    <select id="newClipCategory" class="w-full bg-gray-950 border border-gray-800 rounded-lg p-2.5 text-white text-sm focus:outline-none focus:border-blue-500">
+                        <option value="A|Personal Journey">Cat A: Personal Journey</option>
+                        <option value="B|Steam & Publishing">Cat B: Steam & Publishing</option>
+                        <option value="C|Team & HR">Cat C: Team & HR</option>
+                        <option value="D|Design Philosophy">Cat D: Design Philosophy</option>
+                        <option value="F|Engine & Tech">Cat F: Engine & Tech</option>
+                        <option value="G|Money & Runway">Cat G: Money & Runway</option>
+                        <option value="H|News & Industry">Cat H: News & Industry</option>
+                        <option value="I|Career & Education">Cat I: Career & Education</option>
+                        <option value="J|Mindset">Cat J: Mindset</option>
+                        <option value="L|Events & Business">Cat L: Events & Business</option>
+                    </select>
+                </div>
+            </div>
+
+            <div>
+                <label class="block text-xs text-gray-400 mb-1">Clip Title (Thai)</label>
+                <input type="text" id="newClipTitle" placeholder="e.g. Clip 41 — หัวข้อใหม่สั้นๆ" class="w-full bg-gray-950 border border-gray-800 rounded-lg p-2.5 text-white text-sm focus:outline-none focus:border-blue-500">
+            </div>
+
+            <div>
+                <label class="block text-xs text-gray-400 mb-1">Script Body (Spoken Thai with 5-10s Preview Hook)</label>
+                <textarea id="newClipBody" oninput="updateAddWordCount()" class="w-full h-48 bg-gray-950 border border-gray-800 rounded-xl p-4 text-white font-mono text-sm leading-relaxed focus:outline-none focus:border-blue-500" placeholder="Type or paste spoken Thai script here..."></textarea>
+            </div>
+
+            <div class="flex items-center justify-between text-xs text-gray-400">
+                <span id="addWordCounter">Word count: 0 words (~0s)</span>
+                <div class="flex gap-2">
+                    <button onclick="closeAddModal()" class="bg-gray-800 hover:bg-gray-700 text-white px-4 py-2 rounded-lg font-medium transition">Cancel</button>
+                    <button onclick="addNewScript()" class="bg-emerald-600 hover:bg-emerald-500 text-white px-5 py-2 rounded-lg font-semibold transition">✨ Publish Card</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal: Add New Topic Idea -->
+    <div id="addTopicModal" class="fixed inset-0 bg-black/80 backdrop-blur-sm hidden items-center justify-center p-4 z-50">
+        <div class="bg-gray-900 border border-gray-700 rounded-2xl max-w-xl w-full p-6 flex flex-col gap-4 shadow-2xl">
+            <div class="flex items-center justify-between border-b border-gray-800 pb-3">
+                <h2 class="text-lg font-bold text-white">💡 Add New Unscripted Topic Seed</h2>
+                <button onclick="closeAddTopicModal()" class="text-gray-400 hover:text-white font-bold">✕ Close</button>
+            </div>
+            
+            <div class="grid grid-cols-2 gap-4">
+                <div>
+                    <label class="block text-xs text-gray-400 mb-1">Topic ID</label>
+                    <input type="text" id="newTopicId" placeholder="e.g. Topic 072" class="w-full bg-gray-950 border border-gray-800 rounded-lg p-2.5 text-white text-sm focus:outline-none focus:border-amber-500">
+                </div>
+                <div>
+                    <label class="block text-xs text-gray-400 mb-1">Category</label>
+                    <select id="newTopicCategory" class="w-full bg-gray-950 border border-gray-800 rounded-lg p-2.5 text-white text-sm focus:outline-none focus:border-amber-500">
+                        <option value="A|Personal Journey">Cat A: Personal Journey</option>
+                        <option value="B|Steam & Publishing">Cat B: Steam & Publishing</option>
+                        <option value="C|Team & HR">Cat C: Team & HR</option>
+                        <option value="D|Design Philosophy">Cat D: Design Philosophy</option>
+                        <option value="F|Engine & Tech">Cat F: Engine & Tech</option>
+                        <option value="G|Money & Runway">Cat G: Money & Runway</option>
+                        <option value="H|News & Industry">Cat H: News & Industry</option>
+                        <option value="I|Career & Education">Cat I: Career & Education</option>
+                        <option value="J|Mindset">Cat J: Mindset</option>
+                        <option value="L|Events & Business">Cat L: Events & Business</option>
+                    </select>
+                </div>
+            </div>
+
+            <div>
+                <label class="block text-xs text-gray-400 mb-1">Topic Subject / Title</label>
+                <input type="text" id="newTopicTitle" placeholder="e.g. ประสบการณ์การทำเกมช่วงขาดทุน" class="w-full bg-gray-950 border border-gray-800 rounded-lg p-2.5 text-white text-sm focus:outline-none focus:border-amber-500">
+            </div>
+
+            <div>
+                <label class="block text-xs text-gray-400 mb-1">Core Editorial Angle / Talking Points</label>
+                <textarea id="newTopicAngle" class="w-full h-28 bg-gray-950 border border-gray-800 rounded-xl p-3 text-white text-sm focus:outline-none focus:border-amber-500" placeholder="Summarize the core lesson, news angle, or take..."></textarea>
+            </div>
+
+            <div>
+                <label class="block text-xs text-gray-400 mb-1">Preview Hook Formula (5-10s Preview Statement)</label>
+                <input type="text" id="newTopicHook" placeholder="e.g. จุดเปลี่ยนที่ทำให้เราเลือก..." class="w-full bg-gray-950 border border-gray-800 rounded-lg p-2.5 text-white text-sm focus:outline-none focus:border-amber-500">
+            </div>
+
+            <div class="flex items-center justify-between text-xs text-gray-400 pt-2 border-t border-gray-800">
+                <span class="text-amber-400/80">Creates a draft topic card ready for script expansion</span>
+                <div class="flex gap-2">
+                    <button onclick="closeAddTopicModal()" class="bg-gray-800 hover:bg-gray-700 text-white px-4 py-2 rounded-lg font-medium transition">Cancel</button>
+                    <button onclick="addNewTopicSeed()" class="bg-amber-600 hover:bg-amber-500 text-white px-5 py-2 rounded-lg font-semibold transition">💡 Save Topic Seed</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <script>
-        // Master initial script data
         const initialScripts = [
             { id: 1, cat: "A", catName: "Personal Journey", title: "Clip 01 — อยากทำเกม แต่ไม่รู้จะเริ่มยังไง", body: "อยากทำเกมแต่ไม่รู้อะไรเลย วิธีเริ่มที่ง่ายที่สุด คือเปิดยูทูปแล้วทำตามคลิปสอนยาวๆ ให้จบสักคลิปครับ\n\nตอนผมเริ่มฝึกทำเกม ผมก็ใช้วิธีนี้เลย พิมพ์ใน YouTube ไปเลยว่า Making ตามด้วยแนวเกมที่อยากทำ ต่อด้วยคำว่า game tutorial เช่น Making FPS game tutorial Unreal\n\nเลือกคลิปที่ยาวเกินหนึ่งชั่วโมง แล้วเปิดทำตามไปเรื่อยๆ คุณจะได้เกมแรกของตัวเองทันที\n\nจากนั้นค่อยลองซนดูครับ ลองแก้ตัวเลข ลองย้ายของ ลองใช้ asset ฟรี พังก็ไม่เป็นไรครับ ตรงนั้นแหละคือจุดที่เราได้เรียนรู้จริงๆ ว่ากดอะไรตรงไหนแล้วเกิดผลยังไง\n\nทำถึงตรงนี้เมื่อไหร่ ยินดีด้วยครับ คุณกลายเป็นนักพัฒนาเกมแล้ว", completed: false },
             { id: 2, cat: "L", catName: "Events", title: "Clip 02 — ทำไมผมกลับไปออกบูธ Taipei Game Show ถึงสามปี", body: "Taipei Game Show คือเทศกาลเกมไต้หวันที่น่าไปออกบูธมาก และค่าใช้จ่ายถูกจนแทบไม่ต่างจากงานใหญ่ในไทยเลยครับ\n\nผมบินไปออกงานนี้ซ้ำถึงสามปีติด เพราะเหตุผลแรก ผู้จัดวางโซนอินดี้ไว้ใกล้ทางเดินหลัก คนผ่านเยอะ แถมเกมเมอร์ไต้หวันเปิดใจลองเล่นจริง ให้ feedback เต็มที่ ฟังไม่ออกก็จ้างล่ามรายวันได้\n\nเหตุผลที่สอง ค่าบูธหมื่นห้า ตั๋วเครื่องบินพร้อมที่พักสองคนราวๆ สองหมื่น คุ้มค่ามากครับ\n\nเหตุผลที่สาม Publisher เจ้าใหญ่ๆ มากันเยอะ แต่นัดคุยง่าย ไม่ต้องไปแย่งใครเหมือนงานฝั่งยุโรป\n\nงานจัดปลายมกราคมครับ แต่รอบสมัครจะปิดช่วงตุลาคมนี้แล้ว ใครมีเกมพร้อมโชว์ อย่ารอนาทีสุดท้ายครับ", completed: false },
@@ -129,7 +243,12 @@
             { id: 32, cat: "C", catName: "Team & HR", title: "Clip 32 — ออฟฟิศ 7 คนที่เลิกใช้ Trello แล้วใช้ระบบตะโกนข้ามโต๊ะ", body: "ออฟฟิศทำเกมขนาดเจ็ดคนของเรา เลิกใช้ Trello และ Stand-up meeting แล้วหันมาใช้ระบบตะโกนข้ามโต๊ะแทน\n\nตอนทีมยังเล็ก การนั่งคีย์การ์ดลงบอร์ด หรือจัดประชุมทุกเช้า มันกลายเป็น Overhead ที่กินเวลาโดยไม่จำเป็น\n\nในเมื่อเรานั่งอยู่ในห้องเดียวกัน อยากได้ asset อะไร อยากแก้บั๊กตรงไหน ก็แค่ตะโกนถามหรือเดินไปดูหน้าจอเพื่อนตรงๆ\n\nเราจะประชุมก็ต่อเมื่อมีเรื่องสำคัญที่ต้องตัดสินใจร่วมกันจริงๆ เท่านั้น\n\nเครื่องมือจัดการงานจำเป็นสำหรับทีมใหญ่ครับ แต่ถ้าทีมคุณนั่งมองหน้ากันอยู่แล้ว ใช้การสื่อสารตรงๆ ที่เร็วที่สุดดีกว่าครับ", completed: false },
             { id: 33, cat: "H", catName: "News / TCG", title: "Clip 33 — เมื่อโปรระดับโลกโดนแบนเพราะไม่สับกองการ์ด (Riftbound TCG)", body: "Koko Lopez โปรระดับโลกของเกม Riftbound TCG โดนสั่งแบนยาวถึงปี 2029 จากข้อหาเรียงกอง Rune โดยไม่สับการ์ดก่อนแข่ง\n\nกรณีนี้กลายเป็นประเด็นใหญ่ทันที เมื่อคลิปการแข่งย้อนหลังแสดงให้เห็นชัดเจนว่า เขาตั้งใจจัดเรียง Order Rune ให้อยู่ในตำแหน่งที่ต้องการ เพื่อดึงมาใช้งานได้เป๊ะๆ ทุกรอบ\n\nตอนแรกเจ้าตัวอ้างว่าเป็นความเข้าใจผิด แต่พอหลักฐานมัดแน่นจากหลายทัวร์นาเมนต์ จนทีมต้นสังกัดสั่งปลด สุดท้าย Riot ก็ออกบทลงโทษแบนยาวถึง 3 ปี\n\nเรื่องนี้สอนคนทำเกมและคนแข่งเกมชัดเจนครับว่า วงการการ์ดเกมต่อให้กลไกสนุกแค่ไหน แต่ถ้าไร้ความโปร่งใสและขาด Fair Play สังคมก็พร้อมจะถอดคุณออกจากวงการทันทีครับ", completed: false },
             { id: 34, cat: "H", catName: "News / Esports", title: "Clip 34 — เมื่อสตรีมเมอร์ระดับโลก Ludwig ถอดใจเพราะนโยบาย Esports", body: "Ludwig สตรีมเมอร์ชื่อดังเจ้าของทีม Esports ออกมาเปรยว่าอาจต้องยุบทีมและถอยออกจากวงการ เพราะทนรับนโยบายและการตัดสินใจแย่ๆ ไม่ไหว\n\nการทำทีม Esports ยุคนี้ใช้เงินมหาศาลครับ แต่สิ่งที่ทีมต้องเจอสวนทางกัน คือนโยบายของทางค่ายเกมที่ปรับเปลี่ยนตามใจชอบ กฎเกณฑ์ที่ไม่เอื้อให้คนทำทีมอยู่รอด และการสื่อสารที่ย่ำแย่\n\nพอคนที่มีทั้งเงิน Passion และฐานแฟนคลับแน่นอย่าง Ludwig ยังออกมาตัดพ้อว่าเริ่มไม่คุ้มที่จะสู้ต่อ มันส่งสัญญาณเตือนคนทำเกมทั่วโลกลอยมาเลยครับ\n\nการสร้างระบบแข่งขันถ้าคิดแต่จะดึงเค้กเข้าฝั่งตัวเอง โดยไม่เหลียวมองคนลงทุนทำทีม วันนึงจะไม่มีใครเหลือมาช่วยแบกวงการให้ครับ", completed: false },
-            { id: 35, cat: "D", catName: "Design & Tech", title: "Clip 35 — เมื่อมอดเดอร์ใช้ AI แก้เกมเก่า หรือเราแค่คิดถึงวันวาน", body: "ยุคนี้ AI ช่วยให้มอดเดอร์รังสรรค์ Client และแก้เกมเก่าอายุยี่สิบปีได้อย่างทะลุขอบเขต จนเกิดคำถามว่า เรากำลังสนุกกับเกม หรือแค่อาparentคิดถึงอดีตกันแน่\n\nเครื่องมือ Coding Agent ยุคนี้ช่วยทะลายขีดจำกัดเดิมๆ งานที่เคยต้องใช้เวลาเป็นปี มอดเดอร์สามารถเสกให้เสร็จได้ในไม่กี่วัน\n\nแต่พอเราสามารถแก้เกมเก่าให้กลายเป็นอะไรก็ได้ตามใจชอบ บางทีสิ่งที่เราโหยหาอาจไม่ใช่แค่ระบบที่ทันสมัยขึ้น แต่คือความรู้สึกสมัยเด็กที่ได้นั่งเล่นเกมนั้นเป็นครั้งแรก\n\nAI ช่วยเติมเต็มจินตนาการและสร้างสิ่งใหม่ในเกมเก่าได้จริงครับ แต่เสน่ห์ที่แท้จริงคือการรักษาสมดุลระหว่าง Nostalgia กับความสดใหม่ให้อยู่คู่กันอย่างลงตัวครับ", completed: false }
+            { id: 35, cat: "D", catName: "Design & Tech", title: "Clip 35 — เมื่อมอดเดอร์ใช้ AI แก้เกมเก่า หรือเราแค่คิดถึงวันวาน", body: "ยุคนี้ AI ช่วยให้มอดเดอร์รังสรรค์ Client และแก้เกมเก่าอายุยี่สิบปีได้อย่างทะลุขอบเขต จนเกิดคำถามว่า เรากำลังสนุกกับเกม หรือแค่อาparentคิดถึงอดีตกันแน่\n\nเครื่องมือ Coding Agent ยุคนี้ช่วยทะลายขีดจำกัดเดิมๆ งานที่เคยต้องใช้เวลาเป็นปี มอดเดอร์สามารถเสกให้เสร็จได้ในไม่กี่วัน\n\nแต่พอเราสามารถแก้เกมเก่าให้กลายเป็นอะไรก็ได้ตามใจชอบ บางทีสิ่งที่เราโหยหาอาจไม่ใช่แค่ระบบที่ทันสมัยขึ้น แต่คือความรู้สึกสมัยเด็กที่ได้นั่งเล่นเกมนั้นเป็นครั้งแรก\n\nAI ช่วยเติมเต็มจินตนาการและสร้างสิ่งใหม่ในเกมเก่าได้จริงครับ แต่เสน่ห์ที่แท้จริงคือการรักษาสมดุลระหว่าง Nostalgia กับความสดใหม่ให้อยู่คู่กันอย่างลงตัวครับ", completed: false },
+            { id: 36, cat: "L", catName: "Events & Business", title: "Clip 36 — 3 คำถามเด็ด ไว้ถาม Dev ในงาน Gamescom Asia", body: "ไปเดินงานเกมระดับโลก อย่าง gamescom asia หรือ Thailand Game Show อย่าเสียเวลาถามแค่ว่า \"เริ่มทำเกมยังไง\" แต่ให้ถาม 3 คำถามนี้ครับ\n\nข้อแรก ถามเขาว่า \"ฟีเจอร์ไหนที่ต้องตัดทิ้งแล้วเจ็บปวดที่สุด\" คำถามนี้จะทำให้เราเห็นความจริงเรื่องการคุม Scope งาน\n\nข้อสอง \"ใช้เวลาทำ Prototype นานแค่ไหน ก่อนตัดสินใจทำจริง\" คนส่วนใหญ่มักรีบทำเกมจริงก่อนจะหาความสนุกเจอ\n\nและข้อสาม \"ถ้าแก้ прош past ได้ วันแรกที่เปิดสตูดิโอ จะเปลี่ยนอะไรทันที\"\n\nคนทำเกมที่ยืนเฝ้าบูธเขาเหนื่อยมาทั้งวันครับ อย่าถามคำถามกว้างๆ แต่จงถามเรื่องที่เขาเจอจริง แล้วคุณจะได้วิชาที่หาอ่านจากไหนไม่ได้ครับ", completed: false },
+            { id: 37, cat: "B", catName: "Steam & Publishing", title: "Clip 37 — Checklist 3 ข้อ ก่อนเดินไปคุยกับ Publisher ในงาน B2B", body: "ก่อนจะนัดคุยกับ Publisher ในโซน B2B ห้ามนัดถ้ายังไม่ได้เตรียม Checklist 3 ข้อนี้ให้พร้อม\n\nข้อแรก คือ Playable Demo หรือ Vertical Slice ที่เล่นได้จริง 5 ถึง 10 นาที บนเครื่องพกพา อย่าพกไปแค่กระดาษ GDD หรือภาพวาด\n\nข้อสอง คือ One-Pager หรือ Pitch Deck 1 หน้า ที่บอกชัดเจนว่า เกมเราคืออะไร Target คือใคร เกมคู่แข่งคือเกมไหน และต้องใช้เงินเท่าไหร่\n\nข้อสาม คือตัวเลข Burn Rate ของสตูดิโอตัวเอง ต้องตอบให้ได้ทันทีว่า ทีมใช้เงินเดือนละเท่าไหร่ และถ้าไม่มีทุนก้อนนี้ สตูดิโอจะรอดได้อีกกี่เดือน\n\nเตรียมตัวให้พร้อมครับ Publisher ไม่ได้ลงทุนกับฝัน แต่เขายอมจ่ายให้กับแผนงานที่ทำได้จริง", completed: false },
+            { id: 38, cat: "B", catName: "Steam & Publishing", title: "Clip 38 — 3 คำถามเช็กบิล Publisher ไม่ให้โดนเอาเปรียบ", body: "เวลาไปคุยกับ Publisher อย่าให้เขาเป็นฝ่ายย้อนถามเราฝ่ายเดียวครับ เราต้องเป็นฝ่ายตั้งคำถามเช็กบิล 3 ข้อนี้ด้วย\n\nข้อแรก ถามเรื่อง Recoupment Structure ให้ชัดว่า เขาจะหักเงินคืนจากยอดขายแรกยังไง หัก 100% จนกว่าจะครบ หรือยอมแบ่งส่วนแบ่งให้เราตั้งแต่วันแรก\n\nข้อสอง งบ Marketing มีการการันตีขั้นต่ำไว้ที่เท่าไหร่ ไม่ใช่สัญญาปากเปล่าว่า \"จะช่วยดัน\" แต่ต้องระบุตัวเลขจริงในสัญญา\n\nข้อสาม สิทธิ์ในตัว IP เกมยังเป็นของเรามั้ย หลีกเลี่ยงสัญญาที่ยึดสิทธิ์ในแบรนด์เกมเราไปถาวร\n\nการหา Publisher คือการหา Partner ทางธุรกิจครับ ถ้าเขาไม่กล้าตอบ 3 ข้อนี้ชัดๆ ถอยออกมาดีกว่าครับ", completed: false },
+            { id: 39, cat: "L", catName: "Events & Business", title: "Clip 39 — ประวัติ Gamescom Asia และทำไมถึงย้ายมาจัดที่ไทย", body: "จากงานยักษ์ระดับโลกที่จัดในสิงคโปร์ Gamescom Asia ย้ายมาปักหลักจัดที่กรุงเทพฯ แล้วเพื่อเชื่อมตลาดเกมเอเชียแปซิฟิก\n\nเดิมที มหกรรมเกมระดับโลกจากเยอรมนีงานนี้ ใช้สิงคโปร์เป็นฐานหลักมาโดยตลอด\n\nแต่จุดเปลี่ยนสำคัญคือปีนี้ ผู้จัดตัดสินใจย้ายสถานที่และจับมือกับ Thailand Game Show เพื่อปักหลักจัดงานที่ศูนย์สิริกิติ์ ในกรุงเทพฯ\n\nเหตุผลเพราะประเทศไทยมีอุตสาหกรรมเกมที่เติบโตเร็ว ฐานแฟนเกมแอ็กทีฟ และมีระบบนิเวศ B2B ที่พร้อมต้อนรับ ค่ายเกมกับ Publisher ระดับโลก\n\nถือเป็นโอกาสทองของคนทำเกมไทย ที่จะได้เจอคู่ค้าต่างชาติโดยไม่ต้องบินไปไหนเลยครับ", completed: false },
+            { id: 40, cat: "H", catName: "News & Industry", title: "Clip 40 — มุมมองกลางๆ เมื่อ Steam Next Fest โดนเรียกว่า AI Slop Fest", body: "มหกรรม Steam Next Fest รอบล่าสุด กำลังถูกผู้เล่นและนักพัฒนาบางส่วน ตั้งฉายาประชดประชันว่ากลายเป็น \"AI Slop Fest\" ไปแล้ว\n\nสาเหตุเกิดจากการที่มีเดโมเกมจำลองจำนวนมากที่ใช้ Generative AI ในการสร้าง Asset ภาพ โค้ด และเนื้อหา หลั่งไหลเข้ามาในระบบ จนคนเล่นรู้สึกว่าต้องคัดกรองงานนานขึ้น\n\nในมุมของฝั่งที่ไม่เห็นด้วย มองว่าการทะลักของเกม AI ทำให้เกมอินดี้ที่ตั้งใจทำด้วยมือ ถูกกลืนหายไปจากหน้าค้นหา\n\nแต่ในมุมของผู้สร้างบางกลุ่ม ก็มองว่า AI เป็นเพียงเครื่องมือที่ช่วยลดต้นทุน ทำให้ทีมเล็กสร้างผลงานออกมาได้รวดเร็วขึ้น\n\nเป็นประเด็นถกเถียงเรื่องมาตรฐานและการจัดระเบียบ ที่วงการเกมยังต้องหาจุดสมดุลร่วมกันต่อไปครับ", completed: false }
         ];
 
         let scripts = JSON.parse(localStorage.getItem('vermillion_scripts')) || initialScripts;
@@ -197,6 +316,110 @@
             }
         }
 
+        // Add Full Script Modal Functions
+        function openAddModal() {
+            const nextId = scripts.length > 0 ? Math.max(...scripts.map(s => s.id)) + 1 : 1;
+            document.getElementById('newClipNumber').value = nextId;
+            document.getElementById('newClipTitle').value = `Clip ${nextId < 10 ? '0' + nextId : nextId} — `;
+            document.getElementById('newClipBody').value = '';
+            updateAddWordCount();
+
+            document.getElementById('addModal').classList.remove('hidden');
+            document.getElementById('addModal').classList.add('flex');
+        }
+
+        function closeAddModal() {
+            document.getElementById('addModal').classList.remove('flex');
+            document.getElementById('addModal').classList.add('hidden');
+        }
+
+        function updateAddWordCount() {
+            const val = document.getElementById('newClipBody').value;
+            const words = countWords(val);
+            const estTime = Math.round((words / 140) * 45);
+            document.getElementById('addWordCounter').textContent = `Word count: ${words} words (~${estTime}s target)`;
+        }
+
+        function addNewScript() {
+            const clipNum = parseInt(document.getElementById('newClipNumber').value) || (scripts.length + 1);
+            const [catCode, catLabel] = document.getElementById('newClipCategory').value.split('|');
+            const title = document.getElementById('newClipTitle').value.trim();
+            const body = document.getElementById('newClipBody').value.trim();
+
+            if (!title || !body) {
+                alert('Please enter both a title and script body text.');
+                return;
+            }
+
+            const newScript = {
+                id: clipNum,
+                cat: catCode,
+                catName: catLabel,
+                title: title,
+                body: body,
+                completed: false
+            };
+
+            scripts.push(newScript);
+            scripts.sort((a, b) => a.id - b.id);
+
+            saveToStorage();
+            renderScripts();
+            closeAddModal();
+        }
+
+        // Add Topic Seed Modal Functions
+        function openAddTopicModal() {
+            const nextTopicNum = 72 + scripts.filter(s => s.isSeed).length;
+            document.getElementById('newTopicId').value = `Topic ${nextTopicNum < 100 ? '0' + nextTopicNum : nextTopicNum}`;
+            document.getElementById('newTopicTitle').value = '';
+            document.getElementById('newTopicAngle').value = '';
+            document.getElementById('newTopicHook').value = '';
+
+            document.getElementById('addTopicModal').classList.remove('hidden');
+            document.getElementById('addTopicModal').classList.add('flex');
+        }
+
+        function closeAddTopicModal() {
+            document.getElementById('addTopicModal').classList.remove('flex');
+            document.getElementById('addTopicModal').classList.add('hidden');
+        }
+
+        function addNewTopicSeed() {
+            const topicId = document.getElementById('newTopicId').value.trim() || 'Topic Seed';
+            const [catCode, catLabel] = document.getElementById('newTopicCategory').value.split('|');
+            const title = document.getElementById('newTopicTitle').value.trim();
+            const angle = document.getElementById('newTopicAngle').value.trim();
+            const hook = document.getElementById('newTopicHook').value.trim();
+
+            if (!title || !angle) {
+                alert('Please provide a title and core talking points.');
+                return;
+            }
+
+            const nextClipNum = scripts.length > 0 ? Math.max(...scripts.map(s => s.id)) + 1 : 1;
+
+            const formattedSeedBody = `${hook ? ' preview hook: "' + hook + '"\n\n' : ''}• angle: ${angle}\n\n[unscripted topic seed - ready for full spoken thai expansion]`;
+
+            const newTopicScript = {
+                id: nextClipNum,
+                cat: catCode,
+                catName: catLabel,
+                title: `${topicId} — ${title}`,
+                body: formattedSeedBody,
+                isSeed: true,
+                completed: false
+            };
+
+            scripts.push(newTopicScript);
+            scripts.sort((a, b) => a.id - b.id);
+
+            saveToStorage();
+            renderScripts();
+            closeAddTopicModal();
+        }
+
+        // Edit Modal Functions
         function openModal(id) {
             const script = scripts.find(s => s.id === id);
             if (!script) return;
