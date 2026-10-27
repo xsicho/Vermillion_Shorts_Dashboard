@@ -26,7 +26,7 @@
 </head>
 <body class="p-6 max-w-[1400px] mx-auto">
     <!-- Header Controls -->
-    <header class="flex flex-col md:flex-row md:items-center justify-between pb-6 mb-8 border-b border-gray-800 gap-4">
+    <header class="flex flex-col md:flex-row md:items-center justify-between pb-6 mb-6 border-b border-gray-800 gap-4">
         <div>
             <div class="flex items-center gap-3">
                 <h1 class="text-2xl font-bold text-white tracking-wide">VERMILLION SHORTS — MASTER TOPIC DASHBOARD</h1>
@@ -77,6 +77,41 @@
             </select>
         </div>
     </header>
+
+    <!-- NEW: Views Analytics Header Area -->
+    <section class="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-8">
+        <div class="bg-gray-900/80 border border-purple-900/50 p-4 rounded-xl flex flex-col justify-between">
+            <span class="text-xs font-semibold text-purple-400 uppercase tracking-wider">Total Views</span>
+            <div class="flex items-baseline justify-between mt-2">
+                <span id="totalViewsDisplay" class="text-2xl font-black text-white font-mono">0</span>
+                <span class="text-lg">👀</span>
+            </div>
+        </div>
+
+        <div class="bg-gray-900/80 border border-purple-900/50 p-4 rounded-xl flex flex-col justify-between">
+            <span class="text-xs font-semibold text-purple-400 uppercase tracking-wider">Uploaded Shorts</span>
+            <div class="flex items-baseline justify-between mt-2">
+                <span id="uploadedCountDisplay" class="text-2xl font-black text-white font-mono">0</span>
+                <span class="text-lg">🚀</span>
+            </div>
+        </div>
+
+        <div class="bg-gray-900/80 border border-purple-900/50 p-4 rounded-xl flex flex-col justify-between">
+            <span class="text-xs font-semibold text-purple-400 uppercase tracking-wider">Average Views / Short</span>
+            <div class="flex items-baseline justify-between mt-2">
+                <span id="avgViewsDisplay" class="text-2xl font-black text-white font-mono">0</span>
+                <span class="text-lg">📊</span>
+            </div>
+        </div>
+
+        <div class="bg-gray-900/80 border border-purple-900/50 p-4 rounded-xl flex flex-col justify-between">
+            <span class="text-xs font-semibold text-purple-400 uppercase tracking-wider">Top Performing Short</span>
+            <div class="flex flex-col mt-1">
+                <span id="topShortTitle" class="text-xs text-gray-300 font-semibold truncate">None yet</span>
+                <span id="topShortViews" class="text-sm font-bold text-purple-300 font-mono">0 views</span>
+            </div>
+        </div>
+    </section>
 
     <!-- Collapsible Accordion List -->
     <main class="flex flex-col gap-3" id="scriptGrid">
@@ -224,6 +259,35 @@
             return text ? text.trim().split(/\s+/).filter(Boolean).length : 0;
         }
 
+        function updateAnalyticsHeader() {
+            let totalViews = 0;
+            let uploadedCount = 0;
+            let maxViews = 0;
+            let topTitle = "None yet";
+
+            scripts.forEach(script => {
+                const currentStatus = script.status || (script.completed ? 'completed' : 'pending');
+                if (currentStatus === "uploaded" || script.ytUrl) {
+                    uploadedCount++;
+                    const views = script.views || 0;
+                    totalViews += views;
+
+                    if (views >= maxViews && views > 0) {
+                        maxViews = views;
+                        topTitle = sanitizeTitle(script.title);
+                    }
+                }
+            });
+
+            const avgViews = uploadedCount > 0 ? Math.round(totalViews / uploadedCount) : 0;
+
+            document.getElementById('totalViewsDisplay').textContent = totalViews.toLocaleString();
+            document.getElementById('uploadedCountDisplay').textContent = uploadedCount;
+            document.getElementById('avgViewsDisplay').textContent = avgViews.toLocaleString();
+            document.getElementById('topShortTitle').textContent = topTitle;
+            document.getElementById('topShortViews').textContent = `${maxViews.toLocaleString()} views`;
+        }
+
         function renderScripts() {
             const grid = document.getElementById('scriptGrid');
             grid.innerHTML = '';
@@ -266,7 +330,7 @@
                         </div>
 
                         <div class="flex items-center gap-3 shrink-0" onclick="event.stopPropagation()">
-                            ${viewsText ? `<span class="text-xs text-purple-300 bg-purple-900/40 border border-purple-700/50 px-2 py-0.5 rounded font-mono font-semibold">👀 ${viewsText}</span>` : ''}
+                            ${viewsText ? `<span class="text-xs text-purple-300 bg-purple-900/40 border border-purple-700/50 px-2.5 py-0.5 rounded font-mono font-semibold">👀 ${viewsText}</span>` : ''}
                             <span class="text-xs text-gray-400 font-mono hidden sm:inline">${wordCount} words (~${estTime}s)</span>
                             <select onchange="changeStatus(${script.id}, this.value)" class="bg-gray-900 border border-gray-700 text-xs rounded px-2 py-1 font-semibold text-gray-200 focus:outline-none focus:border-blue-500 cursor-pointer">
                                 <option value="pending" ${currentStatus === 'pending' ? 'selected' : ''}>⏳ Pending</option>
@@ -305,9 +369,15 @@
                                 <label class="block text-xs text-gray-400 mb-1">Topic Title</label>
                                 <input type="text" id="edit-title-input-${script.id}" value="${displayTitle}" class="w-full bg-gray-900 border border-gray-700 rounded-lg p-2.5 text-white text-sm font-bold focus:outline-none focus:border-blue-500">
                             </div>
-                            <div>
-                                <label class="block text-xs text-gray-400 mb-1">YouTube Short Link</label>
-                                <input type="text" id="edit-yt-input-${script.id}" value="${script.ytUrl || ''}" placeholder="https://youtube.com/shorts/..." class="w-full bg-gray-900 border border-gray-700 rounded-lg p-2.5 text-white text-sm focus:outline-none focus:border-purple-500">
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+                                <div>
+                                    <label class="block text-xs text-gray-400 mb-1">YouTube Short Link</label>
+                                    <input type="text" id="edit-yt-input-${script.id}" value="${script.ytUrl || ''}" placeholder="https://youtube.com/shorts/..." class="w-full bg-gray-900 border border-gray-700 rounded-lg p-2.5 text-white text-sm focus:outline-none focus:border-purple-500">
+                                </div>
+                                <div>
+                                    <label class="block text-xs text-gray-400 mb-1">View Count (Manual or Refreshed)</label>
+                                    <input type="number" id="edit-views-input-${script.id}" value="${script.views || 0}" class="w-full bg-gray-900 border border-gray-700 rounded-lg p-2.5 text-white text-sm focus:outline-none focus:border-purple-500">
+                                </div>
                             </div>
                             <div>
                                 <label class="block text-xs text-gray-400 mb-1">Script Body (Spoken Thai)</label>
@@ -325,6 +395,7 @@
             });
 
             document.getElementById('counterBadge').textContent = `${scripts.length} CLIPS (${uploadedCount} UPLOADED, ${doneCount} DONE)`;
+            updateAnalyticsHeader();
             filterScripts();
         }
 
@@ -359,11 +430,17 @@
             if (script) {
                 const newTitle = document.getElementById(`edit-title-input-${id}`).value.trim();
                 const newYtUrl = document.getElementById(`edit-yt-input-${id}`).value.trim();
+                const newViews = parseInt(document.getElementById(`edit-views-input-${id}`).value) || 0;
                 const newBody = document.getElementById(`edit-body-input-${id}`).value;
 
                 script.title = newTitle;
                 script.ytUrl = newYtUrl;
+                script.views = newViews;
                 script.body = newBody;
+
+                if (newYtUrl && (!script.status || script.status === "pending")) {
+                    script.status = "uploaded";
+                }
 
                 renderScripts();
                 saveToKV();
@@ -380,12 +457,12 @@
                 const response = await fetch(`https://www.youtube.com/oembed?url=${encodeURIComponent(script.ytUrl)}&format=json`);
                 if (response.ok) {
                     const data = await response.json();
-                    alert(`Fetched meta for "${data.title}" by ${data.author_name}. View sync ready!`);
+                    alert(`Connected to YouTube for "${data.title}" by ${data.author_name}!`);
                 } else {
-                    alert('YouTube URL reached successfully. To automatically extract numerical view counts without API keys, paste your Shorts link directly here in our chat!');
+                    alert('To update view metrics for your uploaded Shorts, you can paste the URL directly into our chat or type the view count into the topic edit panel!');
                 }
             } catch (err) {
-                console.warn('oEmbed check completed:', err);
+                console.warn('Metadata fetch completed:', err);
             }
         }
 
@@ -449,6 +526,7 @@
                 catName: catLabel,
                 title: title,
                 ytUrl: ytUrl,
+                views: 0,
                 body: body,
                 status: ytUrl ? "uploaded" : "pending",
                 completed: false
