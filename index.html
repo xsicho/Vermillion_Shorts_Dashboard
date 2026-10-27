@@ -9,8 +9,8 @@
         body { background-color: #0b0e14; color: #e2e8f0; font-family: system-ui, -apple-system, sans-serif; }
         .card { background: #131722; border: 1px solid #232a3b; transition: all 0.2s ease; }
         .card:hover { border-color: #3b82f6; }
-        .card-completed { opacity: 0.55; filter: grayscale(0.4); border-color: #10b981 !important; }
-        .card-discarded { opacity: 0.45; filter: grayscale(0.6); border-color: #ef4444 !important; }
+        .card-completed { opacity: 0.6; border-color: #10b981 !important; }
+        .card-discarded { opacity: 0.45; border-color: #ef4444 !important; }
         .tag-a { background: #1e3a8a; color: #93c5fd; }
         .tag-b { background: #14532d; color: #86efac; }
         .tag-c { background: #701a75; color: #f0abfc; }
@@ -23,34 +23,30 @@
         .tag-l { background: #3f6212; color: #d9f99d; }
     </style>
 </head>
-<body class="p-6 max-w-[1800px] mx-auto">
+<body class="p-6 max-w-[1400px] mx-auto">
     <!-- Header Controls -->
     <header class="flex flex-col md:flex-row md:items-center justify-between pb-6 mb-8 border-b border-gray-800 gap-4">
         <div>
             <div class="flex items-center gap-3">
-                <h1 class="text-2xl font-bold text-white tracking-wide">VERMILLION SHORTS — CONTENT & TOPIC DASHBOARD</h1>
-                <span id="counterBadge" class="bg-blue-900/50 text-blue-400 border border-blue-700/50 text-xs px-2.5 py-0.5 rounded-full font-semibold">37 CLIPS ACTIVE</span>
+                <h1 class="text-2xl font-bold text-white tracking-wide">VERMILLION SHORTS — MASTER TOPIC DASHBOARD</h1>
+                <span id="counterBadge" class="bg-blue-900/50 text-blue-400 border border-blue-700/50 text-xs px-2.5 py-0.5 rounded-full font-semibold">0 CLIPS</span>
             </div>
-            <p class="text-sm text-gray-400 mt-1">Live tracking, fast editing, teleprompter mode, script drafting, and topic backlog management</p>
+            <p class="text-sm text-gray-400 mt-1">Topic overview, script editing, teleprompter view, and cloud sync</p>
         </div>
 
         <div class="flex flex-wrap items-center gap-3">
-            <!-- Add Topic Idea Button -->
             <button onclick="openAddTopicModal()" class="bg-amber-600 hover:bg-amber-500 text-white font-semibold text-sm px-3.5 py-2 rounded-lg transition flex items-center gap-1.5 shadow-lg shadow-amber-900/30">
                 <span>💡</span> Add Topic Idea
             </button>
 
-            <!-- Add Full Script Button -->
             <button onclick="openAddModal()" class="bg-blue-600 hover:bg-blue-500 text-white font-semibold text-sm px-3.5 py-2 rounded-lg transition flex items-center gap-1.5 shadow-lg shadow-blue-900/30">
                 <span>➕</span> Add New Script
             </button>
 
-            <!-- Search -->
-            <input type="text" id="searchInput" onkeyup="filterScripts()" placeholder="Search scripts..." class="bg-gray-900 border border-gray-700 text-sm rounded-lg px-4 py-2 text-white w-44 focus:outline-none focus:border-blue-500">
+            <input type="text" id="searchInput" onkeyup="filterScripts()" placeholder="Search topics..." class="bg-gray-900 border border-gray-700 text-sm rounded-lg px-4 py-2 text-white w-44 focus:outline-none focus:border-blue-500">
             
-            <!-- Category Filter -->
             <select id="categoryFilter" onchange="filterScripts()" class="bg-gray-900 border border-gray-700 text-sm rounded-lg px-3 py-2 text-white focus:outline-none focus:border-blue-500">
-                <option value="all">All Categories (A–L)</option>
+                <option value="all">All Categories</option>
                 <option value="A">Cat A: Personal Journey</option>
                 <option value="B">Cat B: Steam & Publishing</option>
                 <option value="C">Cat C: Team & HR</option>
@@ -63,7 +59,6 @@
                 <option value="L">Cat L: Events & Business</option>
             </select>
 
-            <!-- Completion Status Filter -->
             <select id="statusFilter" onchange="filterScripts()" class="bg-gray-900 border border-gray-700 text-sm rounded-lg px-3 py-2 text-white focus:outline-none focus:border-blue-500">
                 <option value="all">All Progress</option>
                 <option value="pending">⏳ Pending</option>
@@ -71,33 +66,42 @@
                 <option value="discarded">❌ Discarded</option>
             </select>
 
-            <!-- Sorting Options -->
             <select id="sortOrder" onchange="sortScripts()" class="bg-gray-900 border border-gray-700 text-sm rounded-lg px-3 py-2 text-white focus:outline-none focus:border-blue-500">
-                <option value="clip-asc">Sort: Clip 1 ➔ Max</option>
-                <option value="clip-desc">Sort: Clip Max ➔ 1</option>
+                <option value="clip-asc">Sort: ID 1 ➔ Max</option>
+                <option value="clip-desc">Sort: ID Max ➔ 1</option>
                 <option value="words-desc">Sort: Longest Word Count</option>
                 <option value="words-asc">Sort: Shortest Word Count</option>
             </select>
         </div>
     </header>
 
-    <!-- Script Cards Grid -->
-    <main class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6" id="scriptGrid">
-        <!-- Cards generated dynamically via JavaScript -->
+    <!-- Compact Topics List View -->
+    <main class="flex flex-col gap-3" id="scriptGrid">
+        <!-- Topic Bars generated dynamically via JS -->
     </main>
 
-    <!-- Modal: Edit / Teleprompter -->
+    <!-- Modal: Edit / View Full Script -->
     <div id="editorModal" class="fixed inset-0 bg-black/80 backdrop-blur-sm hidden items-center justify-center p-4 z-50">
         <div class="bg-gray-900 border border-gray-700 rounded-2xl max-w-3xl w-full p-6 flex flex-col gap-4 shadow-2xl">
             <div class="flex items-center justify-between border-b border-gray-800 pb-3">
-                <h2 id="modalTitle" class="text-lg font-bold text-white">Edit Script</h2>
-                <button onclick="closeModal()" class="text-gray-400 hover:text-white font-bold">✕ Close</button>
+                <span id="modalMeta" class="text-xs font-semibold px-2.5 py-1 rounded">Category</span>
+                <button onclick="closeModal()" class="text-gray-400 hover:text-white font-bold text-sm">✕ Close</button>
             </div>
-            <textarea id="modalTextarea" class="w-full h-80 bg-gray-950 border border-gray-800 rounded-xl p-4 text-white font-mono text-base leading-relaxed focus:outline-none focus:border-blue-500" placeholder="Edit script content..."></textarea>
+
+            <div>
+                <label class="block text-xs text-gray-400 mb-1">Topic Title</label>
+                <input type="text" id="modalTitleInput" class="w-full bg-gray-950 border border-gray-800 rounded-lg p-2.5 text-white font-bold text-base focus:outline-none focus:border-blue-500">
+            </div>
+
+            <div>
+                <label class="block text-xs text-gray-400 mb-1">Script Body (Spoken Thai)</label>
+                <textarea id="modalTextarea" class="w-full h-72 bg-gray-950 border border-gray-800 rounded-xl p-4 text-white font-mono text-base leading-relaxed focus:outline-none focus:border-blue-500" placeholder="Edit script content..."></textarea>
+            </div>
+
             <div class="flex items-center justify-between text-xs text-gray-400">
                 <span id="modalWordCounter">Word count: 0 words (~0s)</span>
                 <div class="flex gap-2">
-                    <button onclick="copyModalText()" class="bg-gray-800 hover:bg-gray-700 text-white px-4 py-2 rounded-lg font-medium transition">📋 Copy Text</button>
+                    <button onclick="copyModalText()" class="bg-gray-800 hover:bg-gray-700 text-white px-4 py-2 rounded-lg font-medium transition">📋 Copy Script</button>
                     <button onclick="saveModalChanges()" class="bg-blue-600 hover:bg-blue-500 text-white px-5 py-2 rounded-lg font-semibold transition">💾 Save Changes</button>
                 </div>
             </div>
@@ -108,13 +112,13 @@
     <div id="addModal" class="fixed inset-0 bg-black/80 backdrop-blur-sm hidden items-center justify-center p-4 z-50">
         <div class="bg-gray-900 border border-gray-700 rounded-2xl max-w-2xl w-full p-6 flex flex-col gap-4 shadow-2xl">
             <div class="flex items-center justify-between border-b border-gray-800 pb-3">
-                <h2 class="text-lg font-bold text-white">➕ Add New Script Card</h2>
+                <h2 class="text-lg font-bold text-white">➕ Add New Script</h2>
                 <button onclick="closeAddModal()" class="text-gray-400 hover:text-white font-bold">✕ Close</button>
             </div>
             
             <div class="grid grid-cols-2 gap-4">
                 <div>
-                    <label class="block text-xs text-gray-400 mb-1">Clip Number</label>
+                    <label class="block text-xs text-gray-400 mb-1">Topic ID #</label>
                     <input type="number" id="newClipNumber" class="w-full bg-gray-950 border border-gray-800 rounded-lg p-2.5 text-white text-sm focus:outline-none focus:border-blue-500">
                 </div>
                 <div>
@@ -135,20 +139,20 @@
             </div>
 
             <div>
-                <label class="block text-xs text-gray-400 mb-1">Clip Title (Thai)</label>
-                <input type="text" id="newClipTitle" placeholder="e.g. Clip 38 — หัวข้อใหม่สั้นๆ" class="w-full bg-gray-950 border border-gray-800 rounded-lg p-2.5 text-white text-sm focus:outline-none focus:border-blue-500">
+                <label class="block text-xs text-gray-400 mb-1">Topic Title (Thai)</label>
+                <input type="text" id="newClipTitle" placeholder="e.g. หัวข้อใหม่สั้นๆ" class="w-full bg-gray-950 border border-gray-800 rounded-lg p-2.5 text-white text-sm focus:outline-none focus:border-blue-500">
             </div>
 
             <div>
-                <label class="block text-xs text-gray-400 mb-1">Script Body (Spoken Thai with 5-10s Preview Hook)</label>
-                <textarea id="newClipBody" oninput="updateAddWordCount()" class="w-full h-48 bg-gray-950 border border-gray-800 rounded-xl p-4 text-white font-mono text-sm leading-relaxed focus:outline-none focus:border-blue-500" placeholder="Type or paste spoken Thai script here..."></textarea>
+                <label class="block text-xs text-gray-400 mb-1">Script Body (Spoken Thai with Preview Hook)</label>
+                <textarea id="newClipBody" oninput="updateAddWordCount()" class="w-full h-44 bg-gray-950 border border-gray-800 rounded-xl p-4 text-white font-mono text-sm leading-relaxed focus:outline-none focus:border-blue-500" placeholder="Type or paste spoken Thai script here..."></textarea>
             </div>
 
             <div class="flex items-center justify-between text-xs text-gray-400">
                 <span id="addWordCounter">Word count: 0 words (~0s)</span>
                 <div class="flex gap-2">
                     <button onclick="closeAddModal()" class="bg-gray-800 hover:bg-gray-700 text-white px-4 py-2 rounded-lg font-medium transition">Cancel</button>
-                    <button onclick="addNewScript()" class="bg-emerald-600 hover:bg-emerald-500 text-white px-5 py-2 rounded-lg font-semibold transition">✨ Publish Card</button>
+                    <button onclick="addNewScript()" class="bg-emerald-600 hover:bg-emerald-500 text-white px-5 py-2 rounded-lg font-semibold transition">✨ Publish Topic</button>
                 </div>
             </div>
         </div>
@@ -164,8 +168,8 @@
             
             <div class="grid grid-cols-2 gap-4">
                 <div>
-                    <label class="block text-xs text-gray-400 mb-1">Topic ID</label>
-                    <input type="text" id="newTopicId" placeholder="e.g. Topic 072" class="w-full bg-gray-950 border border-gray-800 rounded-lg p-2.5 text-white text-sm focus:outline-none focus:border-amber-500">
+                    <label class="block text-xs text-gray-400 mb-1">Topic ID #</label>
+                    <input type="text" id="newTopicId" placeholder="e.g. 72" class="w-full bg-gray-950 border border-gray-800 rounded-lg p-2.5 text-white text-sm focus:outline-none focus:border-amber-500">
                 </div>
                 <div>
                     <label class="block text-xs text-gray-400 mb-1">Category</label>
@@ -185,18 +189,13 @@
             </div>
 
             <div>
-                <label class="block text-xs text-gray-400 mb-1">Topic Subject / Title</label>
+                <label class="block text-xs text-gray-400 mb-1">Topic Title</label>
                 <input type="text" id="newTopicTitle" placeholder="e.g. ประสบการณ์การทำเกมช่วงขาดทุน" class="w-full bg-gray-950 border border-gray-800 rounded-lg p-2.5 text-white text-sm focus:outline-none focus:border-amber-500">
             </div>
 
             <div>
                 <label class="block text-xs text-gray-400 mb-1">Core Editorial Angle / Talking Points</label>
-                <textarea id="newTopicAngle" class="w-full h-28 bg-gray-950 border border-gray-800 rounded-xl p-3 text-white text-sm focus:outline-none focus:border-amber-500" placeholder="Summarize the core lesson, news angle, or take..."></textarea>
-            </div>
-
-            <div>
-                <label class="block text-xs text-gray-400 mb-1">Preview Hook Formula (5-10s Preview Statement)</label>
-                <input type="text" id="newTopicHook" placeholder="e.g. จุดเปลี่ยนที่ทำให้เราเลือก..." class="w-full bg-gray-950 border border-gray-800 rounded-lg p-2.5 text-white text-sm focus:outline-none focus:border-amber-500">
+                <textarea id="newTopicAngle" class="w-full h-24 bg-gray-950 border border-gray-800 rounded-xl p-3 text-white text-sm focus:outline-none focus:border-amber-500" placeholder="Summarize core talking points..."></textarea>
             </div>
 
             <div class="flex items-center justify-between text-xs text-gray-400 pt-2 border-t border-gray-800">
@@ -210,33 +209,27 @@
     </div>
 
     <script>
-        const initialScripts = [{"id":1,"cat":"A","catName":"Personal Journey","title":"Clip 01 — อยากทำเกม แต่ไม่รู้จะเริ่มยังไง","body":"อยากทำเกมแต่ไม่รู้อะไรเลย วิธีเริ่มที่ง่ายที่สุดคือเปิดยูทูปแล้วทำตามคลิปสอนยาวๆให้จบสักคลิปครับ\n\nตอนผมเริ่มฝึกทำเกม ผมก็ใช้วิธีนี้เลย พิมพ์ใน YouTube ไปเลยว่า Making ตามด้วยแนวเกมที่อยากทำ ต่อด้วยคำว่า game tutorial เช่น Making FPS game tutorial\n\nเลือกคลิปที่ยาวเกินหนึ่งชั่วโมงมาดู เปิดทำตามไปเรื่อยๆจนจบ คุณก็จะได้เกมแรกของตัวเอง\n\nจากนั้นค่อยลองซนดูครับ ลองแก้ตัวเลข ลองย้ายของ ลองใช้ asset ฟรี พังก็ไม่เป็นไรครับ ตรงนั้นแหละคือจุดที่เราได้เรียนรู้จริงๆ ว่ากดอะไรตรงไหนแล้วเกิดผลยังไงครับ\n\nทำถึงตรงนี้เมื่อไหร่ ยินดีด้วยครับ คุณได้เริ่มทำเกมแล้ว","status":"pending"},{"id":2,"cat":"L","catName":"Events","title":"Clip 02 — ทำไมผมกลับไปออกบูธ Taipei Game Show ถึงสามปี","body":"Taipei Game Show คือเทศกาลเกมไต้หวันที่น่าไปออกบูธมาก และค่าใช้จ่ายถูกจนแทบไม่ต่างจากงานใหญ่ในไทยเลยครับ\n\nผมบินไปออกงานนี้ซ้ำถึงสามปีติด เพราะเหตุผลแรก ผู้จัดวางโซนอินดี้ไว้ใกล้ทางเดินหลัก คนผ่านเยอะ แถมเกมเมอร์ไต้หวันเปิดใจลองเล่นจริง ให้ feedback เต็มที่ ฟังไม่ออกก็จ้างล่ามรายวันได้\n\nเหตุผลที่สอง ค่าบูธหมื่นห้า ตั๋วเครื่องบินพร้อมที่พักสองคนราวๆ สองหมื่น คุ้มค่ามากครับ\n\nเหตุผลที่สาม Publisher เจ้าใหญ่ๆ มากันเยอะ แต่นัดคุยง่าย ไม่ต้องไปแย่งใครเหมือนงานฝั่งยุโรป\n\nงานจัดปลายมกราคมครับ แต่รอบสมัครจะปิดช่วงตุลาคมนี้แล้ว ใครมีเกมพร้อมโชว์ อย่ารอนาทีสุดท้ายครับ","status":"pending"},{"id":3,"cat":"D","catName":"Design Philosophy","title":"Clip 03 — คำถามข้อเดียว ก่อนเริ่มทำเกม","body":"ก่อนเริ่มทำเกม คุณต้องตอบให้ได้ก่อนว่า อะไรคือความสนุกของเกมคุณ ที่จะทำให้คนเล่นอยากกลับมาเล่นซ้ำ\n\nทีมผมใช้คำถามนี้เช็คทุกไอเดียก่อนเริ่มจริงครับอย่างเกมของทีมผมเองที่ประสบความสำเร็จ เราอยากทำอะไรมากมาย แต่พอคุยๆกันแล้ว เรารู้สึกว่าเราต้องสนุกกับการกระทำอันนี้อันเดียวให้ได้ \n\nเราเลยตั้งใจทำมันเป็นพิเศษ ระบบที่เหลือทั้งหมดก็สร้างมาเพื่อเสิร์ฟความสนุกตัวนี้ อะไรที่ไม่ช่วยเสิร์ฟ ตัดทิ้งได้เลยไม่ต้องเสียดาย\n\nผลคือ scope ไม่บาน ทีมไม่หลงทาง เวลาอธิบายเกมให้ใครฟังก็จบได้ในประโยคเดียว\n\nถ้ายังตอบไม่ได้ แปลว่าเรามีแค่ไอเดียแต่ยังไม่มีเกม หาคำตอบให้เจอก่อน แล้วค่อยลงมือดีกว่าครับ","status":"pending"},{"id":4,"cat":"G","catName":"Money / Budget","title":"Clip 04 — ทำเกมขายบน Steam ด้วยโปรแกรมฟรี ทำได้จริง","body":"คุณสามารถทำเกมด้วยโปรแกรมฟรีเกือบทั้งหมด แล้วเอาขึ้นไปขายบน Steam ได้จริง โดยไม่ต้องเสียเงินซื้อซอฟต์แวร์แพงๆเลยครับ\n\nเกมของผมเองก็ทำแบบนั้นครับ โมเดลสามมิติใช้ Blender เอกสารในทีมใช้ชุดออฟฟิศฟรี ส่วน engine หลักๆ ทุกวันนี้ใช้ฟรีจนกว่าจะมีรายได้ แล้วระบบไหนที่ต้องซื้อแพงๆ เราก็เขียนมันขึ้นมาเองได้ครับ อย่างระบบสุ่มด่าน ทีมเราก็เขียนกันเอง\n\nหลักคิดมีข้อเดียวครับ ก่อนจ่ายเงิน ให้ถามก่อนว่ามีของฟรีที่ทำได้สักเจ็ดสิบแปดสิบเปอร์เซ็นต์มั้ย ถ้ามี ใช้ของฟรีก่อน เก็บเงินไว้จ่ายเงินเดือนคนดีกว่าครับ เพราะคนน่ะหาแทนยาก โปรแกรมน่ะเปลี่ยนเมื่อไหร่ก็ได้","status":"pending"},{"id":5,"cat":"L","catName":"Events","title":"Clip 05 — งานธุรกิจเกมระดับโลกมาถึงกรุงเทพแล้ว แถมเข้าฟรี","body":"gamescom asia งานธุรกิจเกมระดับโลกกำลังจะมาจัดที่กรุงเทพปลายเดือนตุลาคมนี้ และเปิดให้คนสายเกมลงทะเบียนเข้าฟรีครับ\n\nงานจัดร่วมกับ Thailand Game Show ที่ศูนย์สิริกิติ์ แต่โซนที่อยากให้นักพัฒนาสนใจที่สุดคือโซน Business ทางฝั่ง Gamescom Asia โดยสองวันแรกงานฝั่งนี้จะรวม Publisher นักลงทุน และสตูดิโอต่างชาติมาไว้ในฮอลล์เดียว ถ้าทำงานสายเกมอยู่แล้ว ลงทะเบียน business visitor ล่วงหน้าเข้าฟรีได้เลย ไปสมัครหน้างานเสียเงินครับ\n\nไม่ต้องมีบูธ ไม่ต้องมีนัดก็เดินได้ ไปดูว่าเขาคุยธุรกิจและซื้อขายเกมกันยังไง วงการนี้เล็กกว่าที่คิดนะครับ เพื่อนร่วมวงการหลายคนผมก็เจอครั้งแรกในงานแบบนี้แหละครับ","status":"pending"},{"id":6,"cat":"D","catName":"Design Philosophy","title":"Clip 06 — คอมเมนต์เดียวที่เปลี่ยนวิธีออกแบบเกมของทีมผม","body":"คอมเมนต์เดียวจากผู้เล่นที่บอกว่า \"เกมนี้ซับซ้อนเกินกว่าจะเรียนรู้\" เปลี่ยนวิธีออกแบบเกมของผมไปตลอดกาล\n\nตอนทำ MMORPG เกมแรก ทีมผมงงมาก เพราะพวกเราอยู่กับเกมทุกวันจนเห็นว่าทุกอย่างมันง่าย แต่นั่นแหละครับคือกับดัก ของที่เราว่าง่าย สำหรับคนเปิดเกมครั้งแรก มันคือเขาวงกตดีๆ นี่เอง\n\nผู้เล่นส่วนใหญ่ยินดีที่จะให้เราสอนทุกอย่าง เพราะเขาอยากเข้าใจ อยากสนุก ลองเอาเกมไปให้คนที่ไม่เคยเห็นลองเล่น แล้วนั่งดูเงียบๆดูครับว่าเขาติดตรงไหน สิบนาทีแรกบอกจะความจริงให้เราทั้งหมด\n\nคุณจะทำเกมง่ายเพื่อทุกคน หรือซับซ้อนเพื่อสายฮาร์ดคอร์ เลือกได้ทั้งคู่ครับแต่ต้องสอนให้เขาเข้าถึงความสนุกให้ได้นะครับ","status":"pending"},{"id":7,"cat":"G","catName":"Money / Runway","title":"Clip 07 — วิธีคิดง่ายๆ ว่าสตูดิโอจะรอดอีกกี่เดือน","body":"สตูดิโอเกมของเราจะรอดได้อีกกี่เดือน คำนวณแบบง่ายๆได้ด้วยการเอาเงินเก็บที่มีมาหารกับรายได้ในเดือนที่แย่ที่สุด\n\nนี่คือสูตรที่ทีมผมใช้จริงครับ เริ่มจากลิสต์ค่าเช่า เงินเดือน ค่าน้ำค่าไฟ ทุกบาทที่ต้องจ่ายแน่ๆ แล้วบวกค่าใช้จ่ายเผื่อไว้อีกสิบห้าเปอร์เซ็นต์ครับ เผื่อคอมพัง เผื่อคนป่วย เผื่ออะไรไม่คาดคิด\n\nแล้วจากนั้น เอาตัวเลขเดือนที่แย่ที่สุดที่เคยเจอ ให้คิดแบบเลวร้ายที่สุด มาลองหักออกไป จะได้ประเมินได้ว่าทุกเดือน เรามีโอกาสเสียเงินไปเท่าไหร่\n\nแล้วพอเอาเงินเก็บมาหาร ตัวเลขที่ออกมาคือจำนวนเดือนที่อยู่ได้จริง พอรู้เลขนี้ จะรับงานเสริมมั้ย จะขยายทีมมั้ย ตัดสินใจง่ายขึ้นเยอะเลยครับ","status":"pending"},{"id":8,"cat":"F","catName":"Engine & Tech","title":"Clip 08 — ทำไมผมเทสต์เกมบนโน้ตบุ๊คอายุสิบปี","body":"เกมของผมบน Steam ถูกเทสต์บนโน้ตบุ๊คอายุสิบปี การ์ดจอ 1050 เพราะถ้ามันรันบนเครื่องนี้ได้ลื่น มันจะรันได้ลื่นบนเครื่องของผู้เล่นทุกคน\n\nบทเรียนนี้ได้มาจากยุคทำเกมมือถือครับ เครื่องผู้เล่นไม่ได้มีแค่เกมเรา แต่มีโปรแกรมอื่นกินทรัพยากรอยู่ไปครึ่งเครื่องแล้ว ทีมผมเลยตั้งกฎเหล็กเลยว่า ต้องเทสต์บนเครื่องที่สเปคต่ำสุดเท่าที่จะหาได้\n\nผมชอบเทสต์บนเครื่องนี้มากนะครับ ลุ้นทุกครั้งว่าจะไหวมั้ย เจ้าเครื่องนี้รับใช้ทีมมาหลายปีและยังเป็นที่ใช้งานอยู่เรื่อยๆ\n\nเครื่องเก่าที่บ้านอย่าเพิ่งขายทิ้งครับ มันคือเครื่องเทสต์ที่ซื่อสัตย์ที่สุดสำหรับคนทำเกม","status":"pending"},{"id":9,"cat":"B","catName":"Steam & Publishing","title":"Clip 09 — 5 คำถามที่ Publisher ถามจริง","body":"นี่คือคำถามจริงๆ ที่คุณต้องเจอเวลาได้นัดคุยกับ Publisher\n\n1. ตั้งราคาเกมไว้เท่าไหร่ ทำไมถึงราคานี้ /\n2. ต้องใช้เงินอีกเท่าไหร่เกมถึงเสร็จ แล้วถ้าเราไม่ช่วย คุณอยู่ได้อีกนานแค่ไหน /\n3. ถ้าลงทุนให้ แต่ไม่ได้ market ให้ คุณจะหา wishlist จากไหน /\n4. เกมคล้ายๆ กันมีเต็มตลาด ทำไมของคุณถึงจะขายได้ /\n5. คุณศึกษาบริษัทเรามาดีแค่ไหน\n\nเวลาไปคุยกับ Publisher สิ่งที่เขาถามไม่ใช่เรื่องของเกมคุณ แต่เขาดูว่าทำธุรกิจด้วยแล้วรอดมั้ย\n\nจากที่ผมเคยนั่งคุยมาหลายสิบนัด หน้าตาเกมคือใบเบิกทางให้ได้เข้าห้องครับ แต่พอนั่งลงแล้ว มันคือเรื่องธุรกิจล้วนๆ เตรียมคำตอบไปให้พร้อมครับ","status":"pending"},{"id":10,"cat":"I","catName":"Career & Education","title":"Clip 10 — ทำไมวัยเรียนคือช่วงที่ดีที่สุดในการเริ่มทำเกม","body":"ตอนยังเรียนอยู่คือช่วงเวลาที่ดีที่สุดในการเริ่มทำเกมแรก เพราะนั่นคือช่วงเดียวในชีวิตที่คุณ \"ล้มแล้วเจ็บน้อยที่สุด\" ลองนับภาระตอนเรียนดูครับ ยังไม่มีลูก ยังไม่มีผ่อนบ้านผ่อนรถ ครอบครัวยังช่วยซัพพอร์ตให้ได้\n\nถ้าเกมแรกไม่รอด สิ่งที่เสียไปคือเวลาและเงินเก็บก้อนนึง แล้วชีวิตก็เดินต่อได้\n\nแต่พอโตขึ้น มีภาระมากมาย จะแบ่งเวลามาลองทำเกมสักปี ต้องคิดหนักกว่าเดิมหลายสิบเท่า\n\nล้มทีนึงเจ็บกว่าเยอะครับ\n\nผมเองเริ่มตอนอายุยังไม่ถึงยี่สิบ เจ๊งมาแล้วรอบสองรอบ ที่ลุกได้ไวเพราะยังไม่มีภาระเท่าไหร่\n\nไม่ได้ชวนให้ทิ้งการเรียนนะครับ เรียนไปด้วยทำไปด้วยได้ แค่อย่ารอให้พร้อม เพราะวันที่พร้อมที่สุด อาจเป็นวันนี้แล้วครับ","status":"pending"},{"id":11,"cat":"H","catName":"News / AI","title":"Clip 11 — เมื่อคนทำเกมกลัว AI เลียนแบบจนต้องยกเลิก Demo","body":"ทีมพัฒนาเกม Drunken Goddess Reflux ประกาศยกเลิก Public Demo บน Steam เพราะกลัวว่า AI ยุคนี้จะถูกนำมาใช้ก๊อปปี้ทุกอย่างในเกมแล้วชิงตัดหน้าวางขายก่อน\n\nเดิมทีเกมมีแผนเปิดเดโมฟรี แต่ทีมงานยอมรับว่ากลัวมาก เพราะเครื่องมือ AI และ Vibe-coding ตอนนี้ไม่ได้ก๊อปแค่ Asset ภาพ แต่ลามไปถึงแนวเกม ระบบเกม สูตรคำนวน ทั้งหมด ซึ่งเอาไปสร้างตัวเลียนแบบได้ในเวลาไม่กี่วัน\n\nทำให้พวกเขาต้องเปลี่ยนแผนไปเปิดทดสอบแบบระบบปิดที่ต้องลงทะเบียนและเซ็นสัญญาแทน\n\nในมุมคนทำเกม มันสะท้อนเลยว่าความเสี่ยงเรื่องโดนก๊อปปี้ด้วย AI มันชิดติดหน้าประตูบ้านเราจริงๆ วงการเรากำลังเข้าสู่ยุคที่ต้องระวังตัวกันมากขึ้นเยอะเลยครับ","status":"pending"},{"id":12,"cat":"L","catName":"Events & Business","title":"Clip 12 — โอกาสธุรกิจเกม B2B ที่ Gamescom Asia x Thailand Game Show","body":"29 ตุลาคม ถึง 1 พฤศจิกายนนี้ งาน gamescom asia x Thailand Game Show ที่ศูนย์สิริกิติ์ คือโอกาสทองของนักพัฒนาเกมไทย ในการเจรจาธุรกิจกับ Publisher ระดับโลก\n\nโดยเฉพาะวันที่ 29 ถึง 30 ตุลาคม ซึ่งเป็นโซน B2B จากประสบการณ์ที่ผมเคยเดินงานและนัดเจอ Dev ต่างชาติ การคุยธุรกิจมันไม่ได้ยากอย่างที่คิดครับ\n\nยิ่งปีนี้สมาคม GIVA จับมือกับ MeetToMatch จัดพื้นที่ GIVA Business Lounge ให้คนทำเกมไทยเข้ามานั่งคุยจับคู่ธุรกิจได้สะดวกมาก\n\nคุณไม่ต้องมีบูธใหญ่ ไม่ต้องเสียเงินบินไปต่างประเทศ แค่สมัครบัตร Business Visitor หรือใช้ระบบ MeetToMatch นัดเวลา แล้วเดินเข้าไป Pitch งานแลกเปลี่ยนความเห็นได้เลย\n\nโอกาสเจอนักลงทุนอยู่อยู่หน้าบ้านเราแล้ว ไปลงทะเบียนกันไว้ก่อนเลยครับ","status":"pending"},{"id":13,"cat":"A","catName":"Personal Journey","title":"Clip 13 — เรียน 7 ปีเพราะทำงานไปด้วย","body":"ผมใช้เวลาเรียนมหาลัยถึง 7 ปีเต็มกว่าจะจบ ไม่ใช่เพราะเรียนไม่เก่ง แต่เพราะผมเลือกทำงานหาเงินควบคู่ไปด้วยตลอด\n\nตอนนั้นผมลงเรียนแค่อาทิตย์ละสองวัน ส่วนเวลาที่เหลือคือการทำงานหาเงินมาเลี้ยงตัวเองและเก็บเป็นทุนทำเกม\n\nช่วงนั้นเหนื่อยมากครับ แต่บทเรียนที่ได้กลับมาคุ้มค่าสุดๆ มันทำให้ผมเข้าใจเรื่องการบริหารเวลา รู้จักคุณค่าของเงิน และเรียนรู้ระบบธุรกิจจริงตั้งแต่ยังเรียนไม่จบ\n\nการเรียนจบช้ากว่าเพื่อนไม่ใช่เรื่องน่าอายเลยครับ ถ้าเวลาที่เสียไป เราเอาไปแลกกับประสบการณ์และทักษะชีวิตที่หาไม่ได้ในห้องเรียน\n\nอย่าเอาบรรทัดฐานคนอื่นมาวัดความสำเร็จของเราครับ เดินในจังหวะของตัวเองดีที่สุด","status":"pending"},{"id":14,"cat":"C","catName":"Team & HR","title":"Clip 14 — จาก 18 เหลือ 7 คน วงจรการลดขนาดทีม","body":"การลดขนาดทีมจากสิบแปดคนเหลือเจ็ดคน ไม่ใช่เรื่องล้มเหลว แต่เป็นการคัดคนเพื่อให้บริษัทรอด\n\nช่วงเริ่มตั้งสตูดิโอใหม่ๆ เรามีคนเยอะมาก แต่พอเงินทุนเริ่มลดลง และเป้าหมายไม่ตรงกัน คนก็ค่อยๆ แยกย้ายไปตามทาง\n\nมีทั้งคนที่ลาออกเอง คนที่ต้องเชิญออก และคนที่รับความเสี่ยงร่วมกันไม่ไหว\n\nบทเรียนที่ได้คือ ทีมขนาดเจ็ดคนที่มีเป้าหมายเดียวกัน และพร้อมสู้ไปด้วยกัน ทำงานได้เร็วกว่าทีมสิบแปดคนที่เดินกันคนละทิศคนละทาง\n\nยิ่งทีมเล็ก การสื่อสารยิ่งชัด ความคล่องตัวยิ่งสูง บริษัทไม่ได้วัดความสำเร็จที่จำนวนคน แต่ดูที่งานที่ปล่อยออกมาครับ","status":"pending"},{"id":15,"cat":"A","catName":"Personal Journey","title":"Clip 15 — วันที่แย่ที่สุดในการเป็น Founder","body":"วันที่แย่ที่สุดในชีวิตการเป็น Founder ของผม ไม่ใช่โดนผู้เล่นด่า แต่คือวันที่ต้องไปนั่งรอลูกค้าในห้างคนเดียว\n\nช่วงที่ต้องหาเงินมาจ่ายเงินเดือนทีม ผมต้องรับหน้าที่เป็นเซลล์ออกไปเสนอขายงาน วันไหนที่นัดลูกค้าไม่ได้เลย ผมจะไปนั่งอยู่ในห้าง มองกาแฟเย็นชืด แล้วถามตัวเองว่าทำอะไรอยู่\n\nตอนนั้นผมเขียนโค้ดไม่เก่ง วาดรูปไม่ได้ สิ่งเดียวที่ทำได้ดีที่สุดคือออกไปหาเงิน เพื่อให้คนที่เก่งกว่าผม ไม่ต้องหยุดทำเกม\n\nวันนั้นสอนให้ผมรู้ว่า หน้าที่ของผู้นำไม่ใช่การโชว์อีโก้ แต่คือการทำทุกอย่างให้ทีมมีกินและได้ทำสิ่งที่รักต่อไปครับ","status":"pending"},{"id":16,"cat":"G","catName":"Money & Survival","title":"Clip 16 — บทเรียนจากเงินล้านแรกที่ทำหายไป","body":"เงินล้านแรกที่ผมยืมญาติมาทำธุรกิจเกมล้มเหลวไม่เป็นท่า แต่มันคือวิชาบริหารธุรกิจที่คุ้มค่าที่สุดในชีวิต\n\nตอนอายุยี่สิบ ผมได้โอกาสทำบริษัทเกมครั้งแรกด้วยเงินกู้จากผู้ใหญ่ แต่เพราะความอ่อนหละหลวมและไม่มีประสบการณ์ เงินก้อนนั้นละลายหายไปในเวลาไม่นาน\n\nสิ่งที่ผู้ใหญ่สอนผมหลังจากนั้นคือ ทำธุรกิจอย่าใช้แต่ Passion ให้มองเรื่อง Cashflow และสัญญาเป็นหลัก\n\nข้อดีของการล้มเหลวตั้งแต่ยังเด็กคือ เรายังมีเวลาลุกขึ้นใหม่ และบทเรียนนั้นทำให้ผมระวังเรื่องเงินทุกบาทใน M.A.S.S. Builder มาจนถึงทุกวันนี้\n\nล้มได้ครับ แค่ต้องจำให้ได้ว่าล้มเพราะอะไร","status":"pending"},{"id":17,"cat":"A","catName":"Personal Journey","title":"Clip 17 — จากจุดเริ่มต้นแอปพ่นสี สู่ M.A.S.S. Builder","body":"เกม M.A.S.S. Builder ที่ขายบน Steam ในวันนี้ ไม่ได้เริ่มจากการคิดจะทำเกม แต่เริ่มจากแอปทดลองพ่นสีโมเดลพลาสติก\n\nทีมผมเป็นพวกชอบต่อ Gunpla มาก เราเลยอยากทำซอฟต์แวร์จำลองการทำสีโมเดลไว้ดูเป็นตัวอย่างก่อนพ่นจริง\n\nทำไปทำมา พวกเราก็คิดกันว่า ถ้าเอาหุ่นพวกนี้มาขยับได้ ใส่ vũกิษ ได้ และบินยิงกันได้ มันน่าจะสนุกกว่าแค่พ่นสีแน่ๆ\n\nนั่นคือจุดเปลี่ยนที่ทำให้แอปเล็กๆ กลายมาเป็นโปรเจกต์ใหญ่ที่ใช้เวลาทำหลายปี\n\nบางทีไอเดียทำเกมที่ดีที่สุด อาจไม่ได้มาจากหน้ากระดาษว่างๆ แต่มาจาก Passion เล็กๆ ในชีวิตประจำวันของเราครับ","status":"pending"},{"id":18,"cat":"J","catName":"Mindset","title":"Clip 18 — ความรู้สึก Impostor Syndrome ของคนทำเกม","body":"ต่อให้คุณทำเกมมาห้าปี คุณก็ยังรู้สึกว่าตัวเองไม่ใช่ Dev ตัวจริง จนกว่าวันที่เกมจะได้ Ship ขายบน Steam\n\nสภาพจิตใจที่เรียกว่า Impostor Syndrome หรือการรู้สึกว่าตัวเองไม่เก่งจริง มันเกิดขึ้นกับคนทำเกมทุกคนครับ\n\nตอนทำเกม เราจะคอยตั้งคำถามตลอดเวลาว่า งานเราดีพอรึยัง คนเล่นจะชอบมั้ย หรือเรากำลังหลอกตัวเองอยู่\n\nความรู้สึกนี้จะหายไปก็ต่อเมื่อเกมถูกปล่อยออกไปสู่โลกจริง มีผู้เล่นซื้อไปเล่น และส่ง Feedback กลับมา\n\nถ้าคุณกำลังรู้สึกแบบนี้อยู่ ไม่ต้องตกใจครับ คุณไม่ได้เป็นคนเดียว ทำงานต่อไป ส่งเกมออกไป แล้วให้ผลงานเป็นตัวตอบครับ","status":"pending"},{"id":19,"cat":"C","catName":"Team & HR","title":"Clip 19 — ทำไมสตูดิโอเราถึงเลิกรับงาน Outsource 100%","body":"การตัดท่อน้ำเลี้ยงจากงาน Outsource แล้วทุ่มทำเกมตัวเองร้อยเปอร์เซ็นต์ คือการตัดสินใจที่เสี่ยงที่สุด แต่นั่นทำให้ M.A.S.S. Builder เสร็จได้จริง\n\nช่วงแรกเราใช้วิธีรับงานนอกมาเลี้ยงทีม แต่งานนอกมักจะดูดเวลาและพลังงานไปจนหมด จนไม่มีแรงเหลือมาทำเกมตัวเอง\n\nสุดท้ายเราเลยประชุมกัน แล้วตัดสินใจตัดงาน Outsource ทิ้งทั้งหมด เพื่อเอาเวลามาดันเกมหลักให้เสร็จ\n\nมันทำให้เงินสตูดิโอตึงมาก แต่ผลลัพธ์คือทีมมี Focus เดียว งานเดินเร็วขึ้นสิบเท่า\n\nถ้าคุณอยากทำเกมตัวเองให้เสร็จจริงๆ วันนึงคุณต้องกล้าละทิ้งงานนอก แล้วทุ่มสุดตัวครับ","status":"pending"},{"id":20,"cat":"D","catName":"Design Philosophy","title":"Clip 20 — ฝันอยากทำ MMORPG vs ความจริงที่ได้ทำ","body":"เด็กทำเกมทุกคนฝันอยากทำ MMORPG แต่ความจริงจะตบหน้าคุณด้วยเรื่อง Cost และการดูแล Server ที่ไม่มีวันจบสิ้น\n\nเกมแรกของทีมผมเริ่มด้วยความฝันอยากทำ MMORPG ครับ เราใส่ทุกระบบที่อยากได้ลงไป ผลคือเหนื่อยมาก และเจอปัญหารอบด้าน\n\nการทำเกมออนไลน์ไม่ได้จบแค่สร้างเกมเสร็จ แต่ต้องรับมือกับความเสี่ยงเรื่อง Server บั๊กสำรองข้อมูล และการบาลานซ์เกมสดๆ ตลอดเวลา\n\nบทเรียนนี้ทำให้เราเปลี่ยนมาทำเกม Single-player และ Co-op ใน M.A.S.S. Builder แทน\n\nฝันใหญ่ได้ครับ แต่ต้องเลือกขอบเขตงานให้เหมาะกับกำลังทีม เพื่อให้เราทำจบได้จริงๆ","status":"pending"},{"id":21,"cat":"B","catName":"Steam & Publishing","title":"Clip 21 — ขายเกมได้ 1,000 บาท บน Steam เหลือเข้ากระเป๋าจริงเท่าไหร่","body":"ขายเกมราคา 100 บาทบน Steam รู้มั้ยเงินไม่ได้เข้าเราเต็ม 100 ต่อ copy ที่ขายได้ แต่จะเหลือจริงๆ แค่ประมาณ 50 ถึง 65 บาทเท่านั้น!\n\nตัวเลขหายไปไหนบ้าง? หักอย่างแรกคือหักส่วนแบ่ง Platform ของ Steam 30 เปอร์เซ็นต์\n\nหักอย่างที่สอง คือเรื่องภาษี ณ ที่จ่าย และภาษีระหว่างประเทศ ซึ่งขึ้นอยู่กับว่าผู้เล่นซื้อจากประเทศไหน และสตูดิโอทำเอกสารภาษีไว้ทางสตีมอย่างไร\n\nหักอย่างที่สาม คือค่าธรรมเนียมการโอนเงินและอัตราแลกเปลี่ยน\n\nเพราะฉะนั้นเวลาทำแผนการเงิน อย่าคำนวณจาก Gross Revenue ครับ ให้คิดจาก Net ในช่วง 50 ถึง 65 เปอร์เซ็นต์ไว้ก่อน จะได้ไม่คำนวณพลาด","status":"pending"},{"id":22,"cat":"B","catName":"Steam & Publishing","title":"Clip 22 — 3 ข้อต้องเช็ก ก่อนเซ็นสัญญา Publisher","body":"อย่าเพิ่งรีบเซ็นสัญญา Publisher ถ้ายังไม่ได้เช็ก 3 ข้อนี้ให้ชัวร์ จะได้ไม่เสียใจทีหลัง\n\nข้อแรก เช็กเงื่อนไข Recoupment ให้ดีว่า Publisher จะหักเงินคืนจากยอดขายแรกยังไง หักกี่เปอร์เซ็นต์ และเราจะเริ่มได้ส่วนแบ่งเมื่อไหร่\n\nข้อสอง สิทธิ์ใน IP เกมยังเป็นของเรามั้ย หลีกเลี่ยงสัญญาที่ยึดสิทธิ์ในตัวเกมหรือชื่อแบรนด์ไปถาวร\n\nข้อสาม กำหนด Minimum Marketing Budget ให้ชัดเจน ไม่ใช่แค่สัญญาว่าจะช่วยโปรโมต แต่ต้องระบุตัวเลขหรือกิจกรรมจริง\n\nสัญญาที่ดีต้องแฟร์ทั้งสองฝ่าย อย่าปล่อยให้ความดีใจทำให้เรามองข้ามตัวหนังสือครับ","status":"pending"},{"id":23,"cat":"B","catName":"Steam & Publishing","title":"Clip 23 — ทำไม Wishlist 60,000 คน ถึงยังชะล่าใจไม่ได้","body":"ยอด Wishlist 60,000 คนบน Steam ฟังดูเยอะ แต่วันเปิดตัวจริง คนที่กดซื้อทันทีอาจมีแค่ 10 ถึง 15 เปอร์เซ็นต์เท่านั้น\n\nนี่คือเรื่องจริงของ Conversion Rate ในวงการครับ คนกด Wishlist ไว้เพราะสนใจ แต่ไม่ได้แปลว่าเขาพร้อมจะจ่ายเงินในวันแรก\n\nยอด Wishlist ที่สะสมมานาน บางส่วนอาจเป็นคนที่ไม่Activeแล้ว หรือรอช่วงลดราคา\n\nหน้าที่ของ Dev ไม่ใช่แค่นับตัวเลข Wishlist แต่คือการทำกิจกรรมอัปเดตเดโม ปล่อย Devlog และกระตุ้นให้คนที่สนใจเปลี่ยนมาเป็นผู้ซื้อในสัปดาห์แรก\n\nตัวเลขบนกระดาษกินไม่ได้ ยอดขายจริงสัปดาห์แรกต่างหากคือของจริง","status":"pending"},{"id":24,"cat":"B","catName":"Steam & Publishing","title":"Clip 24 — เงินกู้ Forgivable Loan ที่ช่วยชีวิตสตูดิโอ","body":"เงินกู้แบบ Forgivable Loan จาก Publisher คือตัวช่วยที่ทำให้สตูดิโอเรามีเงินจ่ายเงินเดือนทีม จนทำเกมขึ้น Kickstarter ได้สำเร็จ\n\nตอนนั้นทีมเราเงินหมดเกลี้ยง Sekai Project ยื่นข้อเสนอจ่ายเงินสำรองเลี้ยงทีมรายเดือน โดยมีเงื่อนไขว่า เงินก้อนนี้จะคืนก็ต่อเมื่อ Kickstarter ประสบความสำเร็จเท่านั้น\n\nถ้าแคมเปญล้มเหลว หนี้ก้อนนี้จะถูกยกเลิกทันที ไม่ต้องตามชดใช้\n\nข้อตกลงนี้ลดความกดดันให้ทีมเราได้มหาศาล ทำให้เรามีสมาธิตกแต่งเกมตัวอย่างให้ดีที่สุด จนแคมเปญระดมทุนผ่านเป้าไปได้ด้วยดี\n\nการหา Partner ที่เข้าใจและพร้อมรับความเสี่ยงร่วมกัน คือโชคดีใหญ่ของคนทำเกมครับ","status":"pending"},{"id":25,"cat":"B","catName":"Steam & Publishing","title":"Clip 25 — ตราบาปจากการรับปากเกินตัวบน Kickstarter","body":"บทเรียนที่แพงที่สุดจากการทำ Kickstarter คืออย่ารับปากสิ่งที่เราไม่แน่ใจว่าจะทำได้ เพียงเพื่ออยากได้ยอดระดมทุนเพิ่ม\n\nตอนทำแคมเปญ M.A.S.S. Builder เราสัญญา Reward ไว้เยอะมาก ทั้งเสียงพากย์เต็มรูปแบบ และของแถมคัสตอมรายบุคคล\n\nพอระดมทุนได้จริง เงินก้อนนั้นถูกกลืนไปกับค่าผลิตของสัญญากว่าครึ่ง และกลายเป็นภาระงานที่ตามหลอกหลอนทีมหลังเกมวางขายไปหลายปี\n\nคำสัญญาต่อผู้สนับสนุนคือสิ่งศักดิ์สิทธิ์ครับ อะไรทำไม่ได้หรือยังไม่ชัวร์ อย่าใส่ลงใน Stretch Goal เด็ดขาด\n\nระดมทุนได้น้อยกว่าเดิมหน่อย แต่ทำได้จริง สบายใจกว่าเยอะครับ","status":"pending"},{"id":26,"cat":"J","catName":"Mindset","title":"Clip 26 — ทำไมผมถึงแบนตัวเองจากการอ่านรีวิวบน Steam","body":"การแบนตัวเองไม่อ่านรีวิวบน Steam ด้วยตัวเอง คือคำสั่งของทีมงานที่ช่วยเซฟสภาพจิตใจผมไว้ได้มากที่สุด\n\nผมเป็นคนเอฟเฟกต์กับคอมเมนต์แง่ลบง่ายมาก พอด่านไหนมีคนบ่น หรือมีคนด่าเรื่องบาลานซ์ ผมจะรู้สึกนอยด์จนทำงานต่อไม่ได้ไปเป็นวันๆ\n\nทีมงานเลยตั้งกฎ ห้ามผมเปิดอ่านรีวิวบน Steam โดยตรง แต่ให้หัวหน้าทีมทำหน้าที่คัดกรอง สรุปเฉพาะเนื้อหาสาระและปัญหาจริงมาเป็น Report ให้ผมแก้\n\nวิธีนี้ทำให้ผมได้รับการปรับปรุงเกมตาม Feedback จริง โดยไม่ต้องรับแรงกระแทกทางอารมณ์ที่ไม่จำเป็น\n\nถ้าคุณรู้ตัวว่าเป็นคนจิตอ่อน ลองให้เพื่อนร่วมทีมช่วยกรองข้อความดูครับ","status":"pending"},{"id":27,"cat":"B","catName":"Steam & Publishing","title":"Clip 27 — ตั้งราคาขายแบบ Regional Pricing บน Steam","body":"การตั้งราคาขายแบบ Regional Pricing บน Steam ต้องคิดให้ถี่ถ้วน ไม่ใช่แค่กดตามราคาแนะนำของระบบอย่างเดียว\n\nSteam มีระบบแนะนำราคาตามกำลังซื้อของแต่ละประเทศ ซึ่งช่วยให้คนในประเทศนั้นๆ เข้าถึงเกมเราได้ง่ายขึ้น\n\nแต่ข้อควรระวังคือ ถ้าเราตั้งราคาในบางภูมิภาคต่ำเกินไป อาจมีผู้เล่นมุด VPN ไปซื้อในราคาถูกจนทำลายรายได้หลักของเราได้\n\nกลยุทธ์คือ ยึดราคาฐานฝั่งอเมริกาเป็นหลัก แล้วปรับลดให้เหมาะสมในตลาดเกิดใหม่ โดยไม่ให้ส่วนต่างห่างกันจนเกิดการมุดซื้อ\n\nตั้งราคาให้แฟร์กับคนเล่น และแฟร์กับค่าน้ำค่าไฟของคนทำเกมด้วยครับ","status":"pending"},{"id":28,"cat":"B","catName":"Steam & Publishing","title":"Clip 28 — วิธีขึ้นราคาช่วง 1.0.0 โดยไม่โดนด่า","body":"การปรับราคาเกมขึ้นเมื่อออกจาก Early Access เป็น 1.0.0 ทำได้ทันทีโดยที่ผู้เล่นไม่โกรธ แค่ต้องแจ้งล่วงหน้าและทำให้เห็นคุณค่าที่เพิ่มขึ้น\n\nเกม M.A.S.S. Builder ของเรามีการปรับราคาขึ้นเมื่อเวอร์ชันเต็มเสร็จสมบูรณ์\n\nสิ่งที่เราทำคือ ประกาศข่าวล่วงหน้าอย่างน้อย 1-2 เดือน บอกชัดเจนว่าจะปรับราคาขึ้นวันไหน พร้อมชี้แจงว่ามีคอนเทนต์ใหม่ ระบบใหม่ อะไรเพิ่มเข้ามาบ้าง\n\nนี่เป็นการให้เกียรติคนที่อุดหนุนเราตั้งแต่ช่วง Early Access ให้รู้สึกว่าเขาได้ซื้อในราคาคุ้มค่า\n\nและเปิดโอกาสให้คนที่เล็งอยู่ได้ตัดสินใจซื้อก่อนปรับราคาขึ้น ทุกคนเข้าใจได้ถ้าเราสื่อสารตรงไปตรงมาครับ","status":"pending"},{"id":29,"cat":"C","catName":"Team & HR","title":"Clip 29 — ทำไมเงินเดือนผู้ก่อตั้งถึงตั้งไว้ต่ำที่สุด","body":"เงินเดือนของ Founder ในสตูดิโอเรา ตั้งไว้ต่ำที่สุดเท่าที่กฎหมายกำหนด เพื่อเอาเงินส่วนใหญ่ไปจ่ายให้ทีมงาน\n\nช่วงแรกที่ตั้งบริษัท เราไม่ได้มีเงินทุนมหาศาล สิ่งแรกที่ต้องตัดลดคือเงินเดือนของตัวผมเองและผู้ก่อตั้ง\n\nเราเอาเงินก้อนใหญ่ไปจ่ายเงินเดือนให้โปรแกรมเมอร์ อาร์ตติส และซื้ออาหารโกรเซอรีเข้ามาไว้ในออฟฟิศ เพื่อให้ทีมงานอยู่ได้โดยไม่ต้องกังวลเรื่องค่ากิน\n\nFounder คือคนรับความเสี่ยงสูงสุด แต่ความรอดของบริษัทขึ้นอยู่กับทีมงาน\n\nทำให้ทีมงานอิ่มท้อง มีอุปกรณ์ดีๆ ใช้ แล้วงานที่ดีจะตามมาเองครับ เงินส่วนของเราค่อยไปหวังผลตอนเกมขายได้","status":"pending"},{"id":30,"cat":"C","catName":"Team & HR","title":"Clip 30 — การเชิญสมาชิกคนที่ 8 ออกจากทีม","body":"การตัดสินใจแยกทางกับสมาชิกคนที่แปด คือการตัดสินใจที่เจ็บปวดที่สุด แต่จำเป็นที่สุดเพื่ออนาคตของสตูดิโอ\n\nตอนนั้นออฟฟิศกำลังย้ายสถานที่ สมาชิกท่านนั้นมีเงื่อนไขชีวิตที่เปลี่ยนไป ทั้งเรื่องครอบครัวและการเดินทาง ทำให้ไม่สามารถทำงานแบบเต็มที่ร่วมกับทีมได้อีกต่อไป\n\nเรานั่งคุยกันตรงๆ ด้วยเหตุและผล ตกลงจ่ายค่าชดเชยอย่างสมเกียรติ แล้วแยกย้ายกันด้วยดี\n\nแม้จะรู้สึกแย่ แต่หน้าที่ของผู้นำคือการรักษาทิศทางและจังหวะการทำงานของทีมส่วนใหญ่ไว้\n\nเรื่องบางเรื่องไม่ได้มีใครผิด แค่ทิศทางชีวิตไม่ตรงกัน การคุยกันตรงๆ คือทางออกที่ดีที่สุดครับ","status":"pending"},{"id":31,"cat":"C","catName":"Team & HR","title":"Clip 31 — Soft Skills สำคัญกว่า Hard Skills ในทีมเล็ก","body":"ในทีมทำเกมขนาด 7 คน คนที่ทักษะ Soft Skills ดี ปรับตัวง่าย และคุยรู้เรื่อง มีค่ามากกว่าคนเก่งขั้นเทพที่ทำงานร่วมกับคนอื่นไม่ได้\n\nทีมเล็กไม่มีพื้นที่สำหรับ Ego ครับ ถ้ามีโปรแกรมเมอร์เก่งระดับเทพ แต่ไม่ยอมรับฟังความคิดเห็นคนอื่น หรืออาร์ตติสที่เปลี่ยนงานตาม Feedback ไม่ได้ งานทั้งทีมจะสะงักทันที\n\nเราเลือกคนที่สื่อสารชัดเจน พร้อมเรียนรู้ และเปิดใจรับฟังก่อนเสมอ\n\nทักษะการทำเกมหัดกันได้ เขียนโค้ดฝึกกันได้ แต่ทัศนคติและการทำงานเป็นทีมคือสิ่งที่ดัดยาก\n\nอยากได้ทีมที่เดินไปได้ไกล ให้เลือกคนที่คุยกันรู้เรื่องครับ","status":"pending"},{"id":32,"cat":"C","catName":"Team & HR","title":"Clip 32 — ออฟฟิศ 7 คนที่เลิกใช้ Trello แล้วใช้ระบบตะโกนข้ามโต๊ะ","body":"ออฟฟิศทำเกมขนาดเจ็ดคนของเรา เลิกใช้ Trello และ Stand-up meeting แล้วหันมาใช้ระบบตะโกนข้ามโต๊ะแทน\n\nตอนทีมยังเล็ก การนั่งคีย์การ์ดลงบอร์ด หรือจัดประชุมทุกเช้า มันกลายเป็น Overhead ที่กินเวลาโดยไม่จำเป็น\n\nในเมื่อเรานั่งอยู่ในห้องเดียวกัน อยากได้ asset อะไร อยากแก้บั๊กตรงไหน ก็แค่ตะโกนถามหรือเดินไปดูหน้าจอเพื่อนตรงๆ\n\nเราจะประชุมก็ต่อเมื่อมีเรื่องสำคัญที่ต้องตัดสินใจร่วมกันจริงๆ เท่านั้น\n\nเครื่องมือจัดการงานจำเป็นสำหรับทีมใหญ่ครับ แต่ถ้าทีมคุณนั่งมองหน้ากันอยู่แล้ว ใช้การสื่อสารตรงๆ ที่เร็วที่สุดดีกว่าครับ","status":"pending"},{"id":33,"cat":"H","catName":"News / TCG","title":"Clip 33 — เมื่อโปรระดับโลกโดนแบนเพราะไม่สับกองการ์ด (Riftbound TCG)","body":"Koko Lopez โปรระดับโลกของเกม Riftbound TCG โดนสั่งแบนยาวถึงปี 2029 จากข้อหาเรียงกอง Rune โดยไม่สับการ์ดก่อนแข่ง\n\nกรณีนี้กลายเป็นประเด็นใหญ่ทันที เมื่อคลิปการแข่งย้อนหลังแสดงให้เห็นชัดเจนว่า เขาตั้งใจจัดเรียง Order Rune ให้อยู่ในตำแหน่งที่ต้องการ เพื่อดึงมาใช้งานได้เป๊ะๆ ทุกรอบ\n\nตอนแรกเจ้าตัวอ้างว่าเป็นความเข้าใจผิด แต่พอหลักฐานมัดแน่นจากหลายทัวร์นาเมนต์ จนทีมต้นสังกัดสั่งปลด สุดท้าย Riot ก็ออกบทลงโทษแบนยาวถึง 3 ปี\n\nเรื่องนี้สอนคนทำเกมและคนแข่งเกมชัดเจนครับว่า วงการการ์ดเกมต่อให้กลไกสนุกแค่ไหน แต่ถ้าไร้ความโปร่งใสและขาด Fair Play สังคมก็พร้อมจะถอดคุณออกจากวงการทันทีครับ","status":"pending"},{"id":34,"cat":"H","catName":"News / Esports","title":"Clip 34 — เมื่อสตรีมเมอร์ระดับโลก Ludwig ถอดใจเพราะนโยบาย Esports","body":"Ludwig สตรีมเมอร์ชื่อดังเจ้าของทีม Esports ออกมาเปรยว่าอาจต้องยุบทีมและถอยออกจากวงการ เพราะทนรับนโยบายและการตัดสินใจแย่ๆ ไม่ไหว\n\nการทำทีม Esports ยุคนี้ใช้เงินมหาศาลครับ แต่สิ่งที่ทีมต้องเจอสวนทางกัน คือนโยบายของทางค่ายเกมที่ปรับเปลี่ยนตามใจชอบ กฎเกณฑ์ที่ไม่เอื้อให้คนทำทีมอยู่รอด และการสื่อสารที่ย่ำแย่\n\nพอคนที่มีทั้งเงิน Passion และฐานแฟนคลับแน่นอย่าง Ludwig ยังออกมาตัดพ้อว่าเริ่มไม่คุ้มที่จะสู้ต่อ มันส่งสัญญาณเตือนคนทำเกมทั่วโลกลอยมาเลยครับ\n\nการสร้างระบบแข่งขันถ้าคิดแต่จะดึงเค้กเข้าฝั่งตัวเอง โดยไม่เหลียวมองคนลงทุนทำทีม วันนึงจะไม่มีใครเหลือมาช่วยแบกวงการให้ครับ","status":"pending"},{"id":35,"cat":"D","catName":"Design & Tech","title":"Clip 35 — เมื่อมอดเดอร์ใช้ AI แก้เกมเก่า หรือเราแค่คิดถึงวันวาน","body":"ต้องยอมรับว่าเครื่องมือ AI Coding Agent ยุคนี้ช่วยทะลายขีดจำกัดเดิมๆ ช่วยให้มอดเดอร์รังสรรค์ แก้เกมเก่าอายุสิบยี่สิบปีได้อย่างทะลุขอบเขต งานที่เคยต้องใช้เวลาเป็นปี ก็สามารถเสกให้เสร็จได้ในเวลาไม่นาน\n\nแต่พอเราสามารถแก้เกมเก่าให้กลายเป็นอะไรก็ได้ตามใจชอบ เกมนั้น จะยังสนุกแบบที่เราเคยเล่นมันในอดีตอยู่หรือเปล่า? บางทีสิ่งที่เราโหยหาอาจไม่ใช่แค่ระบบที่ทันสมัยขึ้น แต่คือความรู้สึกสมัยเด็กที่ได้นั่งเล่นเกมนั้นเป็นครั้งแรก\n\nAI ช่วยเติมเต็มจินตนาการและสร้างสิ่งใหม่ในเกมเก่าได้จริงครับ แต่เสน่ห์ที่แท้จริงของเกมนั้นคืออะไร และเราจะสามารถรักษาสมดุลระหว่าง ความอาลัยอาวรณกับความสดใหม่ให้อยู่คู่กันอย่างลงตัวได้มั้ยกับ mod ที่ vibe-code ออกมาแบบไม่เพอร์เฟ็ค","status":"pending"},{"id":36,"cat":"L","catName":"Events & Business","title":"Clip 36 — ประวัติ Gamescom Asia และทำไมถึงมาจัดที่ไทย","body":"ปีนี้เป็นปีที่สองที่ Gamescom Asia ย้ายมาจัดที่กรุงเทพฯ แต่เดิมทีเป็นงานยักษ์ใหญ่ที่จัดอยู่ที่สิงคโปร์มาก่อน\n\nงานนี้สร้างโดย Koelnmesse ผู้จัดระดับโลกจากเยอรมนี ร่วมกับ สมาคมอุตสาหกรรมเกมเยอรมัน\n\nเดิมทีเปิดตัวที่สิงคโปร์เพื่อเป็นสะพานเชื่อม Dev เอเชีย กับ Publisher ฝั่งตะวันตก จนกลายเป็นงาน B2B หลักของภูมิภาค\n\nแต่เพราะสิงคโปร์เป็นตลาดขนาดเล็ก ทำให้การเติบโตฝั่ง B2C หรือฝั่งคนเล่นเกมนั้นติดเพดาน\n\nผู้จัดจึงตัดสินใจควบรวมกับ Thailand Game Show ย้ายมาจัดที่กรุงเทพฯ อาศัยความยิ่งใหญ่ ที่มีผู้ร่วมงานหลายแสนคนทุกปี \n\nขยายฝั่ง B2C ให้ใหญ่ขึ้นเต็มสูบ และเสริมส่วนของพื้นที่ B2B ให้คนทำเกมไทยได้เจอนักลงทุนทั่วโลกครับ","status":"completed"},{"id":37,"cat":"H","catName":"News & Industry","title":"Clip 37 — เมื่อ Steam Next Fest โดนเรียกว่า Steam AI Slop Fest","body":"มหกรรม Steam Next Fest รอบล่าสุด กำลังถูกผู้เล่นและนักพัฒนาบางส่วน ตั้งฉายา \"AI Slop Fest\" ไปแล้ว\n\nสาเหตุเกิดจากการที่มีเดโมเกมจำนวนมากที่ใช้ Generative AI ในการสร้าง Asset ภาพ โค้ด และเนื้อหา หลั่งไหลเข้ามาในระบบหลายพันเกม\n\nนักพัฒนาเกมอินดี้จำนวนมาก มองว่าการทะลักของเกม AI ทำให้เกมอินดี้ที่ตั้งใจทำด้วยมือ ถูกกลืนหายไปจากหน้าค้นหา ทำให้เกมอินดี้ที่ค่อนข้างมีปัญหาในการหาลูกค้าอยู่แล้วโดนกลบเข้าไปอีก\n\nส่วนผู้พัฒนาเกมที่ใช้ AI ก็ออกมาตอบโต้ว่า เขาไม่ได้มีความสามารถแต่เขามีไอเดีย และเขาอยากนำเสนอเกมของเขา แถมยังบอกแล้วด้วยว่าใช้ AI ทำ ไม่ได้ผิดกฎอะไรของ steam สุดท้ายคนเล่นก็เป็นคนตัดสินอยู่ดีว่าจะซื้อหรือไม่\n\nก็เป็นประเด็นถกเถียงเรื่องมาตรฐานและการจัดระเบียบ ที่วงการเกมและตัวสตีมเองยังต้องหาจุดสมดุลร่วมกันต่อไปครับ","status":"completed"}];
-
         let scripts = [];
         let activeEditId = null;
 
-        // Fetch master scripts live from Vercel KV / Upstash Redis
+        // Clean raw title by removing obsolete "Clip XX — " prefixes
+        function sanitizeTitle(title) {
+            return title.replace(/^Clip\s+\d+\s*—\s*/i, '').trim();
+        }
+
         async function loadScriptsFromKV() {
             try {
                 const response = await fetch('/api/get-scripts');
                 const data = await response.json();
-                
                 if (data && data.length > 0) {
                     scripts = data;
-                } else {
-                    // Fallback & seed database on initial setup
-                    scripts = initialScripts;
-                    await saveToKV();
                 }
                 renderScripts();
             } catch (err) {
-                console.error("Failed to load scripts from cloud storage, using fallback:", err);
-                scripts = initialScripts;
-                renderScripts();
+                console.error("Failed to load scripts from cloud storage:", err);
             }
         }
 
-        // Push updated scripts live to Vercel KV / Upstash Redis
         async function saveToKV() {
             try {
                 await fetch('/api/save-scripts', {
@@ -250,7 +243,7 @@
         }
 
         function countWords(text) {
-            return text.trim().split(/\s+/).filter(Boolean).length;
+            return text ? text.trim().split(/\s+/).filter(Boolean).length : 0;
         }
 
         function renderScripts() {
@@ -267,8 +260,10 @@
 
                 const wordCount = countWords(script.body);
                 const estTime = Math.round((wordCount / 140) * 45);
+                const currentStatus = script.status || (script.completed ? 'completed' : 'pending');
+                const displayTitle = sanitizeTitle(script.title);
 
-                let cardClass = "card rounded-xl p-5 flex flex-col justify-between script-card";
+                let cardClass = "card rounded-xl px-5 py-3.5 flex items-center justify-between script-card cursor-pointer hover:bg-gray-800/60";
                 if (isDone) cardClass += " card-completed";
                 if (isDiscarded) cardClass += " card-discarded";
 
@@ -277,28 +272,21 @@
                 card.setAttribute('data-category', script.cat);
                 card.setAttribute('data-id', script.id);
 
-                const currentStatus = script.status || (script.completed ? 'completed' : 'pending');
-
                 card.innerHTML = `
-                    <div>
-                        <div class="flex items-center justify-between mb-3">
-                            <span class="text-xs font-semibold px-2.5 py-1 rounded tag-${script.cat.toLowerCase()}">Cat ${script.cat}: ${script.catName}</span>
-                            <!-- Status Dropdown -->
-                            <select onchange="changeStatus(${script.id}, this.value)" class="bg-gray-900 border border-gray-700 text-xs rounded px-2 py-1 font-semibold text-gray-200 focus:outline-none focus:border-blue-500 cursor-pointer">
-                                <option value="pending" ${currentStatus === 'pending' ? 'selected' : ''}>⏳ Pending</option>
-                                <option value="completed" ${currentStatus === 'completed' ? 'selected' : ''}>✅ Done</option>
-                                <option value="discarded" ${currentStatus === 'discarded' ? 'selected' : ''}>❌ Discard</option>
-                            </select>
-                        </div>
-                        <h3 class="text-base font-bold text-white mb-2">${script.title}</h3>
-                        <p class="text-sm text-gray-300 leading-relaxed mb-4 whitespace-pre-line">${script.body}</p>
+                    <div class="flex items-center gap-4 flex-1 min-w-0 mr-4" onclick="openModal(${script.id})">
+                        <span class="text-xs font-mono font-bold text-gray-500 w-8">#${script.id}</span>
+                        <span class="text-xs font-semibold px-2.5 py-1 rounded tag-${script.cat.toLowerCase()} shrink-0">Cat ${script.cat}</span>
+                        <h3 class="text-sm font-bold text-white truncate hover:text-blue-400 transition">${displayTitle}</h3>
                     </div>
-                    <div class="pt-4 border-t border-gray-800 flex items-center justify-between text-xs text-gray-400">
-                        <span>${wordCount} words (~${estTime}s)</span>
-                        <div class="flex gap-2">
-                            <button onclick="copyScriptText(${script.id})" class="bg-gray-800 hover:bg-gray-700 text-gray-200 px-2.5 py-1 rounded text-xs transition">📋 Copy</button>
-                            <button onclick="openModal(${script.id})" class="bg-blue-900/60 hover:bg-blue-800 text-blue-200 border border-blue-700/50 px-2.5 py-1 rounded text-xs transition">✏️ Edit</button>
-                        </div>
+
+                    <div class="flex items-center gap-4 shrink-0" onclick="event.stopPropagation()">
+                        <span class="text-xs text-gray-400 font-mono hidden sm:inline">${wordCount} words (~${estTime}s)</span>
+                        <select onchange="changeStatus(${script.id}, this.value)" class="bg-gray-900 border border-gray-700 text-xs rounded px-2 py-1 font-semibold text-gray-200 focus:outline-none focus:border-blue-500 cursor-pointer">
+                            <option value="pending" ${currentStatus === 'pending' ? 'selected' : ''}>⏳ Pending</option>
+                            <option value="completed" ${currentStatus === 'completed' ? 'selected' : ''}>✅ Done</option>
+                            <option value="discarded" ${currentStatus === 'discarded' ? 'selected' : ''}>❌ Discard</option>
+                        </select>
+                        <button onclick="openModal(${script.id})" class="bg-blue-900/60 hover:bg-blue-800 text-blue-200 border border-blue-700/50 px-2.5 py-1 rounded text-xs transition">✏️ View / Edit</button>
                     </div>
                 `;
 
@@ -319,11 +307,64 @@
             }
         }
 
-        // Add Full Script Modal Functions
+        function openModal(id) {
+            const script = scripts.find(s => s.id === id);
+            if (!script) return;
+
+            activeEditId = id;
+            
+            const metaTag = document.getElementById('modalMeta');
+            metaTag.textContent = `#${script.id} | Cat ${script.cat}: ${script.catName}`;
+            metaTag.className = `text-xs font-semibold px-2.5 py-1 rounded tag-${script.cat.toLowerCase()}`;
+
+            const titleInput = document.getElementById('modalTitleInput');
+            titleInput.value = sanitizeTitle(script.title);
+
+            const textarea = document.getElementById('modalTextarea');
+            textarea.value = script.body;
+            updateModalWordCount();
+
+            textarea.oninput = updateModalWordCount;
+
+            document.getElementById('editorModal').classList.remove('hidden');
+            document.getElementById('editorModal').classList.add('flex');
+        }
+
+        function updateModalWordCount() {
+            const val = document.getElementById('modalTextarea').value;
+            const words = countWords(val);
+            const estTime = Math.round((words / 140) * 45);
+            document.getElementById('modalWordCounter').textContent = `Word count: ${words} words (~${estTime}s target)`;
+        }
+
+        function closeModal() {
+            document.getElementById('editorModal').classList.remove('flex');
+            document.getElementById('editorModal').classList.add('hidden');
+            activeEditId = null;
+        }
+
+        function saveModalChanges() {
+            if (!activeEditId) return;
+            const script = scripts.find(s => s.id === activeEditId);
+            if (script) {
+                script.title = document.getElementById('modalTitleInput').value.trim();
+                script.body = document.getElementById('modalTextarea').value;
+                renderScripts();
+                saveToKV();
+                closeModal();
+            }
+        }
+
+        function copyModalText() {
+            const val = document.getElementById('modalTextarea').value;
+            navigator.clipboard.writeText(val);
+            alert("Script text copied to clipboard!");
+        }
+
         function openAddModal() {
             const nextId = scripts.length > 0 ? Math.max(...scripts.map(s => s.id)) + 1 : 1;
             document.getElementById('newClipNumber').value = nextId;
-            document.getElementById('newClipTitle').value = `Clip ${nextId < 10 ? '0' + nextId : nextId} — `;
+            document.getElementById('newClipTitle').value = '';
             document.getElementById('newClipBody').value = '';
             updateAddWordCount();
 
@@ -372,13 +413,11 @@
             closeAddModal();
         }
 
-        // Add Topic Seed Modal Functions
         function openAddTopicModal() {
-            const nextTopicNum = 72 + scripts.filter(s => s.isSeed).length;
-            document.getElementById('newTopicId').value = `Topic ${nextTopicNum < 100 ? '0' + nextTopicNum : nextTopicNum}`;
+            const nextTopicNum = scripts.length > 0 ? Math.max(...scripts.map(s => s.id)) + 1 : 1;
+            document.getElementById('newTopicId').value = nextTopicNum;
             document.getElementById('newTopicTitle').value = '';
             document.getElementById('newTopicAngle').value = '';
-            document.getElementById('newTopicHook').value = '';
 
             document.getElementById('addTopicModal').classList.remove('hidden');
             document.getElementById('addTopicModal').classList.add('flex');
@@ -390,25 +429,23 @@
         }
 
         function addNewTopicSeed() {
-            const topicId = document.getElementById('newTopicId').value.trim() || 'Topic Seed';
+            const topicId = parseInt(document.getElementById('newTopicId').value) || (scripts.length + 1);
             const [catCode, catLabel] = document.getElementById('newTopicCategory').value.split('|');
             const title = document.getElementById('newTopicTitle').value.trim();
             const angle = document.getElementById('newTopicAngle').value.trim();
-            const hook = document.getElementById('newTopicHook').value.trim();
 
             if (!title || !angle) {
                 alert('Please provide a title and core talking points.');
                 return;
             }
 
-            const nextClipNum = scripts.length > 0 ? Math.max(...scripts.map(s => s.id)) + 1 : 1;
-            const formattedSeedBody = `${hook ? ' preview hook: "' + hook + '"\n\n' : ''}• angle: ${angle}\n\n[unscripted topic seed - ready for full spoken thai expansion]`;
+            const formattedSeedBody = `• Angle: ${angle}\n\n[Unscripted topic seed - ready for full spoken Thai expansion]`;
 
             const newTopicScript = {
-                id: nextClipNum,
+                id: topicId,
                 cat: catCode,
                 catName: catLabel,
-                title: `${topicId} — ${title}`,
+                title: title,
                 body: formattedSeedBody,
                 isSeed: true,
                 status: "pending",
@@ -421,61 +458,6 @@
             renderScripts();
             saveToKV();
             closeAddTopicModal();
-        }
-
-        // Edit Modal Functions
-        function openModal(id) {
-            const script = scripts.find(s => s.id === id);
-            if (!script) return;
-
-            activeEditId = id;
-            document.getElementById('modalTitle').textContent = `Editing ${script.title}`;
-            const textarea = document.getElementById('modalTextarea');
-            textarea.value = script.body;
-            updateModalWordCount();
-
-            textarea.oninput = updateModalWordCount;
-
-            document.getElementById('editorModal').classList.remove('hidden');
-            document.getElementById('editorModal').classList.add('flex');
-        }
-
-        function updateModalWordCount() {
-            const val = document.getElementById('modalTextarea').value;
-            const words = countWords(val);
-            const estTime = Math.round((words / 140) * 45);
-            document.getElementById('modalWordCounter').textContent = `Word count: ${words} words (~${estTime}s target)`;
-        }
-
-        function closeModal() {
-            document.getElementById('editorModal').classList.remove('flex');
-            document.getElementById('editorModal').classList.add('hidden');
-            activeEditId = null;
-        }
-
-        function saveModalChanges() {
-            if (!activeEditId) return;
-            const script = scripts.find(s => s.id === activeEditId);
-            if (script) {
-                script.body = document.getElementById('modalTextarea').value;
-                renderScripts();
-                saveToKV();
-                closeModal();
-            }
-        }
-
-        function copyModalText() {
-            const val = document.getElementById('modalTextarea').value;
-            navigator.clipboard.writeText(val);
-            alert("Script text copied to clipboard!");
-        }
-
-        function copyScriptText(id) {
-            const script = scripts.find(s => s.id === id);
-            if (script) {
-                navigator.clipboard.writeText(script.body);
-                alert(`Copied ${script.title} to clipboard!`);
-            }
         }
 
         function filterScripts() {
@@ -491,8 +473,9 @@
                 if (!script) return;
 
                 const currentStatus = script.status || (script.completed ? 'completed' : 'pending');
+                const displayTitle = sanitizeTitle(script.title);
 
-                const matchesSearch = script.title.toLowerCase().includes(searchVal) || script.body.toLowerCase().includes(searchVal);
+                const matchesSearch = displayTitle.toLowerCase().includes(searchVal) || script.body.toLowerCase().includes(searchVal);
                 const matchesCategory = (catVal === 'all') || (script.cat === catVal);
                 const matchesStatus = (statusVal === 'all') || (currentStatus === statusVal);
 
@@ -520,7 +503,7 @@
             renderScripts();
         }
 
-        // Initialize dashboard from Vercel KV
+        // Initialize from cloud KV
         loadScriptsFromKV();
     </script>
 </body>
