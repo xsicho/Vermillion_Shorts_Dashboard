@@ -9,7 +9,7 @@
         body { background-color: #0b0e14; color: #e2e8f0; font-family: system-ui, -apple-system, sans-serif; }
         .card { background: #131722; border: 1px solid #232a3b; transition: all 0.2s ease; }
         .card:hover { border-color: #3b82f6; }
-        .card-completed { opacity: 0.6; border-color: #10b981 !important; }
+        .card-completed { opacity: 0.65; border-color: #10b981 !important; }
         .card-discarded { opacity: 0.45; border-color: #ef4444 !important; }
         .tag-a { background: #1e3a8a; color: #93c5fd; }
         .tag-b { background: #14532d; color: #86efac; }
@@ -31,7 +31,7 @@
                 <h1 class="text-2xl font-bold text-white tracking-wide">VERMILLION SHORTS — MASTER TOPIC DASHBOARD</h1>
                 <span id="counterBadge" class="bg-blue-900/50 text-blue-400 border border-blue-700/50 text-xs px-2.5 py-0.5 rounded-full font-semibold">0 CLIPS</span>
             </div>
-            <p class="text-sm text-gray-400 mt-1">Topic overview, script editing, teleprompter view, and cloud sync</p>
+            <p class="text-sm text-gray-400 mt-1">Interactive topic accordion, inline quick editing, and Vercel KV cloud sync</p>
         </div>
 
         <div class="flex flex-wrap items-center gap-3">
@@ -75,44 +75,16 @@
         </div>
     </header>
 
-    <!-- Compact Topics List View -->
+    <!-- Collapsible Accordion List -->
     <main class="flex flex-col gap-3" id="scriptGrid">
-        <!-- Topic Bars generated dynamically via JS -->
+        <!-- Topic rows generated dynamically via JavaScript -->
     </main>
-
-    <!-- Modal: Edit / View Full Script -->
-    <div id="editorModal" class="fixed inset-0 bg-black/80 backdrop-blur-sm hidden items-center justify-center p-4 z-50">
-        <div class="bg-gray-900 border border-gray-700 rounded-2xl max-w-3xl w-full p-6 flex flex-col gap-4 shadow-2xl">
-            <div class="flex items-center justify-between border-b border-gray-800 pb-3">
-                <span id="modalMeta" class="text-xs font-semibold px-2.5 py-1 rounded">Category</span>
-                <button onclick="closeModal()" class="text-gray-400 hover:text-white font-bold text-sm">✕ Close</button>
-            </div>
-
-            <div>
-                <label class="block text-xs text-gray-400 mb-1">Topic Title</label>
-                <input type="text" id="modalTitleInput" class="w-full bg-gray-950 border border-gray-800 rounded-lg p-2.5 text-white font-bold text-base focus:outline-none focus:border-blue-500">
-            </div>
-
-            <div>
-                <label class="block text-xs text-gray-400 mb-1">Script Body (Spoken Thai)</label>
-                <textarea id="modalTextarea" class="w-full h-72 bg-gray-950 border border-gray-800 rounded-xl p-4 text-white font-mono text-base leading-relaxed focus:outline-none focus:border-blue-500" placeholder="Edit script content..."></textarea>
-            </div>
-
-            <div class="flex items-center justify-between text-xs text-gray-400">
-                <span id="modalWordCounter">Word count: 0 words (~0s)</span>
-                <div class="flex gap-2">
-                    <button onclick="copyModalText()" class="bg-gray-800 hover:bg-gray-700 text-white px-4 py-2 rounded-lg font-medium transition">📋 Copy Script</button>
-                    <button onclick="saveModalChanges()" class="bg-blue-600 hover:bg-blue-500 text-white px-5 py-2 rounded-lg font-semibold transition">💾 Save Changes</button>
-                </div>
-            </div>
-        </div>
-    </div>
 
     <!-- Modal: Add New Full Script -->
     <div id="addModal" class="fixed inset-0 bg-black/80 backdrop-blur-sm hidden items-center justify-center p-4 z-50">
         <div class="bg-gray-900 border border-gray-700 rounded-2xl max-w-2xl w-full p-6 flex flex-col gap-4 shadow-2xl">
             <div class="flex items-center justify-between border-b border-gray-800 pb-3">
-                <h2 class="text-lg font-bold text-white">➕ Add New Script</h2>
+                <h2 class="text-lg font-bold text-white">➕ Add New Script Card</h2>
                 <button onclick="closeAddModal()" class="text-gray-400 hover:text-white font-bold">✕ Close</button>
             </div>
             
@@ -139,12 +111,12 @@
             </div>
 
             <div>
-                <label class="block text-xs text-gray-400 mb-1">Topic Title (Thai)</label>
+                <label class="block text-xs text-gray-400 mb-1">Topic Title</label>
                 <input type="text" id="newClipTitle" placeholder="e.g. หัวข้อใหม่สั้นๆ" class="w-full bg-gray-950 border border-gray-800 rounded-lg p-2.5 text-white text-sm focus:outline-none focus:border-blue-500">
             </div>
 
             <div>
-                <label class="block text-xs text-gray-400 mb-1">Script Body (Spoken Thai with Preview Hook)</label>
+                <label class="block text-xs text-gray-400 mb-1">Script Body (Spoken Thai)</label>
                 <textarea id="newClipBody" oninput="updateAddWordCount()" class="w-full h-44 bg-gray-950 border border-gray-800 rounded-xl p-4 text-white font-mono text-sm leading-relaxed focus:outline-none focus:border-blue-500" placeholder="Type or paste spoken Thai script here..."></textarea>
             </div>
 
@@ -152,13 +124,13 @@
                 <span id="addWordCounter">Word count: 0 words (~0s)</span>
                 <div class="flex gap-2">
                     <button onclick="closeAddModal()" class="bg-gray-800 hover:bg-gray-700 text-white px-4 py-2 rounded-lg font-medium transition">Cancel</button>
-                    <button onclick="addNewScript()" class="bg-emerald-600 hover:bg-emerald-500 text-white px-5 py-2 rounded-lg font-semibold transition">✨ Publish Topic</button>
+                    <button onclick="addNewScript()" class="bg-emerald-600 hover:bg-emerald-500 text-white px-5 py-2 rounded-lg font-semibold transition">✨ Publish Card</button>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- Modal: Add New Topic Idea -->
+    <!-- Modal: Add New Topic Seed -->
     <div id="addTopicModal" class="fixed inset-0 bg-black/80 backdrop-blur-sm hidden items-center justify-center p-4 z-50">
         <div class="bg-gray-900 border border-gray-700 rounded-2xl max-w-xl w-full p-6 flex flex-col gap-4 shadow-2xl">
             <div class="flex items-center justify-between border-b border-gray-800 pb-3">
@@ -210,9 +182,7 @@
 
     <script>
         let scripts = [];
-        let activeEditId = null;
 
-        // Clean raw title by removing obsolete "Clip XX — " prefixes
         function sanitizeTitle(title) {
             return title.replace(/^Clip\s+\d+\s*—\s*/i, '').trim();
         }
@@ -263,7 +233,7 @@
                 const currentStatus = script.status || (script.completed ? 'completed' : 'pending');
                 const displayTitle = sanitizeTitle(script.title);
 
-                let cardClass = "card rounded-xl px-5 py-3.5 flex items-center justify-between script-card cursor-pointer hover:bg-gray-800/60";
+                let cardClass = "card rounded-xl overflow-hidden script-card transition-all duration-200";
                 if (isDone) cardClass += " card-completed";
                 if (isDiscarded) cardClass += " card-discarded";
 
@@ -273,20 +243,54 @@
                 card.setAttribute('data-id', script.id);
 
                 card.innerHTML = `
-                    <div class="flex items-center gap-4 flex-1 min-w-0 mr-4" onclick="openModal(${script.id})">
-                        <span class="text-xs font-mono font-bold text-gray-500 w-8">#${script.id}</span>
-                        <span class="text-xs font-semibold px-2.5 py-1 rounded tag-${script.cat.toLowerCase()} shrink-0">Cat ${script.cat}</span>
-                        <h3 class="text-sm font-bold text-white truncate hover:text-blue-400 transition">${displayTitle}</h3>
+                    <!-- Accordion Bar Header -->
+                    <div class="px-5 py-3.5 flex items-center justify-between cursor-pointer select-none hover:bg-gray-800/50" onclick="toggleAccordion(${script.id})">
+                        <div class="flex items-center gap-4 flex-1 min-w-0 mr-4">
+                            <span id="chevron-${script.id}" class="text-gray-500 font-bold text-xs transition-transform duration-200">►</span>
+                            <span class="text-xs font-mono font-bold text-gray-500 w-8">#${script.id}</span>
+                            <span class="text-xs font-semibold px-2.5 py-1 rounded tag-${script.cat.toLowerCase()} shrink-0">Cat ${script.cat}</span>
+                            <h3 id="display-title-${script.id}" class="text-sm font-bold text-white truncate hover:text-blue-400 transition">${displayTitle}</h3>
+                        </div>
+
+                        <div class="flex items-center gap-3 shrink-0" onclick="event.stopPropagation()">
+                            <span class="text-xs text-gray-400 font-mono hidden sm:inline">${wordCount} words (~${estTime}s)</span>
+                            <select onchange="changeStatus(${script.id}, this.value)" class="bg-gray-900 border border-gray-700 text-xs rounded px-2 py-1 font-semibold text-gray-200 focus:outline-none focus:border-blue-500 cursor-pointer">
+                                <option value="pending" ${currentStatus === 'pending' ? 'selected' : ''}>⏳ Pending</option>
+                                <option value="completed" ${currentStatus === 'completed' ? 'selected' : ''}>✅ Done</option>
+                                <option value="discarded" ${currentStatus === 'discarded' ? 'selected' : ''}>❌ Discard</option>
+                            </select>
+                        </div>
                     </div>
 
-                    <div class="flex items-center gap-4 shrink-0" onclick="event.stopPropagation()">
-                        <span class="text-xs text-gray-400 font-mono hidden sm:inline">${wordCount} words (~${estTime}s)</span>
-                        <select onchange="changeStatus(${script.id}, this.value)" class="bg-gray-900 border border-gray-700 text-xs rounded px-2 py-1 font-semibold text-gray-200 focus:outline-none focus:border-blue-500 cursor-pointer">
-                            <option value="pending" ${currentStatus === 'pending' ? 'selected' : ''}>⏳ Pending</option>
-                            <option value="completed" ${currentStatus === 'completed' ? 'selected' : ''}>✅ Done</option>
-                            <option value="discarded" ${currentStatus === 'discarded' ? 'selected' : ''}>❌ Discard</option>
-                        </select>
-                        <button onclick="openModal(${script.id})" class="bg-blue-900/60 hover:bg-blue-800 text-blue-200 border border-blue-700/50 px-2.5 py-1 rounded text-xs transition">✏️ View / Edit</button>
+                    <!-- Slide-Down Body Section -->
+                    <div id="body-panel-${script.id}" class="hidden border-t border-gray-800/80 bg-gray-950/60 p-5 flex flex-col gap-4">
+                        <!-- Read-Only View -->
+                        <div id="view-mode-${script.id}" class="flex flex-col gap-3">
+                            <p id="body-text-${script.id}" class="text-sm text-gray-200 leading-relaxed font-sans whitespace-pre-line">${script.body}</p>
+                            <div class="flex items-center justify-between pt-2 border-t border-gray-800/50">
+                                <span class="text-xs text-gray-500">Cat ${script.cat}: ${script.catName}</span>
+                                <div class="flex gap-2">
+                                    <button onclick="copyScriptText(${script.id})" class="bg-gray-800 hover:bg-gray-700 text-white px-3 py-1.5 rounded-lg text-xs font-medium transition">📋 Copy Text</button>
+                                    <button onclick="enableInlineEdit(${script.id})" class="bg-blue-900/60 hover:bg-blue-800 text-blue-200 border border-blue-700/50 px-3 py-1.5 rounded-lg text-xs font-semibold transition">✏️ Edit Script</button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Inline Edit Mode (Hidden by Default) -->
+                        <div id="edit-mode-${script.id}" class="hidden flex flex-col gap-3">
+                            <div>
+                                <label class="block text-xs text-gray-400 mb-1">Topic Title</label>
+                                <input type="text" id="edit-title-input-${script.id}" value="${displayTitle}" class="w-full bg-gray-900 border border-gray-700 rounded-lg p-2.5 text-white text-sm font-bold focus:outline-none focus:border-blue-500">
+                            </div>
+                            <div>
+                                <label class="block text-xs text-gray-400 mb-1">Script Body (Spoken Thai)</label>
+                                <textarea id="edit-body-input-${script.id}" class="w-full h-48 bg-gray-900 border border-gray-700 rounded-xl p-3 text-white font-mono text-sm leading-relaxed focus:outline-none focus:border-blue-500">${script.body}</textarea>
+                            </div>
+                            <div class="flex items-center justify-end gap-2 pt-1">
+                                <button onclick="cancelInlineEdit(${script.id})" class="bg-gray-800 hover:bg-gray-700 text-white px-3.5 py-1.5 rounded-lg text-xs font-medium transition">Cancel</button>
+                                <button onclick="saveInlineEdit(${script.id})" class="bg-blue-600 hover:bg-blue-500 text-white px-4 py-1.5 rounded-lg text-xs font-semibold transition">💾 Save Changes</button>
+                            </div>
+                        </div>
                     </div>
                 `;
 
@@ -295,6 +299,49 @@
 
             document.getElementById('counterBadge').textContent = `${scripts.length} CLIPS (${doneCount} DONE)`;
             filterScripts();
+        }
+
+        function toggleAccordion(id) {
+            const panel = document.getElementById(`body-panel-${id}`);
+            const chevron = document.getElementById(`chevron-${id}`);
+            
+            if (panel.classList.contains('hidden')) {
+                panel.classList.remove('hidden');
+                chevron.style.transform = 'rotate(90deg)';
+                chevron.classList.add('text-blue-400');
+            } else {
+                panel.classList.add('hidden');
+                chevron.style.transform = 'rotate(0deg)';
+                chevron.classList.remove('text-blue-400');
+                cancelInlineEdit(id);
+            }
+        }
+
+        function enableInlineEdit(id) {
+            document.getElementById(`view-mode-${id}`).classList.add('hidden');
+            document.getElementById(`edit-mode-${id}`).classList.remove('hidden');
+        }
+
+        function cancelInlineEdit(id) {
+            document.getElementById(`view-mode-${id}`).classList.remove('hidden');
+            document.getElementById(`edit-mode-${id}`).classList.add('hidden');
+        }
+
+        function saveInlineEdit(id) {
+            const script = scripts.find(s => s.id === id);
+            if (script) {
+                const newTitle = document.getElementById(`edit-title-input-${id}`).value.trim();
+                const newBody = document.getElementById(`edit-body-input-${id}`).value;
+
+                script.title = newTitle;
+                script.body = newBody;
+
+                renderScripts();
+                saveToKV();
+
+                // Keep panel open after re-render
+                setTimeout(() => toggleAccordion(id), 50);
+            }
         }
 
         function changeStatus(id, newStatus) {
@@ -307,58 +354,12 @@
             }
         }
 
-        function openModal(id) {
+        function copyScriptText(id) {
             const script = scripts.find(s => s.id === id);
-            if (!script) return;
-
-            activeEditId = id;
-            
-            const metaTag = document.getElementById('modalMeta');
-            metaTag.textContent = `#${script.id} | Cat ${script.cat}: ${script.catName}`;
-            metaTag.className = `text-xs font-semibold px-2.5 py-1 rounded tag-${script.cat.toLowerCase()}`;
-
-            const titleInput = document.getElementById('modalTitleInput');
-            titleInput.value = sanitizeTitle(script.title);
-
-            const textarea = document.getElementById('modalTextarea');
-            textarea.value = script.body;
-            updateModalWordCount();
-
-            textarea.oninput = updateModalWordCount;
-
-            document.getElementById('editorModal').classList.remove('hidden');
-            document.getElementById('editorModal').classList.add('flex');
-        }
-
-        function updateModalWordCount() {
-            const val = document.getElementById('modalTextarea').value;
-            const words = countWords(val);
-            const estTime = Math.round((words / 140) * 45);
-            document.getElementById('modalWordCounter').textContent = `Word count: ${words} words (~${estTime}s target)`;
-        }
-
-        function closeModal() {
-            document.getElementById('editorModal').classList.remove('flex');
-            document.getElementById('editorModal').classList.add('hidden');
-            activeEditId = null;
-        }
-
-        function saveModalChanges() {
-            if (!activeEditId) return;
-            const script = scripts.find(s => s.id === activeEditId);
             if (script) {
-                script.title = document.getElementById('modalTitleInput').value.trim();
-                script.body = document.getElementById('modalTextarea').value;
-                renderScripts();
-                saveToKV();
-                closeModal();
+                navigator.clipboard.writeText(script.body);
+                alert(`Copied "${sanitizeTitle(script.title)}" to clipboard!`);
             }
-        }
-
-        function copyModalText() {
-            const val = document.getElementById('modalTextarea').value;
-            navigator.clipboard.writeText(val);
-            alert("Script text copied to clipboard!");
         }
 
         function openAddModal() {
@@ -480,7 +481,7 @@
                 const matchesStatus = (statusVal === 'all') || (currentStatus === statusVal);
 
                 if (matchesSearch && matchesCategory && matchesStatus) {
-                    card.style.display = 'flex';
+                    card.style.display = 'block';
                 } else {
                     card.style.display = 'none';
                 }
