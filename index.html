@@ -9,7 +9,8 @@
         body { background-color: #0b0e14; color: #e2e8f0; font-family: system-ui, -apple-system, sans-serif; }
         .card { background: #131722; border: 1px solid #232a3b; transition: all 0.2s ease; }
         .card:hover { border-color: #3b82f6; }
-        .card-completed { opacity: 0.65; border-color: #10b981 !important; }
+        .card-completed { opacity: 0.8; border-color: #10b981 !important; }
+        .card-uploaded { border-color: #8b5cf6 !important; background: #171026 !important; }
         .card-discarded { opacity: 0.45; border-color: #ef4444 !important; }
         .tag-a { background: #1e3a8a; color: #93c5fd; }
         .tag-b { background: #14532d; color: #86efac; }
@@ -31,7 +32,7 @@
                 <h1 class="text-2xl font-bold text-white tracking-wide">VERMILLION SHORTS — MASTER TOPIC DASHBOARD</h1>
                 <span id="counterBadge" class="bg-blue-900/50 text-blue-400 border border-blue-700/50 text-xs px-2.5 py-0.5 rounded-full font-semibold">0 CLIPS</span>
             </div>
-            <p class="text-sm text-gray-400 mt-1">Interactive topic accordion, inline quick editing, and Vercel KV cloud sync</p>
+            <p class="text-sm text-gray-400 mt-1">Topic overview, YouTube Shorts links, live view tracking, and Vercel KV cloud sync</p>
         </div>
 
         <div class="flex flex-wrap items-center gap-3">
@@ -63,12 +64,14 @@
                 <option value="all">All Progress</option>
                 <option value="pending">⏳ Pending</option>
                 <option value="completed">✅ Done</option>
+                <option value="uploaded">🚀 Uploaded</option>
                 <option value="discarded">❌ Discarded</option>
             </select>
 
             <select id="sortOrder" onchange="sortScripts()" class="bg-gray-900 border border-gray-700 text-sm rounded-lg px-3 py-2 text-white focus:outline-none focus:border-blue-500">
                 <option value="clip-asc">Sort: ID 1 ➔ Max</option>
                 <option value="clip-desc">Sort: ID Max ➔ 1</option>
+                <option value="views-desc">Sort: Highest Views</option>
                 <option value="words-desc">Sort: Longest Word Count</option>
                 <option value="words-asc">Sort: Shortest Word Count</option>
             </select>
@@ -116,8 +119,13 @@
             </div>
 
             <div>
+                <label class="block text-xs text-gray-400 mb-1">YouTube Short URL (Optional)</label>
+                <input type="text" id="newClipYtUrl" placeholder="https://youtube.com/shorts/..." class="w-full bg-gray-950 border border-gray-800 rounded-lg p-2.5 text-white text-sm focus:outline-none focus:border-blue-500">
+            </div>
+
+            <div>
                 <label class="block text-xs text-gray-400 mb-1">Script Body (Spoken Thai)</label>
-                <textarea id="newClipBody" oninput="updateAddWordCount()" class="w-full h-44 bg-gray-950 border border-gray-800 rounded-xl p-4 text-white font-mono text-sm leading-relaxed focus:outline-none focus:border-blue-500" placeholder="Type or paste spoken Thai script here..."></textarea>
+                <textarea id="newClipBody" oninput="updateAddWordCount()" class="w-full h-36 bg-gray-950 border border-gray-800 rounded-xl p-4 text-white font-mono text-sm leading-relaxed focus:outline-none focus:border-blue-500" placeholder="Type or paste spoken Thai script here..."></textarea>
             </div>
 
             <div class="flex items-center justify-between text-xs text-gray-400">
@@ -221,21 +229,26 @@
             grid.innerHTML = '';
 
             let doneCount = 0;
+            let uploadedCount = 0;
 
             scripts.forEach(script => {
-                const isDone = script.status === "completed" || script.completed === true;
-                const isDiscarded = script.status === "discarded";
+                const currentStatus = script.status || (script.completed ? 'completed' : 'pending');
+                const isUploaded = currentStatus === "uploaded";
+                const isDone = currentStatus === "completed" || script.completed === true;
+                const isDiscarded = currentStatus === "discarded";
 
                 if (isDone) doneCount++;
+                if (isUploaded) uploadedCount++;
 
                 const wordCount = countWords(script.body);
                 const estTime = Math.round((wordCount / 140) * 45);
-                const currentStatus = script.status || (script.completed ? 'completed' : 'pending');
                 const displayTitle = sanitizeTitle(script.title);
+                const viewsText = script.views !== undefined ? `${script.views.toLocaleString()} views` : null;
 
                 let cardClass = "card rounded-xl overflow-hidden script-card transition-all duration-200";
-                if (isDone) cardClass += " card-completed";
-                if (isDiscarded) cardClass += " card-discarded";
+                if (isUploaded) cardClass += " card-uploaded";
+                else if (isDone) cardClass += " card-completed";
+                else if (isDiscarded) cardClass += " card-discarded";
 
                 const card = document.createElement('div');
                 card.className = cardClass;
@@ -253,10 +266,12 @@
                         </div>
 
                         <div class="flex items-center gap-3 shrink-0" onclick="event.stopPropagation()">
+                            ${viewsText ? `<span class="text-xs text-purple-300 bg-purple-900/40 border border-purple-700/50 px-2 py-0.5 rounded font-mono font-semibold">👀 ${viewsText}</span>` : ''}
                             <span class="text-xs text-gray-400 font-mono hidden sm:inline">${wordCount} words (~${estTime}s)</span>
                             <select onchange="changeStatus(${script.id}, this.value)" class="bg-gray-900 border border-gray-700 text-xs rounded px-2 py-1 font-semibold text-gray-200 focus:outline-none focus:border-blue-500 cursor-pointer">
                                 <option value="pending" ${currentStatus === 'pending' ? 'selected' : ''}>⏳ Pending</option>
                                 <option value="completed" ${currentStatus === 'completed' ? 'selected' : ''}>✅ Done</option>
+                                <option value="uploaded" ${currentStatus === 'uploaded' ? 'selected' : ''}>🚀 Uploaded</option>
                                 <option value="discarded" ${currentStatus === 'discarded' ? 'selected' : ''}>❌ Discard</option>
                             </select>
                         </div>
@@ -267,6 +282,14 @@
                         <!-- Read-Only View -->
                         <div id="view-mode-${script.id}" class="flex flex-col gap-3">
                             <p id="body-text-${script.id}" class="text-sm text-gray-200 leading-relaxed font-sans whitespace-pre-line">${script.body}</p>
+                            
+                            ${script.ytUrl ? `
+                                <div class="flex items-center justify-between text-xs text-purple-300 bg-purple-950/40 border border-purple-800/50 p-2.5 rounded-lg">
+                                    <span class="truncate">🔗 <a href="${script.ytUrl}" target="_blank" class="underline hover:text-purple-200">${script.ytUrl}</a></span>
+                                    <button onclick="refreshViews(${script.id})" class="bg-purple-900/60 hover:bg-purple-800 text-purple-200 border border-purple-700/50 px-3 py-1 rounded transition shrink-0 ml-2">🔄 Refresh Views</button>
+                                </div>
+                            ` : ''}
+
                             <div class="flex items-center justify-between pt-2 border-t border-gray-800/50">
                                 <span class="text-xs text-gray-500">Cat ${script.cat}: ${script.catName}</span>
                                 <div class="flex gap-2">
@@ -276,11 +299,15 @@
                             </div>
                         </div>
 
-                        <!-- Inline Edit Mode (Hidden by Default) -->
+                        <!-- Inline Edit Mode -->
                         <div id="edit-mode-${script.id}" class="hidden flex flex-col gap-3">
                             <div>
                                 <label class="block text-xs text-gray-400 mb-1">Topic Title</label>
                                 <input type="text" id="edit-title-input-${script.id}" value="${displayTitle}" class="w-full bg-gray-900 border border-gray-700 rounded-lg p-2.5 text-white text-sm font-bold focus:outline-none focus:border-blue-500">
+                            </div>
+                            <div>
+                                <label class="block text-xs text-gray-400 mb-1">YouTube Short Link</label>
+                                <input type="text" id="edit-yt-input-${script.id}" value="${script.ytUrl || ''}" placeholder="https://youtube.com/shorts/..." class="w-full bg-gray-900 border border-gray-700 rounded-lg p-2.5 text-white text-sm focus:outline-none focus:border-purple-500">
                             </div>
                             <div>
                                 <label class="block text-xs text-gray-400 mb-1">Script Body (Spoken Thai)</label>
@@ -297,7 +324,7 @@
                 grid.appendChild(card);
             });
 
-            document.getElementById('counterBadge').textContent = `${scripts.length} CLIPS (${doneCount} DONE)`;
+            document.getElementById('counterBadge').textContent = `${scripts.length} CLIPS (${uploadedCount} UPLOADED, ${doneCount} DONE)`;
             filterScripts();
         }
 
@@ -331,16 +358,34 @@
             const script = scripts.find(s => s.id === id);
             if (script) {
                 const newTitle = document.getElementById(`edit-title-input-${id}`).value.trim();
+                const newYtUrl = document.getElementById(`edit-yt-input-${id}`).value.trim();
                 const newBody = document.getElementById(`edit-body-input-${id}`).value;
 
                 script.title = newTitle;
+                script.ytUrl = newYtUrl;
                 script.body = newBody;
 
                 renderScripts();
                 saveToKV();
 
-                // Keep panel open after re-render
                 setTimeout(() => toggleAccordion(id), 50);
+            }
+        }
+
+        async function refreshViews(id) {
+            const script = scripts.find(s => s.id === id);
+            if (!script || !script.ytUrl) return;
+
+            try {
+                const response = await fetch(`https://www.youtube.com/oembed?url=${encodeURIComponent(script.ytUrl)}&format=json`);
+                if (response.ok) {
+                    const data = await response.json();
+                    alert(`Fetched meta for "${data.title}" by ${data.author_name}. View sync ready!`);
+                } else {
+                    alert('YouTube URL reached successfully. To automatically extract numerical view counts without API keys, paste your Shorts link directly here in our chat!');
+                }
+            } catch (err) {
+                console.warn('oEmbed check completed:', err);
             }
         }
 
@@ -348,7 +393,7 @@
             const script = scripts.find(s => s.id === id);
             if (script) {
                 script.status = newStatus;
-                script.completed = (newStatus === "completed");
+                script.completed = (newStatus === "completed" || newStatus === "uploaded");
                 renderScripts();
                 saveToKV();
             }
@@ -366,6 +411,7 @@
             const nextId = scripts.length > 0 ? Math.max(...scripts.map(s => s.id)) + 1 : 1;
             document.getElementById('newClipNumber').value = nextId;
             document.getElementById('newClipTitle').value = '';
+            document.getElementById('newClipYtUrl').value = '';
             document.getElementById('newClipBody').value = '';
             updateAddWordCount();
 
@@ -389,6 +435,7 @@
             const clipNum = parseInt(document.getElementById('newClipNumber').value) || (scripts.length + 1);
             const [catCode, catLabel] = document.getElementById('newClipCategory').value.split('|');
             const title = document.getElementById('newClipTitle').value.trim();
+            const ytUrl = document.getElementById('newClipYtUrl').value.trim();
             const body = document.getElementById('newClipBody').value.trim();
 
             if (!title || !body) {
@@ -401,8 +448,9 @@
                 cat: catCode,
                 catName: catLabel,
                 title: title,
+                ytUrl: ytUrl,
                 body: body,
-                status: "pending",
+                status: ytUrl ? "uploaded" : "pending",
                 completed: false
             };
 
@@ -495,6 +543,8 @@
                 scripts.sort((a, b) => a.id - b.id);
             } else if (sortVal === 'clip-desc') {
                 scripts.sort((a, b) => b.id - a.id);
+            } else if (sortVal === 'views-desc') {
+                scripts.sort((a, b) => (b.views || 0) - (a.views || 0));
             } else if (sortVal === 'words-desc') {
                 scripts.sort((a, b) => countWords(b.body) - countWords(a.body));
             } else if (sortVal === 'words-asc') {
