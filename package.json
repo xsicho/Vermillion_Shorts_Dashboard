@@ -2,6 +2,6 @@
   "name": "vermillion-shorts-dashboard",
   "version": "1.0.0",
   "dependencies": {
-    "@upstash/redis": "^1.28.0"
+    "redis": "^4.6.0"
   }
 }
