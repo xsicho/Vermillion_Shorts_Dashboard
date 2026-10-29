@@ -18,24 +18,39 @@ export default async function handler(req, res) {
       return res.status(400).json({ error: 'Invalid YouTube URL format' });
     }
 
-    // Fetch video page HTML
-    const response = await fetch(`https://www.youtube.com/watch?v=${videoId}`, {
+    // Call official YouTube oEmbed API to verify video exists and gets official metadata
+    const oembedRes = await fetch(`https://www.youtube.com/oembed?url=https://www.youtube.com/watch?v=${videoId}&format=json`);
+    
+    if (!oembedRes.ok) {
+      return res.status(404).json({ error: 'Video not found or private' });
+    }
+
+    const oembedData = await oembedRes.json();
+
+    // Fetch view count from YouTube's public web page player JSON payload
+    const pageRes = await fetch(`https://www.youtube.com/watch?v=${videoId}`, {
       headers: {
-        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36'
+        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/121.0.0.0 Safari/537.36',
+        'Accept-Language': 'en-US,en;q=0.9'
       }
     });
 
-    const html = await response.text();
+    const html = await pageRes.text();
 
-    // Extract viewCount from YouTube meta tag or ytInitialData
-    const viewMetaMatch = html.match(/<meta itemprop="interactionCount" content="(\d+)">/) ||
-                          html.match(/"viewCount":"(\d+)"/);
+    // Regex match for viewCount inside ytInitialData payload
+    const viewMatch = html.match(/"viewCount":"(\d+)"/) || 
+                      html.match(/"videoDetails":\{"videoId":"[^"]+","title":"[^"]+","lengthSeconds":"[^"]+","keywords":\[.*?\],"channelId":"[^"]+","isOwnerViewing":false,"shortDescription":"[^"]*","isCrawlable":true,"thumbnail":\{"thumbnails":\[.*?\]\},"allowRatings":true,"viewCount":"(\d+)"/);
 
-    const views = viewMetaMatch ? parseInt(viewMetaMatch[1], 10) : 0;
+    const views = viewMatch ? parseInt(viewMatch[1], 10) : 0;
 
-    return res.status(200).json({ videoId, views });
+    return res.status(200).json({ 
+      videoId, 
+      title: oembedData.title,
+      author: oembedData.author_name,
+      views 
+    });
   } catch (error) {
-    console.error('Error scraping YouTube view count:', error);
+    console.error('Error fetching YouTube view count:', error);
     return res.status(500).json({ error: error.message });
   }
 }
