@@ -1,35 +1,44 @@
-export default async function handler(req, res) {
-  res.setHeader('Access-Control-Allow-Origin', '*');
-  res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
-  res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
+async function refreshAllViews() {
+    const btn = document.getElementById('refreshAllBtn');
+    const eligibleScripts = scripts.filter(s => s.ytUrl && s.ytUrl.trim().length > 0);
 
-  if (req.method === 'OPTIONS') return res.status(200).end();
-  if (req.method !== 'POST') return res.status(405).json({ error: 'Method not allowed' });
-
-  const { ytUrl } = req.body;
-  if (!ytUrl) return res.status(400).json({ error: 'Missing ytUrl parameter' });
-
-  const match = ytUrl.match(/(?:shorts\/|v=|youtu\.be\/)([a-zA-Z0-9_-]{11})/);
-  const videoId = match ? match[1] : null;
-
-  if (!videoId) return res.status(400).json({ error: 'Invalid YouTube URL format' });
-
-  const apiKey = process.env.YOUTUBE_API_KEY;
-  if (!apiKey) return res.status(500).json({ error: 'YOUTUBE_API_KEY environment variable missing' });
-
-  try {
-    const apiRes = await fetch(
-      `https://www.googleapis.com/youtube/v3/videos?part=statistics&id=${videoId}&key=${apiKey}`
-    );
-    const data = await apiRes.json();
-
-    if (data.items && data.items.length > 0) {
-      const views = parseInt(data.items[0].statistics.viewCount, 10) || 0;
-      return res.status(200).json({ videoId, views });
+    if (eligibleScripts.length === 0) {
+        alert('No clips with YouTube links found.');
+        return;
     }
 
-    return res.status(404).json({ error: 'Video not found' });
-  } catch (error) {
-    return res.status(500).json({ error: error.message });
-  }
+    btn.disabled = true;
+    btn.innerHTML = `<span>⏳</span> Syncing ${eligibleScripts.length} Shorts...`;
+
+    let updatedCount = 0;
+
+    for (const script of eligibleScripts) {
+        try {
+            const match = script.ytUrl.match(/(?:shorts\/|v=|youtu\.be\/)([a-zA-Z0-9_-]{11})/);
+            const videoId = match ? match[1] : null;
+
+            if (!videoId) continue;
+
+            // Direct fetch via CORS proxy or web page payload
+            const res = await fetch(`https://www.youtube.com/watch?v=${videoId}`);
+            const html = await res.text();
+            
+            const viewMatch = html.match(/"viewCount":"(\d+)"/);
+            if (viewMatch) {
+                script.views = parseInt(viewMatch[1], 10);
+                script.status = "uploaded";
+                script.completed = true;
+                updatedCount++;
+            }
+        } catch (err) {
+            console.warn(`Browser fetch restricted for #${script.id}:`, err);
+        }
+    }
+
+    renderScripts();
+    await saveToKV();
+
+    btn.disabled = false;
+    btn.innerHTML = `<span>🔄</span> Refresh All Views`;
+    alert(`Successfully updated ${updatedCount} YouTube Shorts!`);
 }
