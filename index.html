@@ -68,11 +68,6 @@
           <span>Export JSON</span>
         </button>
 
-        <button onclick="resetToRemoteJson()" class="bg-slate-800 hover:bg-slate-700 border border-slate-700 text-slate-300 text-sm font-medium px-3.5 py-2 rounded-lg flex items-center gap-2 transition" title="Reload from data/scripts.json">
-          <i class="fa-solid fa-arrows-rotate text-xs"></i>
-          <span>Reload JSON</span>
-        </button>
-
         <button onclick="addNewScript()" class="bg-slate-800 hover:bg-slate-700 border border-slate-700 text-white text-sm font-medium px-3.5 py-2 rounded-lg flex items-center gap-2 transition">
           <i class="fa-solid fa-plus text-xs"></i>
           <span>New Script</span>
@@ -107,7 +102,7 @@
   <!-- Main Grid Area -->
   <main class="max-w-7xl mx-auto w-full px-6 py-6 flex-1">
     <div id="script-container" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
-      <!-- Dynamic Script Cards inserted here -->
+      <!-- Cards rendered here -->
     </div>
   </main>
 
@@ -127,7 +122,7 @@
         <button onclick="closeApiKeyModal()" class="text-slate-400 hover:text-white"><i class="fa-solid fa-xmark"></i></button>
       </div>
       <p class="text-xs text-slate-400 mb-4">
-        Enter your Google Cloud Data API Key to fetch view statistics directly. Key is saved locally in your browser.
+        Enter your Google Cloud YouTube Data API Key to fetch live view counts.
       </p>
       <input type="text" id="api-key-input" placeholder="AIzaSy..." class="w-full bg-slate-800 border border-slate-700 rounded-lg px-3.5 py-2.5 text-sm text-slate-200 focus:outline-none focus:border-indigo-500 mb-4">
       <div class="flex justify-end gap-2">
@@ -170,11 +165,11 @@
 
         <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <div>
-            <label class="block text-xs font-semibold text-slate-400 uppercase mb-1">YouTube Video ID / URL</label>
+            <label class="block text-xs font-semibold text-slate-400 uppercase mb-1">YouTube Video ID / Link</label>
             <input type="text" id="edit-youtube-id" placeholder="e.g. dQw4w9WgXcQ" class="w-full bg-slate-800 border border-slate-700 rounded-lg px-3.5 py-2 text-sm text-slate-200 focus:outline-none focus:border-indigo-500">
           </div>
           <div>
-            <label class="block text-xs font-semibold text-slate-400 uppercase mb-1">Manual Views Override</label>
+            <label class="block text-xs font-semibold text-slate-400 uppercase mb-1">Manual Views</label>
             <input type="number" id="edit-views" class="w-full bg-slate-800 border border-slate-700 rounded-lg px-3.5 py-2 text-sm text-slate-200 focus:outline-none focus:border-indigo-500">
           </div>
         </div>
@@ -200,71 +195,76 @@
     let currentFilter = 'ALL';
     let draggedIndex = null;
 
-    // --- Startup Initialization ---
     document.addEventListener('DOMContentLoaded', () => {
       loadScriptsData();
     });
 
     async function loadScriptsData() {
-      const localData = localStorage.getItem('shorts_scripts_cache');
-      
-      if (localData) {
-        try {
-          const parsed = JSON.parse(localData);
-          if (Array.isArray(parsed) && parsed.length > 0) {
-            scripts = parsed;
-            normalizeSortOrders();
-            renderScripts();
-            return;
-          }
-        } catch (e) {
-          console.warn("Failed to parse local cache, fetching fresh JSON", e);
-        }
-      }
-
-      await fetchRemoteJson();
-    }
-
-    async function fetchRemoteJson() {
+      // 1. Try fetching from data/scripts.json directly
       try {
         const res = await fetch('data/scripts.json');
         if (res.ok) {
           const data = await res.json();
-          // Handles both array format [...] and object format { scripts: [...] }
-          scripts = Array.isArray(data) ? data : (data.scripts || []);
-          normalizeSortOrders();
-          saveState();
-          showToast(`Loaded ${scripts.length} scripts from JSON`);
-        } else {
-          showToast('Failed to fetch data/scripts.json', 'error');
+          // Support both array format [...] and object format { scripts: [...] } or { clips: [...] }
+          scripts = Array.isArray(data) ? data : (data.scripts || data.clips || []);
+          
+          // Apply local overrides (like view counts or status edits) if present
+          const localCache = localStorage.getItem('shorts_scripts_overrides');
+          if (localCache) {
+            try {
+              const overrides = JSON.parse(localCache);
+              // Merge local overrides or reordered positions
+              if (Array.isArray(overrides) && overrides.length > 0) {
+                scripts = mergeScriptsWithOverrides(scripts, overrides);
+              }
+            } catch (e) {
+              console.warn("Local override merge skipped", e);
+            }
+          }
         }
       } catch (err) {
-        console.error("Fetch error:", err);
-        showToast('Error loading scripts JSON', 'error');
+        console.error("Error loading scripts JSON:", err);
+        showToast('Error loading scripts.json', 'error');
       }
+
+      // Ensure every item has a sort_order
+      scripts.forEach((item, idx) => {
+        if (item.sort_order === undefined) item.sort_order = idx + 1;
+      });
+      scripts.sort((a, b) => a.sort_order - b.sort_order);
+
       renderScripts();
     }
 
-    function resetToRemoteJson() {
-      localStorage.removeItem('shorts_scripts_cache');
-      fetchRemoteJson();
-    }
+    function mergeScriptsWithOverrides(fetched, saved) {
+      // Respect saved order if user dragged cards around
+      const savedMap = new Map(saved.map(s => [s.id, s]));
+      const result = [];
 
-    function normalizeSortOrders() {
-      scripts.forEach((item, idx) => {
-        if (item.sort_order === undefined) {
-          item.sort_order = idx + 1;
+      saved.forEach(s => {
+        const fresh = fetched.find(f => f.id === s.id);
+        if (fresh) {
+          result.push({ ...fresh, ...s });
+        } else {
+          result.push(s);
         }
       });
-      scripts.sort((a, b) => a.sort_order - b.sort_order);
+
+      // Add any new scripts from JSON that weren't in saved state
+      fetched.forEach(f => {
+        if (!savedMap.has(f.id)) {
+          result.push(f);
+        }
+      });
+
+      return result;
     }
 
     function saveState() {
-      localStorage.setItem('shorts_scripts_cache', JSON.stringify(scripts));
+      localStorage.setItem('shorts_scripts_overrides', JSON.stringify(scripts));
       document.getElementById('script-count').innerText = scripts.length;
     }
 
-    // --- Rendering ---
     function renderScripts() {
       const container = document.getElementById('script-container');
       container.innerHTML = '';
@@ -282,7 +282,7 @@
         container.innerHTML = `
           <div class="col-span-full py-12 text-center text-slate-500">
             <i class="fa-solid fa-folder-open text-4xl mb-3 block opacity-40"></i>
-            <p class="text-sm">No scripts found. Try clearing search or reloading JSON.</p>
+            <p class="text-sm">No scripts found.</p>
           </div>
         `;
       } else {
@@ -316,7 +316,6 @@
 
       card.innerHTML = `
         <div>
-          <!-- Header info -->
           <div class="flex items-center justify-between gap-2 mb-3">
             <div class="flex items-center gap-2">
               <span class="cursor-grab text-slate-600 hover:text-slate-400 transition" title="Drag to reorder">
@@ -327,18 +326,15 @@
             <span class="text-[11px] font-medium px-2.5 py-0.5 rounded-full border ${statusBg}">${script.status || 'Draft'}</span>
           </div>
 
-          <!-- Title -->
           <h3 class="font-bold text-slate-100 text-base mb-2 leading-snug cursor-pointer hover:text-indigo-400 transition" onclick="openEditModal(${script.id})">
             ${script.title}
           </h3>
 
-          <!-- Body snippet -->
           <p class="text-xs text-slate-400 line-clamp-4 leading-relaxed mb-4 whitespace-pre-line">
             ${script.script_body}
           </p>
         </div>
 
-        <!-- Footer / Controls -->
         <div class="pt-3 border-t border-slate-800/80 flex items-center justify-between text-xs">
           <div class="flex items-center gap-2 text-slate-400" title="YouTube Views">
             <i class="fa-solid fa-eye text-slate-500"></i>
@@ -346,7 +342,7 @@
           </div>
 
           <div class="flex items-center gap-2">
-            <button onclick="copyToClipboard(\`${escapeJsString(script.script_body)}\`)" class="bg-slate-800 hover:bg-slate-700 text-slate-300 px-2.5 py-1.5 rounded-md border border-slate-700 transition flex items-center gap-1.5" title="Copy Script">
+            <button class="btn-copy bg-slate-800 hover:bg-slate-700 text-slate-300 px-2.5 py-1.5 rounded-md border border-slate-700 transition flex items-center gap-1.5" title="Copy Script">
               <i class="fa-solid fa-copy text-xs"></i>
               <span>Copy</span>
             </button>
@@ -356,6 +352,13 @@
           </div>
         </div>
       `;
+
+      // Safely attach copy event to avoid string quote escaping issues
+      card.querySelector('.btn-copy').addEventListener('click', () => {
+        navigator.clipboard.writeText(script.script_body).then(() => {
+          showToast('Script copied to clipboard!');
+        });
+      });
 
       return card;
     }
@@ -381,34 +384,19 @@
       const movedItem = scripts.splice(draggedIndex, 1)[0];
       scripts.splice(targetIndex, 0, movedItem);
 
-      // Re-assign sort orders
       scripts.forEach((item, idx) => {
         item.sort_order = idx + 1;
       });
 
       saveState();
       renderScripts();
-      showToast('Queue reordered successfully');
+      showToast('Reordered script queue');
     }
 
     function handleDragEnd(card) {
       card.classList.remove('card-dragging');
       document.querySelectorAll('.drag-over').forEach(el => el.classList.remove('drag-over'));
       draggedIndex = null;
-    }
-
-    // --- Utility Copy & Toast ---
-    function copyToClipboard(text) {
-      navigator.clipboard.writeText(text).then(() => {
-        showToast('Script paragraph copied to clipboard!');
-      }).catch(err => {
-        showToast('Failed to copy text', 'error');
-      });
-    }
-
-    function escapeJsString(str) {
-      if (!str) return '';
-      return str.replace(/\\/g, '\\\\').replace(/`/g, '\\`').replace(/\$/g, '\\$');
     }
 
     function showToast(msg, type = 'success') {
@@ -429,7 +417,6 @@
       }, 3000);
     }
 
-    // --- Filter & Search ---
     function filterScripts() {
       renderScripts();
     }
@@ -446,7 +433,6 @@
       renderScripts();
     }
 
-    // --- Export JSON ---
     function exportJson() {
       const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(scripts, null, 2));
       const downloadAnchor = document.createElement('a');
@@ -455,7 +441,7 @@
       document.body.appendChild(downloadAnchor);
       downloadAnchor.click();
       downloadAnchor.remove();
-      showToast('Exported scripts.json file!');
+      showToast('Exported updated scripts.json!');
     }
 
     // --- YouTube API Views Fetcher ---
@@ -463,17 +449,15 @@
       if (!input) return null;
       input = input.trim();
       if (input.length === 11) return input;
-      
-      const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|shorts\/|watch\?v=|\&v=)([^#\&\?]*).*/;
-      const match = input.match(regExp);
-      return (match && match[2].length === 11) ? match[2] : null;
+      const match = input.match(/(?:v=|\/shorts\/|youtu\.be\/)([a-zA-Z0-9_-]{11})/);
+      return match ? match[1] : null;
     }
 
     async function fetchYouTubeViews() {
       const apiKey = localStorage.getItem('yt_dashboard_api_key');
       if (!apiKey) {
         openApiKeyModal();
-        showToast('Please set your YouTube API Key first', 'error');
+        showToast('Please save your YouTube API Key first', 'error');
         return;
       }
 
@@ -484,7 +468,7 @@
       });
 
       if (idMap.length === 0) {
-        showToast('No valid YouTube Video IDs found in scripts', 'error');
+        showToast('No YouTube Video IDs set on scripts', 'error');
         return;
       }
 
@@ -526,7 +510,6 @@
       }
     }
 
-    // --- Modal Controls ---
     function openApiKeyModal() {
       document.getElementById('api-key-input').value = localStorage.getItem('yt_dashboard_api_key') || '';
       document.getElementById('api-modal').classList.remove('hidden');
@@ -540,7 +523,7 @@
       const val = document.getElementById('api-key-input').value.trim();
       localStorage.setItem('yt_dashboard_api_key', val);
       closeApiKeyModal();
-      showToast('API Key saved successfully');
+      showToast('API Key saved');
     }
 
     function openEditModal(scriptId) {
@@ -582,11 +565,7 @@
       let script = scripts.find(s => s.id === id);
 
       if (!script) {
-        script = {
-          id: id,
-          sort_order: 1
-        };
-        // Bump all current sort_orders down
+        script = { id: id, sort_order: 1 };
         scripts.forEach(s => s.sort_order++);
         scripts.unshift(script);
       }
