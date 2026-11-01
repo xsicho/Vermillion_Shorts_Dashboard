@@ -1,585 +1,723 @@
 <!DOCTYPE html>
 <html lang="th">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>YouTube Shorts Script Dashboard</title>
-  <script src="https://cdn.tailwindcss.com"></script>
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-  <style>
-    @import url('https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;500;600;700&display=swap');
-    body {
-      font-family: 'Kanit', sans-serif;
-      background-color: #0f172a;
-      color: #f8fafc;
-    }
-    .card-dragging {
-      opacity: 0.4;
-      border: 2px dashed #6366f1 !important;
-    }
-    .drag-over {
-      border-top: 4px solid #6366f1 !important;
-    }
-    .custom-scrollbar::-webkit-scrollbar {
-      width: 6px;
-    }
-    .custom-scrollbar::-webkit-scrollbar-track {
-      background: #1e293b;
-    }
-    .custom-scrollbar::-webkit-scrollbar-thumb {
-      background: #475569;
-      border-radius: 3px;
-    }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vermillion Shorts — Master Content & Topic Dashboard</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body { background-color: #0b0e14; color: #e2e8f0; font-family: system-ui, -apple-system, sans-serif; }
+        .card { background: #131722; border: 1px solid #232a3b; transition: all 0.2s ease; }
+        .card:hover { border-color: #3b82f6; }
+        .card-completed { opacity: 0.8; border-color: #10b981 !important; }
+        .card-uploaded { border-color: #8b5cf6 !important; background: #171026 !important; }
+        .card-discarded { opacity: 0.45; border-color: #ef4444 !important; }
+        .card-dragging { opacity: 0.4; border: 2px dashed #3b82f6 !important; }
+        .drag-over { border-top: 3px solid #3b82f6 !important; }
+        .tag-a { background: #1e3a8a; color: #93c5fd; }
+        .tag-b { background: #14532d; color: #86efac; }
+        .tag-c { background: #701a75; color: #f0abfc; }
+        .tag-d { background: #7c2d12; color: #fdba74; }
+        .tag-f { background: #312e81; color: #c7d2fe; }
+        .tag-g { background: #365314; color: #bef264; }
+        .tag-h { background: #831843; color: #f472b6; }
+        .tag-i { background: #134e4a; color: #99f6e4; }
+        .tag-j { background: #4c1d95; color: #ddd6fe; }
+        .tag-l { background: #3f6212; color: #d9f99d; }
+    </style>
 </head>
-<body class="min-h-screen flex flex-col custom-scrollbar">
-
-  <!-- Header & Toolbar -->
-  <header class="bg-slate-900/80 backdrop-blur-md border-b border-slate-800 sticky top-0 z-40 px-6 py-4">
-    <div class="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center gap-4">
-      
-      <!-- Title & Branding -->
-      <div class="flex items-center gap-3">
-        <div class="bg-red-600/20 text-red-500 p-2.5 rounded-xl border border-red-500/30">
-          <i class="fa-solid fa-clapperboard text-xl"></i>
-        </div>
+<body class="p-6 max-w-[1400px] mx-auto">
+    <!-- Header Controls -->
+    <header class="flex flex-col md:flex-row md:items-center justify-between pb-6 mb-6 border-b border-gray-800 gap-4">
         <div>
-          <h1 class="text-xl font-bold bg-gradient-to-r from-white via-slate-200 to-slate-400 bg-clip-text text-transparent">
-            Shorts Script Dashboard
-          </h1>
-          <p class="text-xs text-slate-400">Managing <span id="script-count">0</span> scripts</p>
-        </div>
-      </div>
-
-      <!-- Control Buttons -->
-      <div class="flex flex-wrap items-center gap-2">
-        <button onclick="openApiKeyModal()" class="bg-slate-800 hover:bg-slate-700 border border-slate-700 text-slate-300 text-sm font-medium px-3.5 py-2 rounded-lg flex items-center gap-2 transition">
-          <i class="fa-solid fa-key text-amber-400"></i>
-          <span>API Key</span>
-        </button>
-
-        <button onclick="fetchYouTubeViews()" id="btn-fetch-views" class="bg-indigo-600 hover:bg-indigo-500 text-white text-sm font-medium px-3.5 py-2 rounded-lg flex items-center gap-2 transition shadow-lg shadow-indigo-600/20">
-          <i class="fa-solid fa-rotate text-xs"></i>
-          <span>Fetch Views</span>
-        </button>
-
-        <button onclick="exportJson()" class="bg-emerald-600 hover:bg-emerald-500 text-white text-sm font-medium px-3.5 py-2 rounded-lg flex items-center gap-2 transition shadow-lg shadow-emerald-600/20">
-          <i class="fa-solid fa-download text-xs"></i>
-          <span>Export JSON</span>
-        </button>
-
-        <button onclick="addNewScript()" class="bg-slate-800 hover:bg-slate-700 border border-slate-700 text-white text-sm font-medium px-3.5 py-2 rounded-lg flex items-center gap-2 transition">
-          <i class="fa-solid fa-plus text-xs"></i>
-          <span>New Script</span>
-        </button>
-      </div>
-
-    </div>
-  </header>
-
-  <!-- Filter & Search Bar -->
-  <section class="max-w-7xl mx-auto w-full px-6 pt-6">
-    <div class="flex flex-col sm:flex-row gap-4 justify-between items-center bg-slate-900/50 p-3 rounded-xl border border-slate-800">
-      
-      <!-- Search Input -->
-      <div class="relative w-full sm:w-80">
-        <i class="fa-solid fa-magnifying-glass absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-500 text-sm"></i>
-        <input type="text" id="search-input" oninput="filterScripts()" placeholder="Search title or content..." 
-               class="w-full bg-slate-800/80 border border-slate-700 rounded-lg pl-10 pr-4 py-2 text-sm text-slate-200 placeholder-slate-500 focus:outline-none focus:border-indigo-500 transition">
-      </div>
-
-      <!-- Status Filters -->
-      <div class="flex items-center gap-1.5 overflow-x-auto w-full sm:w-auto pb-2 sm:pb-0">
-        <button onclick="setStatusFilter('ALL')" class="filter-btn active bg-slate-800 text-slate-200 text-xs font-medium px-3 py-1.5 rounded-lg border border-slate-700 transition" data-status="ALL">All</button>
-        <button onclick="setStatusFilter('Draft')" class="filter-btn text-slate-400 text-xs font-medium px-3 py-1.5 rounded-lg border border-transparent hover:border-slate-800 transition" data-status="Draft">Draft</button>
-        <button onclick="setStatusFilter('Ready to Record')" class="filter-btn text-slate-400 text-xs font-medium px-3 py-1.5 rounded-lg border border-transparent hover:border-slate-800 transition" data-status="Ready to Record">Ready</button>
-        <button onclick="setStatusFilter('Recorded')" class="filter-btn text-slate-400 text-xs font-medium px-3 py-1.5 rounded-lg border border-transparent hover:border-slate-800 transition" data-status="Recorded">Recorded</button>
-      </div>
-
-    </div>
-  </section>
-
-  <!-- Main Grid Area -->
-  <main class="max-w-7xl mx-auto w-full px-6 py-6 flex-1">
-    <div id="script-container" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
-      <!-- Dynamic Script Cards inserted here -->
-    </div>
-  </main>
-
-  <!-- Toast Notification -->
-  <div id="toast" class="fixed bottom-6 right-6 bg-slate-800 text-white border border-slate-700 px-4 py-3 rounded-xl shadow-2xl flex items-center gap-3 transition-all transform translate-y-20 opacity-0 z-50">
-    <i id="toast-icon" class="fa-solid fa-circle-check text-emerald-400"></i>
-    <span id="toast-msg" class="text-sm font-medium">Notification</span>
-  </div>
-
-  <!-- API Key Modal -->
-  <div id="api-modal" class="fixed inset-0 bg-black/70 backdrop-blur-sm flex items-center justify-center p-4 z-50 hidden">
-    <div class="bg-slate-900 border border-slate-800 rounded-2xl max-w-md w-full p-6 shadow-2xl">
-      <div class="flex justify-between items-center mb-4">
-        <h3 class="text-lg font-bold text-white flex items-center gap-2">
-          <i class="fa-solid fa-key text-amber-400"></i> YouTube API Key
-        </h3>
-        <button onclick="closeApiKeyModal()" class="text-slate-400 hover:text-white"><i class="fa-solid fa-xmark"></i></button>
-      </div>
-      <p class="text-xs text-slate-400 mb-4">
-        Enter your Google Cloud Data API Key to fetch view statistics directly. Key is saved locally in your browser.
-      </p>
-      <input type="text" id="api-key-input" placeholder="AIzaSy..." class="w-full bg-slate-800 border border-slate-700 rounded-lg px-3.5 py-2.5 text-sm text-slate-200 focus:outline-none focus:border-indigo-500 mb-4">
-      <div class="flex justify-end gap-2">
-        <button onclick="closeApiKeyModal()" class="px-4 py-2 rounded-lg text-sm bg-slate-800 hover:bg-slate-700 text-slate-300">Cancel</button>
-        <button onclick="saveApiKey()" class="px-4 py-2 rounded-lg text-sm bg-indigo-600 hover:bg-indigo-500 text-white font-medium">Save Key</button>
-      </div>
-    </div>
-  </div>
-
-  <!-- Script Editor Modal -->
-  <div id="edit-modal" class="fixed inset-0 bg-black/70 backdrop-blur-sm flex items-center justify-center p-4 z-50 hidden">
-    <div class="bg-slate-900 border border-slate-800 rounded-2xl max-w-2xl w-full p-6 shadow-2xl max-h-[90vh] flex flex-col">
-      <div class="flex justify-between items-center mb-4">
-        <h3 class="text-lg font-bold text-white" id="modal-title-text">Edit Script</h3>
-        <button onclick="closeEditModal()" class="text-slate-400 hover:text-white"><i class="fa-solid fa-xmark"></i></button>
-      </div>
-
-      <div class="space-y-4 overflow-y-auto custom-scrollbar pr-2 flex-1">
-        <input type="hidden" id="edit-id">
-
-        <div>
-          <label class="block text-xs font-semibold text-slate-400 uppercase mb-1">Title</label>
-          <input type="text" id="edit-title" class="w-full bg-slate-800 border border-slate-700 rounded-lg px-3.5 py-2 text-sm text-slate-200 focus:outline-none focus:border-indigo-500">
-        </div>
-
-        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-          <div>
-            <label class="block text-xs font-semibold text-slate-400 uppercase mb-1">Category</label>
-            <input type="text" id="edit-category" class="w-full bg-slate-800 border border-slate-700 rounded-lg px-3.5 py-2 text-sm text-slate-200 focus:outline-none focus:border-indigo-500">
-          </div>
-          <div>
-            <label class="block text-xs font-semibold text-slate-400 uppercase mb-1">Status</label>
-            <select id="edit-status" class="w-full bg-slate-800 border border-slate-700 rounded-lg px-3.5 py-2 text-sm text-slate-200 focus:outline-none focus:border-indigo-500">
-              <option value="Draft">Draft</option>
-              <option value="Ready to Record">Ready to Record</option>
-              <option value="Recorded">Recorded</option>
-            </select>
-          </div>
-        </div>
-
-        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-          <div>
-            <label class="block text-xs font-semibold text-slate-400 uppercase mb-1">YouTube Video ID / URL</label>
-            <input type="text" id="edit-youtube-id" placeholder="e.g. dQw4w9WgXcQ" class="w-full bg-slate-800 border border-slate-700 rounded-lg px-3.5 py-2 text-sm text-slate-200 focus:outline-none focus:border-indigo-500">
-          </div>
-          <div>
-            <label class="block text-xs font-semibold text-slate-400 uppercase mb-1">Manual Views Override</label>
-            <input type="number" id="edit-views" class="w-full bg-slate-800 border border-slate-700 rounded-lg px-3.5 py-2 text-sm text-slate-200 focus:outline-none focus:border-indigo-500">
-          </div>
-        </div>
-
-        <div>
-          <label class="block text-xs font-semibold text-slate-400 uppercase mb-1">Script Content</label>
-          <textarea id="edit-body" rows="8" class="w-full bg-slate-800 border border-slate-700 rounded-lg p-3 text-sm text-slate-200 focus:outline-none focus:border-indigo-500 leading-relaxed custom-scrollbar"></textarea>
-        </div>
-      </div>
-
-      <div class="flex justify-between items-center pt-4 border-t border-slate-800 mt-4">
-        <button onclick="deleteCurrentScript()" class="px-4 py-2 rounded-lg text-sm bg-red-900/30 hover:bg-red-900/50 text-red-400 border border-red-800/50">Delete</button>
-        <div class="flex gap-2">
-          <button onclick="closeEditModal()" class="px-4 py-2 rounded-lg text-sm bg-slate-800 hover:bg-slate-700 text-slate-300">Cancel</button>
-          <button onclick="saveScriptChanges()" class="px-4 py-2 rounded-lg text-sm bg-indigo-600 hover:bg-indigo-500 text-white font-medium">Save Script</button>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <script>
-    let scripts = [];
-    let currentFilter = 'ALL';
-    let draggedIndex = null;
-
-    document.addEventListener('DOMContentLoaded', () => {
-      loadScriptsData();
-    });
-
-    async function loadScriptsData() {
-      try {
-        const res = await fetch('data/scripts.json');
-        if (res.ok) {
-          const data = await res.json();
-          scripts = Array.isArray(data) ? data : (data.scripts || data.clips || []);
-          
-          const localCache = localStorage.getItem('shorts_scripts_overrides');
-          if (localCache) {
-            try {
-              const overrides = JSON.parse(localCache);
-              if (Array.isArray(overrides) && overrides.length > 0) {
-                scripts = mergeScriptsWithOverrides(scripts, overrides);
-              }
-            } catch (e) {
-              console.warn("Local override merge skipped", e);
-            }
-          }
-        }
-      } catch (err) {
-        console.error("Error loading scripts JSON:", err);
-        showToast('Error loading scripts.json', 'error');
-      }
-
-      scripts.forEach((item, idx) => {
-        if (item.sort_order === undefined) item.sort_order = idx + 1;
-      });
-      scripts.sort((a, b) => a.sort_order - b.sort_order);
-
-      renderScripts();
-    }
-
-    function mergeScriptsWithOverrides(fetched, saved) {
-      const savedMap = new Map(saved.map(s => [s.id, s]));
-      const result = [];
-
-      saved.forEach(s => {
-        const fresh = fetched.find(f => f.id === s.id);
-        if (fresh) {
-          result.push({ ...fresh, ...s });
-        } else {
-          result.push(s);
-        }
-      });
-
-      fetched.forEach(f => {
-        if (!savedMap.has(f.id)) {
-          result.push(f);
-        }
-      });
-
-      return result;
-    }
-
-    function saveState() {
-      localStorage.setItem('shorts_scripts_overrides', JSON.stringify(scripts));
-      document.getElementById('script-count').innerText = scripts.length;
-    }
-
-    function renderScripts() {
-      const container = document.getElementById('script-container');
-      container.innerHTML = '';
-
-      const searchVal = document.getElementById('search-input').value.toLowerCase();
-
-      const filtered = scripts.filter(s => {
-        const matchesStatus = currentFilter === 'ALL' || s.status === currentFilter;
-        const matchesSearch = (s.title && s.title.toLowerCase().includes(searchVal)) || 
-                              (s.script_body && s.script_body.toLowerCase().includes(searchVal));
-        return matchesStatus && matchesSearch;
-      });
-
-      if (filtered.length === 0) {
-        container.innerHTML = `
-          <div class="col-span-full py-12 text-center text-slate-500">
-            <i class="fa-solid fa-folder-open text-4xl mb-3 block opacity-40"></i>
-            <p class="text-sm">No scripts found.</p>
-          </div>
-        `;
-      } else {
-        filtered.forEach((script) => {
-          const realIndex = scripts.findIndex(item => item.id === script.id);
-          const card = createCardElement(script, realIndex);
-          container.appendChild(card);
-        });
-      }
-
-      document.getElementById('script-count').innerText = scripts.length;
-    }
-
-    function createCardElement(script, index) {
-      const card = document.createElement('div');
-      card.className = "bg-slate-900 border border-slate-800 rounded-xl p-5 flex flex-col justify-between hover:border-slate-700 transition shadow-lg relative group";
-      card.draggable = true;
-
-      card.addEventListener('dragstart', (e) => handleDragStart(e, index, card));
-      card.addEventListener('dragover', (e) => handleDragOver(e, card));
-      card.addEventListener('dragleave', () => card.classList.remove('drag-over'));
-      card.addEventListener('drop', (e) => handleDrop(e, index, card));
-      card.addEventListener('dragend', () => handleDragEnd(card));
-
-      let statusBg = 'bg-slate-800 text-slate-400 border-slate-700';
-      if (script.status === 'Ready to Record') statusBg = 'bg-emerald-900/30 text-emerald-400 border-emerald-800/50';
-      if (script.status === 'Recorded') statusBg = 'bg-blue-900/30 text-blue-400 border-blue-800/50';
-
-      const formattedViews = script.views ? Number(script.views).toLocaleString() : '0';
-
-      card.innerHTML = `
-        <div>
-          <div class="flex items-center justify-between gap-2 mb-3">
-            <div class="flex items-center gap-2">
-              <span class="cursor-grab text-slate-600 hover:text-slate-400 transition" title="Drag to reorder">
-                <i class="fa-solid fa-grip-vertical"></i>
-              </span>
-              <span class="text-xs font-semibold text-indigo-400 uppercase tracking-wider">${script.category || 'General'}</span>
+            <div class="flex items-center gap-3">
+                <h1 class="text-2xl font-bold text-white tracking-wide">VERMILLION SHORTS — MASTER TOPIC DASHBOARD</h1>
+                <span id="counterBadge" class="bg-blue-900/50 text-blue-400 border border-blue-700/50 text-xs px-2.5 py-0.5 rounded-full font-semibold">0 CLIPS</span>
             </div>
-            <span class="text-[11px] font-medium px-2.5 py-0.5 rounded-full border ${statusBg}">${script.status || 'Draft'}</span>
-          </div>
-
-          <h3 class="font-bold text-slate-100 text-base mb-2 leading-snug cursor-pointer hover:text-indigo-400 transition" onclick="openEditModal(${script.id})">
-            ${script.title}
-          </h3>
-
-          <p class="text-xs text-slate-400 line-clamp-4 leading-relaxed mb-4 whitespace-pre-line">
-            ${script.script_body}
-          </p>
+            <p class="text-sm text-gray-400 mt-1">Topic overview, YouTube Shorts links, live view tracking, and Vercel KV cloud sync</p>
         </div>
 
-        <div class="pt-3 border-t border-slate-800/80 flex items-center justify-between text-xs">
-          <div class="flex items-center gap-2 text-slate-400" title="YouTube Views">
-            <i class="fa-solid fa-eye text-slate-500"></i>
-            <span>${formattedViews}</span>
-          </div>
+        <div class="flex flex-wrap items-center gap-3">
+            <button id="refreshAllBtn" onclick="refreshAllViews()" class="bg-purple-700 hover:bg-purple-600 text-white font-semibold text-sm px-3.5 py-2 rounded-lg transition flex items-center gap-1.5 shadow-lg shadow-purple-900/30">
+                <span>🔄</span> Refresh All Views
+            </button>
 
-          <div class="flex items-center gap-2">
-            <button class="btn-copy bg-slate-800 hover:bg-slate-700 text-slate-300 px-2.5 py-1.5 rounded-md border border-slate-700 transition flex items-center gap-1.5" title="Copy Script">
-              <i class="fa-solid fa-copy text-xs"></i>
-              <span>Copy</span>
+            <button onclick="openAddTopicModal()" class="bg-amber-600 hover:bg-amber-500 text-white font-semibold text-sm px-3.5 py-2 rounded-lg transition flex items-center gap-1.5 shadow-lg shadow-amber-900/30">
+                <span>💡</span> Add Topic Idea
             </button>
-            <button onclick="openEditModal(${script.id})" class="bg-slate-800 hover:bg-slate-700 text-slate-300 px-2.5 py-1.5 rounded-md border border-slate-700 transition" title="Edit">
-              <i class="fa-solid fa-pen-to-square text-xs"></i>
+
+            <button onclick="openAddModal()" class="bg-blue-600 hover:bg-blue-500 text-white font-semibold text-sm px-3.5 py-2 rounded-lg transition flex items-center gap-1.5 shadow-lg shadow-blue-900/30">
+                <span>➕</span> Add New Script
             </button>
-          </div>
+
+            <input type="text" id="searchInput" onkeyup="filterScripts()" placeholder="Search topics..." class="bg-gray-900 border border-gray-700 text-sm rounded-lg px-4 py-2 text-white w-44 focus:outline-none focus:border-blue-500">
+            
+            <select id="categoryFilter" onchange="filterScripts()" class="bg-gray-900 border border-gray-700 text-sm rounded-lg px-3 py-2 text-white focus:outline-none focus:border-blue-500">
+                <option value="all">All Categories</option>
+                <option value="A">Cat A: Personal Journey</option>
+                <option value="B">Cat B: Steam & Publishing</option>
+                <option value="C">Cat C: Team & HR</option>
+                <option value="D">Cat D: Design Philosophy</option>
+                <option value="F">Cat F: Engine & Tech</option>
+                <option value="G">Cat G: Money & Runway</option>
+                <option value="H">Cat H: News & Industry</option>
+                <option value="I">Cat I: Career & Education</option>
+                <option value="J">Cat J: Mindset</option>
+                <option value="L">Cat L: Events & Business</option>
+            </select>
+
+            <select id="statusFilter" onchange="filterScripts()" class="bg-gray-900 border border-gray-700 text-sm rounded-lg px-3 py-2 text-white focus:outline-none focus:border-blue-500">
+                <option value="all">All Progress</option>
+                <option value="pending">⏳ Pending</option>
+                <option value="completed">✅ Done</option>
+                <option value="uploaded">🚀 Uploaded</option>
+                <option value="discarded">❌ Discarded</option>
+            </select>
+
+            <select id="sortOrder" onchange="sortScripts()" class="bg-gray-900 border border-gray-700 text-sm rounded-lg px-3 py-2 text-white focus:outline-none focus:border-blue-500">
+                <option value="custom">Sort: Custom Drag Order</option>
+                <option value="clip-asc">Sort: ID 1 ➔ Max</option>
+                <option value="clip-desc">Sort: ID Max ➔ 1</option>
+                <option value="views-desc">Sort: Highest Views</option>
+                <option value="words-desc">Sort: Longest Word Count</option>
+                <option value="words-asc">Sort: Shortest Word Count</option>
+            </select>
         </div>
-      `;
+    </header>
 
-      card.querySelector('.btn-copy').addEventListener('click', () => {
-        navigator.clipboard.writeText(script.script_body).then(() => {
-          showToast('Script copied to clipboard!');
-        });
-      });
+    <!-- Views Analytics Header -->
+    <section class="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-8">
+        <div class="bg-gray-900/80 border border-purple-900/50 p-4 rounded-xl flex flex-col justify-between">
+            <span class="text-xs font-semibold text-purple-400 uppercase tracking-wider">Total Channel Views</span>
+            <div class="flex items-baseline justify-between mt-2">
+                <span id="totalViewsDisplay" class="text-2xl font-black text-white font-mono">0</span>
+                <span class="text-lg">👀</span>
+            </div>
+        </div>
 
-      return card;
-    }
+        <div class="bg-gray-900/80 border border-purple-900/50 p-4 rounded-xl flex flex-col justify-between">
+            <span class="text-xs font-semibold text-purple-400 uppercase tracking-wider">Uploaded Shorts</span>
+            <div class="flex items-baseline justify-between mt-2">
+                <span id="uploadedCountDisplay" class="text-2xl font-black text-white font-mono">0</span>
+                <span class="text-lg">🚀</span>
+            </div>
+        </div>
 
-    function handleDragStart(e, index, card) {
-      draggedIndex = index;
-      card.classList.add('card-dragging');
-      e.dataTransfer.effectAllowed = 'move';
-    }
+        <div class="bg-gray-900/80 border border-purple-900/50 p-4 rounded-xl flex flex-col justify-between">
+            <span class="text-xs font-semibold text-purple-400 uppercase tracking-wider">Average Views / Short</span>
+            <div class="flex items-baseline justify-between mt-2">
+                <span id="avgViewsDisplay" class="text-2xl font-black text-white font-mono">0</span>
+                <span class="text-lg">📊</span>
+            </div>
+        </div>
 
-    function handleDragOver(e, card) {
-      e.preventDefault();
-      e.dataTransfer.dropEffect = 'move';
-      card.classList.add('drag-over');
-    }
+        <div class="bg-gray-900/80 border border-purple-900/50 p-4 rounded-xl flex flex-col justify-between">
+            <span class="text-xs font-semibold text-purple-400 uppercase tracking-wider">Top Performing Short</span>
+            <div class="flex flex-col mt-1">
+                <span id="topShortTitle" class="text-xs text-gray-300 font-semibold truncate">None yet</span>
+                <span id="topShortViews" class="text-sm font-bold text-purple-300 font-mono">0 views</span>
+            </div>
+        </div>
+    </section>
 
-    function handleDrop(e, targetIndex, card) {
-      e.preventDefault();
-      card.classList.remove('drag-over');
-      if (draggedIndex === null || draggedIndex === targetIndex) return;
+    <!-- Collapsible Accordion List -->
+    <main class="flex flex-col gap-3" id="scriptGrid">
+        <!-- Topic rows generated dynamically via JavaScript -->
+    </main>
 
-      const movedItem = scripts.splice(draggedIndex, 1)[0];
-      scripts.splice(targetIndex, 0, movedItem);
+    <!-- Modal: Add New Full Script -->
+    <div id="addModal" class="fixed inset-0 bg-black/80 backdrop-blur-sm hidden items-center justify-center p-4 z-50">
+        <div class="bg-gray-900 border border-gray-700 rounded-2xl max-w-2xl w-full p-6 flex flex-col gap-4 shadow-2xl">
+            <div class="flex items-center justify-between border-b border-gray-800 pb-3">
+                <h2 class="text-lg font-bold text-white">➕ Add New Script Card</h2>
+                <button onclick="closeAddModal()" class="text-gray-400 hover:text-white font-bold">✕ Close</button>
+            </div>
+            
+            <div class="grid grid-cols-2 gap-4">
+                <div>
+                    <label class="block text-xs text-gray-400 mb-1">Topic ID #</label>
+                    <input type="number" id="newClipNumber" class="w-full bg-gray-950 border border-gray-800 rounded-lg p-2.5 text-white text-sm focus:outline-none focus:border-blue-500">
+                </div>
+                <div>
+                    <label class="block text-xs text-gray-400 mb-1">Category</label>
+                    <select id="newClipCategory" class="w-full bg-gray-950 border border-gray-800 rounded-lg p-2.5 text-white text-sm focus:outline-none focus:border-blue-500">
+                        <option value="A|Personal Journey">Cat A: Personal Journey</option>
+                        <option value="B|Steam & Publishing">Cat B: Steam & Publishing</option>
+                        <option value="C|Team & HR">Cat C: Team & HR</option>
+                        <option value="D|Design Philosophy">Cat D: Design Philosophy</option>
+                        <option value="F|Engine & Tech">Cat F: Engine & Tech</option>
+                        <option value="G|Money & Runway">Cat G: Money & Runway</option>
+                        <option value="H|News & Industry">Cat H: News & Industry</option>
+                        <option value="I|Career & Education">Cat I: Career & Education</option>
+                        <option value="J|Mindset">Cat J: Mindset</option>
+                        <option value="L|Events & Business">Cat L: Events & Business</option>
+                    </select>
+                </div>
+            </div>
 
-      scripts.forEach((item, idx) => {
-        item.sort_order = idx + 1;
-      });
+            <div>
+                <label class="block text-xs text-gray-400 mb-1">Topic Title</label>
+                <input type="text" id="newClipTitle" placeholder="e.g. หัวข้อใหม่สั้นๆ" class="w-full bg-gray-950 border border-gray-800 rounded-lg p-2.5 text-white text-sm focus:outline-none focus:border-blue-500">
+            </div>
 
-      saveState();
-      renderScripts();
-      showToast('Reordered script queue');
-    }
+            <div>
+                <label class="block text-xs text-gray-400 mb-1">YouTube Short Link (Optional)</label>
+                <input type="text" id="newClipYtUrl" placeholder="https://youtube.com/shorts/..." class="w-full bg-gray-950 border border-gray-800 rounded-lg p-2.5 text-white text-sm focus:outline-none focus:border-blue-500">
+            </div>
 
-    function handleDragEnd(card) {
-      card.classList.remove('card-dragging');
-      document.querySelectorAll('.drag-over').forEach(el => el.classList.remove('drag-over'));
-      draggedIndex = null;
-    }
+            <div>
+                <label class="block text-xs text-gray-400 mb-1">Script Body (Spoken Thai)</label>
+                <textarea id="newClipBody" oninput="updateAddWordCount()" class="w-full h-36 bg-gray-950 border border-gray-800 rounded-xl p-4 text-white font-mono text-sm leading-relaxed focus:outline-none focus:border-blue-500" placeholder="Type or paste spoken Thai script here..."></textarea>
+            </div>
 
-    function showToast(msg, type = 'success') {
-      const toast = document.getElementById('toast');
-      const toastMsg = document.getElementById('toast-msg');
-      const toastIcon = document.getElementById('toast-icon');
+            <div class="flex items-center justify-between text-xs text-gray-400">
+                <span id="addWordCounter">Word count: 0 words (~0s)</span>
+                <div class="flex gap-2">
+                    <button onclick="closeAddModal()" class="bg-gray-800 hover:bg-gray-700 text-white px-4 py-2 rounded-lg font-medium transition">Cancel</button>
+                    <button onclick="addNewScript()" class="bg-emerald-600 hover:bg-emerald-500 text-white px-5 py-2 rounded-lg font-semibold transition">✨ Publish Card</button>
+                </div>
+            </div>
+        </div>
+    </div>
 
-      toastMsg.innerText = msg;
-      if (type === 'error') {
-        toastIcon.className = 'fa-solid fa-circle-exclamation text-red-400';
-      } else {
-        toastIcon.className = 'fa-solid fa-circle-check text-emerald-400';
-      }
+    <!-- Modal: Add New Topic Seed -->
+    <div id="addTopicModal" class="fixed inset-0 bg-black/80 backdrop-blur-sm hidden items-center justify-center p-4 z-50">
+        <div class="bg-gray-900 border border-gray-700 rounded-2xl max-w-xl w-full p-6 flex flex-col gap-4 shadow-2xl">
+            <div class="flex items-center justify-between border-b border-gray-800 pb-3">
+                <h2 class="text-lg font-bold text-white">💡 Add New Unscripted Topic Seed</h2>
+                <button onclick="closeAddTopicModal()" class="text-gray-400 hover:text-white font-bold">✕ Close</button>
+            </div>
+            
+            <div class="grid grid-cols-2 gap-4">
+                <div>
+                    <label class="block text-xs text-gray-400 mb-1">Topic ID #</label>
+                    <input type="text" id="newTopicId" placeholder="e.g. 72" class="w-full bg-gray-950 border border-gray-800 rounded-lg p-2.5 text-white text-sm focus:outline-none focus:border-amber-500">
+                </div>
+                <div>
+                    <label class="block text-xs text-gray-400 mb-1">Category</label>
+                    <select id="newTopicCategory" class="w-full bg-gray-950 border border-gray-800 rounded-lg p-2.5 text-white text-sm focus:outline-none focus:border-amber-500">
+                        <option value="A|Personal Journey">Cat A: Personal Journey</option>
+                        <option value="B|Steam & Publishing">Cat B: Steam & Publishing</option>
+                        <option value="C|Team & HR">Cat C: Team & HR</option>
+                        <option value="D|Design Philosophy">Cat D: Design Philosophy</option>
+                        <option value="F|Engine & Tech">Cat F: Engine & Tech</option>
+                        <option value="G|Money & Runway">Cat G: Money & Runway</option>
+                        <option value="H|News & Industry">Cat H: News & Industry</option>
+                        <option value="I|Career & Education">Cat I: Career & Education</option>
+                        <option value="J|Mindset">Cat J: Mindset</option>
+                        <option value="L|Events & Business">Cat L: Events & Business</option>
+                    </select>
+                </div>
+            </div>
 
-      toast.classList.remove('translate-y-20', 'opacity-0');
-      setTimeout(() => {
-        toast.classList.add('translate-y-20', 'opacity-0');
-      }, 3000);
-    }
+            <div>
+                <label class="block text-xs text-gray-400 mb-1">Topic Title</label>
+                <input type="text" id="newTopicTitle" placeholder="e.g. ประสบการณ์การทำเกมช่วงขาดทุน" class="w-full bg-gray-950 border border-gray-800 rounded-lg p-2.5 text-white text-sm focus:outline-none focus:border-amber-500">
+            </div>
 
-    function filterScripts() {
-      renderScripts();
-    }
+            <div>
+                <label class="block text-xs text-gray-400 mb-1">Core Editorial Angle / Talking Points</label>
+                <textarea id="newTopicAngle" class="w-full h-24 bg-gray-950 border border-gray-800 rounded-xl p-3 text-white text-sm focus:outline-none focus:border-amber-500" placeholder="Summarize core talking points..."></textarea>
+            </div>
 
-    function setStatusFilter(status) {
-      currentFilter = status;
-      document.querySelectorAll('.filter-btn').forEach(btn => {
-        if (btn.dataset.status === status) {
-          btn.className = 'filter-btn active bg-slate-800 text-slate-200 text-xs font-medium px-3 py-1.5 rounded-lg border border-slate-700 transition';
-        } else {
-          btn.className = 'filter-btn text-slate-400 text-xs font-medium px-3 py-1.5 rounded-lg border border-transparent hover:border-slate-800 transition';
+            <div class="flex items-center justify-between text-xs text-gray-400 pt-2 border-t border-gray-800">
+                <span class="text-amber-400/80">Creates a draft topic card ready for script expansion</span>
+                <div class="flex gap-2">
+                    <button onclick="closeAddTopicModal()" class="bg-gray-800 hover:bg-gray-700 text-white px-4 py-2 rounded-lg font-medium transition">Cancel</button>
+                    <button onclick="addNewTopicSeed()" class="bg-amber-600 hover:bg-amber-500 text-white px-5 py-2 rounded-lg font-semibold transition">💡 Save Topic Seed</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let scripts = [];
+        let draggedIndex = null;
+
+        function sanitizeTitle(title) {
+            return title ? title.replace(/^Clip\s+\d+\s*—\s*/i, '').trim() : '';
         }
-      });
-      renderScripts();
-    }
 
-    function exportJson() {
-      const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(scripts, null, 2));
-      const downloadAnchor = document.createElement('a');
-      downloadAnchor.setAttribute("href", dataStr);
-      downloadAnchor.setAttribute("download", "scripts.json");
-      document.body.appendChild(downloadAnchor);
-      downloadAnchor.click();
-      downloadAnchor.remove();
-      showToast('Exported updated scripts.json!');
-    }
+        function extractVideoId(url) {
+            if (!url) return null;
+            url = url.trim();
+            if (url.length === 11) return url;
+            const match = url.match(/(?:v=|\/shorts\/|youtu\.be\/)([a-zA-Z0-9_-]{11})/);
+            return match ? match[1] : null;
+        }
 
-    function extractVideoId(input) {
-      if (!input) return null;
-      input = input.trim();
-      if (input.length === 11) return input;
-      const match = input.match(/(?:v=|\/shorts\/|youtu\.be\/)([a-zA-Z0-9_-]{11})/);
-      return match ? match[1] : null;
-    }
+        async function loadScriptsFromKV() {
+            try {
+                const response = await fetch('/api/get-scripts');
+                const data = await response.json();
+                if (data && data.length > 0) {
+                    scripts = data;
+                }
+                renderScripts();
+            } catch (err) {
+                console.error("Failed to load scripts from cloud storage:", err);
+            }
+        }
 
-    async function fetchYouTubeViews() {
-      const apiKey = localStorage.getItem('yt_dashboard_api_key');
-      if (!apiKey) {
-        openApiKeyModal();
-        showToast('Please save your YouTube API Key first', 'error');
-        return;
-      }
+        async function saveToKV() {
+            try {
+                await fetch('/api/save-scripts', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(scripts)
+                });
+            } catch (err) {
+                console.error("Failed to save scripts to cloud storage:", err);
+            }
+        }
 
-      const idMap = [];
-      scripts.forEach((s) => {
-        const vid = extractVideoId(s.youtube_video_id);
-        if (vid) idMap.push({ scriptId: s.id, videoId: vid });
-      });
+        function countWords(text) {
+            return text ? text.trim().split(/\s+/).filter(Boolean).length : 0;
+        }
 
-      if (idMap.length === 0) {
-        showToast('No YouTube Video IDs set on scripts', 'error');
-        return;
-      }
+        function updateAnalyticsHeader() {
+            let totalViews = 0;
+            let uploadedCount = 0;
+            let maxViews = 0;
+            let topTitle = "None yet";
 
-      const btn = document.getElementById('btn-fetch-views');
-      btn.disabled = true;
-      btn.classList.add('opacity-50');
+            scripts.forEach(script => {
+                const currentStatus = script.status || (script.completed ? 'completed' : 'pending');
+                if (currentStatus === "uploaded" || script.ytUrl) {
+                    uploadedCount++;
+                    const views = script.views || 0;
+                    totalViews += views;
 
-      const uniqueVideoIds = [...new Set(idMap.map(item => item.videoId))].join(',');
-
-      try {
-        const response = await fetch(`https://www.googleapis.com/youtube/v3/videos?part=statistics&id=${uniqueVideoIds}&key=${apiKey}`);
-        const data = await response.json();
-
-        if (data.error) {
-          showToast(`API Error: ${data.error.message}`, 'error');
-        } else if (data.items) {
-          let updatedCount = 0;
-          data.items.forEach(item => {
-            const viewCount = parseInt(item.statistics.viewCount, 10);
-            idMap.filter(m => m.videoId === item.id).forEach(match => {
-              const script = scripts.find(s => s.id === match.scriptId);
-              if (script) {
-                script.views = viewCount;
-                updatedCount++;
-              }
+                    if (views >= maxViews && views > 0) {
+                        maxViews = views;
+                        topTitle = sanitizeTitle(script.title);
+                    }
+                }
             });
-          });
 
-          saveState();
-          renderScripts();
-          showToast(`Updated views for ${updatedCount} video(s)!`);
+            const avgViews = uploadedCount > 0 ? Math.round(totalViews / uploadedCount) : 0;
+
+            document.getElementById('totalViewsDisplay').textContent = totalViews.toLocaleString();
+            document.getElementById('uploadedCountDisplay').textContent = uploadedCount;
+            document.getElementById('avgViewsDisplay').textContent = avgViews.toLocaleString();
+            document.getElementById('topShortTitle').textContent = topTitle;
+            document.getElementById('topShortViews').textContent = `${maxViews.toLocaleString()} views`;
         }
-      } catch (err) {
-        console.error("YouTube Fetch Error:", err);
-        showToast('Network error fetching YouTube views', 'error');
-      } finally {
-        btn.disabled = false;
-        btn.classList.remove('opacity-50');
-      }
-    }
 
-    function openApiKeyModal() {
-      document.getElementById('api-key-input').value = localStorage.getItem('yt_dashboard_api_key') || '';
-      document.getElementById('api-modal').classList.remove('hidden');
-    }
+        function renderScripts() {
+            const grid = document.getElementById('scriptGrid');
+            grid.innerHTML = '';
 
-    function closeApiKeyModal() {
-      document.getElementById('api-modal').classList.add('hidden');
-    }
+            let doneCount = 0;
+            let uploadedCount = 0;
 
-    function saveApiKey() {
-      const val = document.getElementById('api-key-input').value.trim();
-      localStorage.setItem('yt_dashboard_api_key', val);
-      closeApiKeyModal();
-      showToast('API Key saved');
-    }
+            scripts.forEach((script, index) => {
+                const currentStatus = script.status || (script.completed ? 'completed' : 'pending');
+                const isUploaded = currentStatus === "uploaded";
+                const isDone = currentStatus === "completed" || script.completed === true;
+                const isDiscarded = currentStatus === "discarded";
 
-    function openEditModal(scriptId) {
-      const script = scripts.find(s => s.id === scriptId);
-      if (!script) return;
+                if (isDone) doneCount++;
+                if (isUploaded) uploadedCount++;
 
-      document.getElementById('modal-title-text').innerText = "Edit Script";
-      document.getElementById('edit-id').value = script.id;
-      document.getElementById('edit-title').value = script.title || '';
-      document.getElementById('edit-category').value = script.category || '';
-      document.getElementById('edit-status').value = script.status || 'Draft';
-      document.getElementById('edit-youtube-id').value = script.youtube_video_id || '';
-      document.getElementById('edit-views').value = script.views || 0;
-      document.getElementById('edit-body').value = script.script_body || '';
+                const wordCount = countWords(script.body);
+                const estTime = Math.round((wordCount / 140) * 45);
+                const displayTitle = sanitizeTitle(script.title);
+                const viewsText = script.views !== undefined && script.views > 0 ? `${script.views.toLocaleString()} views` : null;
 
-      document.getElementById('edit-modal').classList.remove('hidden');
-    }
+                let cardClass = "card rounded-xl overflow-hidden script-card transition-all duration-200";
+                if (isUploaded) cardClass += " card-uploaded";
+                else if (isDone) cardClass += " card-completed";
+                else if (isDiscarded) cardClass += " card-discarded";
 
-    function addNewScript() {
-      const newId = Date.now();
-      document.getElementById('modal-title-text').innerText = "New Script";
-      document.getElementById('edit-id').value = newId;
-      document.getElementById('edit-title').value = '';
-      document.getElementById('edit-category').value = 'Cat H: News & Industry';
-      document.getElementById('edit-status').value = 'Draft';
-      document.getElementById('edit-youtube-id').value = '';
-      document.getElementById('edit-views').value = 0;
-      document.getElementById('edit-body').value = '';
+                const card = document.createElement('div');
+                card.className = cardClass;
+                card.setAttribute('data-category', script.cat);
+                card.setAttribute('data-id', script.id);
+                card.draggable = true;
 
-      document.getElementById('edit-modal').classList.remove('hidden');
-    }
+                // Attach HTML5 Drag-and-Drop Event Handlers
+                card.addEventListener('dragstart', (e) => {
+                    draggedIndex = index;
+                    card.classList.add('card-dragging');
+                    e.dataTransfer.effectAllowed = 'move';
+                });
 
-    function closeEditModal() {
-      document.getElementById('edit-modal').classList.add('hidden');
-    }
+                card.addEventListener('dragover', (e) => {
+                    e.preventDefault();
+                    e.dataTransfer.dropEffect = 'move';
+                    card.classList.add('drag-over');
+                });
 
-    function saveScriptChanges() {
-      const id = parseInt(document.getElementById('edit-id').value, 10);
-      let script = scripts.find(s => s.id === id);
+                card.addEventListener('dragleave', () => {
+                    card.classList.remove('drag-over');
+                });
 
-      if (!script) {
-        script = { id: id, sort_order: 1 };
-        scripts.forEach(s => s.sort_order++);
-        scripts.unshift(script);
-      }
+                card.addEventListener('drop', (e) => {
+                    e.preventDefault();
+                    card.classList.remove('drag-over');
+                    if (draggedIndex === null || draggedIndex === index) return;
 
-      script.title = document.getElementById('edit-title').value;
-      script.category = document.getElementById('edit-category').value;
-      script.status = document.getElementById('edit-status').value;
-      script.youtube_video_id = document.getElementById('edit-youtube-id').value;
-      script.views = parseInt(document.getElementById('edit-views').value, 10) || 0;
-      script.script_body = document.getElementById('edit-body').value;
+                    // Reorder in array
+                    const movedItem = scripts.splice(draggedIndex, 1)[0];
+                    scripts.splice(index, 0, movedItem);
 
-      saveState();
-      renderScripts();
-      closeEditModal();
-      showToast('Script saved!');
-    }
+                    // Switch select filter back to custom drag order
+                    document.getElementById('sortOrder').value = 'custom';
 
-    function deleteCurrentScript() {
-      const id = parseInt(document.getElementById('edit-id').value, 10);
-      scripts = scripts.filter(s => s.id !== id);
-      saveState();
-      renderScripts();
-      closeEditModal();
-      showToast('Script deleted', 'error');
-    }
-  </script>
+                    renderScripts();
+                    saveToKV();
+                });
+
+                card.addEventListener('dragend', () => {
+                    card.classList.remove('card-dragging');
+                    document.querySelectorAll('.drag-over').forEach(el => el.classList.remove('drag-over'));
+                    draggedIndex = null;
+                });
+
+                card.innerHTML = `
+                    <!-- Accordion Bar Header -->
+                    <div class="px-5 py-3.5 flex items-center justify-between cursor-pointer select-none hover:bg-gray-800/50" onclick="toggleAccordion(${script.id})">
+                        <div class="flex items-center gap-4 flex-1 min-w-0 mr-4">
+                            <span class="cursor-grab text-gray-600 hover:text-gray-300 transition text-sm font-bold" title="Drag to reorder" onclick="event.stopPropagation()">⣿</span>
+                            <span id="chevron-${script.id}" class="text-gray-500 font-bold text-xs transition-transform duration-200">►</span>
+                            <span class="text-xs font-mono font-bold text-gray-500 w-8">#${script.id}</span>
+                            <span class="text-xs font-semibold px-2.5 py-1 rounded tag-${script.cat.toLowerCase()} shrink-0">Cat ${script.cat}</span>
+                            <h3 id="display-title-${script.id}" class="text-sm font-bold text-white truncate hover:text-blue-400 transition">${displayTitle}</h3>
+                        </div>
+
+                        <div class="flex items-center gap-3 shrink-0" onclick="event.stopPropagation()">
+                            ${viewsText ? `<span class="text-xs text-purple-300 bg-purple-900/40 border border-purple-700/50 px-2.5 py-0.5 rounded font-mono font-semibold">👀 ${viewsText}</span>` : ''}
+                            <span class="text-xs text-gray-400 font-mono hidden sm:inline">${wordCount} words (~${estTime}s)</span>
+                            <select onchange="changeStatus(${script.id}, this.value)" class="bg-gray-900 border border-gray-700 text-xs rounded px-2 py-1 font-semibold text-gray-200 focus:outline-none focus:border-blue-500 cursor-pointer">
+                                <option value="pending" ${currentStatus === 'pending' ? 'selected' : ''}>⏳ Pending</option>
+                                <option value="completed" ${currentStatus === 'completed' ? 'selected' : ''}>✅ Done</option>
+                                <option value="uploaded" ${currentStatus === 'uploaded' ? 'selected' : ''}>🚀 Uploaded</option>
+                                <option value="discarded" ${currentStatus === 'discarded' ? 'selected' : ''}>❌ Discard</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <!-- Slide-Down Body Section -->
+                    <div id="body-panel-${script.id}" class="hidden border-t border-gray-800/80 bg-gray-950/60 p-5 flex flex-col gap-4">
+                        <!-- Read-Only View -->
+                        <div id="view-mode-${script.id}" class="flex flex-col gap-3">
+                            <p id="body-text-${script.id}" class="text-sm text-gray-200 leading-relaxed font-sans whitespace-pre-line">${script.body}</p>
+                            
+                            ${script.ytUrl ? `
+                                <div class="flex items-center justify-between text-xs text-purple-300 bg-purple-950/40 border border-purple-800/50 p-2.5 rounded-lg">
+                                    <span class="truncate">🔗 <a href="${script.ytUrl}" target="_blank" class="underline hover:text-purple-200">${script.ytUrl}</a></span>
+                                    <span class="text-xs font-mono font-semibold text-purple-200">Views: ${script.views || 0}</span>
+                                </div>
+                            ` : ''}
+
+                            <div class="flex items-center justify-between pt-2 border-t border-gray-800/50">
+                                <span class="text-xs text-gray-500">Cat ${script.cat}: ${script.catName}</span>
+                                <div class="flex gap-2">
+                                    <button onclick="copyScriptText(${script.id})" class="bg-gray-800 hover:bg-gray-700 text-white px-3 py-1.5 rounded-lg text-xs font-medium transition">📋 Copy Text</button>
+                                    <button onclick="enableInlineEdit(${script.id})" class="bg-blue-900/60 hover:bg-blue-800 text-blue-200 border border-blue-700/50 px-3 py-1.5 rounded-lg text-xs font-semibold transition">✏️ Edit Script</button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Inline Edit Mode -->
+                        <div id="edit-mode-${script.id}" class="hidden flex flex-col gap-3">
+                            <div>
+                                <label class="block text-xs text-gray-400 mb-1">Topic Title</label>
+                                <input type="text" id="edit-title-input-${script.id}" value="${displayTitle}" class="w-full bg-gray-900 border border-gray-700 rounded-lg p-2.5 text-white text-sm font-bold focus:outline-none focus:border-blue-500">
+                            </div>
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+                                <div>
+                                    <label class="block text-xs text-gray-400 mb-1">YouTube Short Link</label>
+                                    <input type="text" id="edit-yt-input-${script.id}" value="${script.ytUrl || ''}" placeholder="https://youtube.com/shorts/..." class="w-full bg-gray-900 border border-gray-700 rounded-lg p-2.5 text-white text-sm focus:outline-none focus:border-purple-500">
+                                </div>
+                                <div>
+                                    <label class="block text-xs text-gray-400 mb-1">View Count</label>
+                                    <input type="number" id="edit-views-input-${script.id}" value="${script.views || 0}" class="w-full bg-gray-900 border border-gray-700 rounded-lg p-2.5 text-white text-sm focus:outline-none focus:border-purple-500">
+                                </div>
+                            </div>
+                            <div>
+                                <label class="block text-xs text-gray-400 mb-1">Script Body (Spoken Thai)</label>
+                                <textarea id="edit-body-input-${script.id}" class="w-full h-48 bg-gray-900 border border-gray-700 rounded-xl p-3 text-white font-mono text-sm leading-relaxed focus:outline-none focus:border-blue-500">${script.body}</textarea>
+                            </div>
+                            <div class="flex items-center justify-end gap-2 pt-1">
+                                <button onclick="cancelInlineEdit(${script.id})" class="bg-gray-800 hover:bg-gray-700 text-white px-3.5 py-1.5 rounded-lg text-xs font-medium transition">Cancel</button>
+                                <button onclick="saveInlineEdit(${script.id})" class="bg-blue-600 hover:bg-blue-500 text-white px-4 py-1.5 rounded-lg text-xs font-semibold transition">💾 Save Changes</button>
+                            </div>
+                        </div>
+                    </div>
+                `;
+
+                grid.appendChild(card);
+            });
+
+            document.getElementById('counterBadge').textContent = `${scripts.length} CLIPS (${uploadedCount} UPLOADED, ${doneCount} DONE)`;
+            updateAnalyticsHeader();
+            filterScripts();
+        }
+
+        async function refreshAllViews() {
+            const btn = document.getElementById('refreshAllBtn');
+            const eligibleScripts = scripts.filter(s => s.ytUrl && s.ytUrl.trim().length > 0);
+
+            if (eligibleScripts.length === 0) {
+                alert('No clips with YouTube links found.');
+                return;
+            }
+
+            btn.disabled = true;
+            btn.innerHTML = `<span>⏳</span> Syncing ${eligibleScripts.length} Shorts...`;
+
+            let updatedCount = 0;
+
+            for (const script of eligibleScripts) {
+                try {
+                    const videoId = extractVideoId(script.ytUrl);
+                    const res = await fetch('/api/fetch-yt-views', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ ytUrl: script.ytUrl, videoId: videoId })
+                    });
+
+                    if (res.ok) {
+                        const data = await res.json();
+                        if (data.views !== undefined) {
+                            script.views = parseInt(data.views, 10) || 0;
+                            script.status = "uploaded";
+                            script.completed = true;
+                            updatedCount++;
+                        }
+                    }
+                } catch (err) {
+                    console.warn(`Failed fetching views for clip #${script.id}:`, err);
+                }
+            }
+
+            renderScripts();
+            await saveToKV();
+
+            btn.disabled = false;
+            btn.innerHTML = `<span>🔄</span> Refresh All Views`;
+            alert(`Successfully refreshed metrics for ${updatedCount} YouTube Shorts!`);
+        }
+
+        function toggleAccordion(id) {
+            const panel = document.getElementById(`body-panel-${id}`);
+            const chevron = document.getElementById(`chevron-${id}`);
+            
+            if (panel.classList.contains('hidden')) {
+                panel.classList.remove('hidden');
+                chevron.style.transform = 'rotate(90deg)';
+                chevron.classList.add('text-blue-400');
+            } else {
+                panel.classList.add('hidden');
+                chevron.style.transform = 'rotate(0deg)';
+                chevron.classList.remove('text-blue-400');
+                cancelInlineEdit(id);
+            }
+        }
+
+        function enableInlineEdit(id) {
+            document.getElementById(`view-mode-${id}`).classList.add('hidden');
+            document.getElementById(`edit-mode-${id}`).classList.remove('hidden');
+        }
+
+        function cancelInlineEdit(id) {
+            document.getElementById(`view-mode-${id}`).classList.remove('hidden');
+            document.getElementById(`edit-mode-${id}`).classList.add('hidden');
+        }
+
+        function saveInlineEdit(id) {
+            const script = scripts.find(s => s.id === id);
+            if (script) {
+                const newTitle = document.getElementById(`edit-title-input-${id}`).value.trim();
+                const newYtUrl = document.getElementById(`edit-yt-input-${id}`).value.trim();
+                const newViews = parseInt(document.getElementById(`edit-views-input-${id}`).value) || 0;
+                const newBody = document.getElementById(`edit-body-input-${id}`).value;
+
+                script.title = newTitle;
+                script.ytUrl = newYtUrl;
+                script.views = newViews;
+                script.body = newBody;
+
+                if (newYtUrl && (!script.status || script.status === "pending")) {
+                    script.status = "uploaded";
+                    script.completed = true;
+                }
+
+                renderScripts();
+                saveToKV();
+
+                setTimeout(() => toggleAccordion(id), 50);
+            }
+        }
+
+        function changeStatus(id, newStatus) {
+            const script = scripts.find(s => s.id === id);
+            if (script) {
+                script.status = newStatus;
+                script.completed = (newStatus === "completed" || newStatus === "uploaded");
+                renderScripts();
+                saveToKV();
+            }
+        }
+
+        function copyScriptText(id) {
+            const script = scripts.find(s => s.id === id);
+            if (script) {
+                navigator.clipboard.writeText(script.body);
+                alert(`Copied "${sanitizeTitle(script.title)}" to clipboard!`);
+            }
+        }
+
+        function openAddModal() {
+            const nextId = scripts.length > 0 ? Math.max(...scripts.map(s => s.id)) + 1 : 1;
+            document.getElementById('newClipNumber').value = nextId;
+            document.getElementById('newClipTitle').value = '';
+            document.getElementById('newClipYtUrl').value = '';
+            document.getElementById('newClipBody').value = '';
+            updateAddWordCount();
+
+            document.getElementById('addModal').classList.remove('hidden');
+            document.getElementById('addModal').classList.add('flex');
+        }
+
+        function closeAddModal() {
+            document.getElementById('addModal').classList.remove('flex');
+            document.getElementById('addModal').classList.add('hidden');
+        }
+
+        function updateAddWordCount() {
+            const val = document.getElementById('newClipBody').value;
+            const words = countWords(val);
+            const estTime = Math.round((words / 140) * 45);
+            document.getElementById('addWordCounter').textContent = `Word count: ${words} words (~${estTime}s target)`;
+        }
+
+        function addNewScript() {
+            const clipNum = parseInt(document.getElementById('newClipNumber').value) || (scripts.length + 1);
+            const [catCode, catLabel] = document.getElementById('newClipCategory').value.split('|');
+            const title = document.getElementById('newClipTitle').value.trim();
+            const ytUrl = document.getElementById('newClipYtUrl').value.trim();
+            const body = document.getElementById('newClipBody').value.trim();
+
+            if (!title || !body) {
+                alert('Please enter both a title and script body text.');
+                return;
+            }
+
+            const newScript = {
+                id: clipNum,
+                cat: catCode,
+                catName: catLabel,
+                title: title,
+                ytUrl: ytUrl,
+                views: 0,
+                body: body,
+                status: ytUrl ? "uploaded" : "pending",
+                completed: ytUrl ? true : false
+            };
+
+            scripts.push(newScript);
+
+            renderScripts();
+            saveToKV();
+            closeAddModal();
+        }
+
+        function openAddTopicModal() {
+            const nextTopicNum = scripts.length > 0 ? Math.max(...scripts.map(s => s.id)) + 1 : 1;
+            document.getElementById('newTopicId').value = nextTopicNum;
+            document.getElementById('newTopicTitle').value = '';
+            document.getElementById('newTopicAngle').value = '';
+
+            document.getElementById('addTopicModal').classList.remove('hidden');
+            document.getElementById('addTopicModal').classList.add('flex');
+        }
+
+        function closeAddTopicModal() {
+            document.getElementById('addTopicModal').classList.remove('flex');
+            document.getElementById('addTopicModal').classList.add('hidden');
+        }
+
+        function addNewTopicSeed() {
+            const topicId = parseInt(document.getElementById('newTopicId').value) || (scripts.length + 1);
+            const [catCode, catLabel] = document.getElementById('newTopicCategory').value.split('|');
+            const title = document.getElementById('newTopicTitle').value.trim();
+            const angle = document.getElementById('newTopicAngle').value.trim();
+
+            if (!title || !angle) {
+                alert('Please provide a title and core talking points.');
+                return;
+            }
+
+            const formattedSeedBody = `• Angle: ${angle}\n\n[Unscripted topic seed - ready for full spoken Thai expansion]`;
+
+            const newTopicScript = {
+                id: topicId,
+                cat: catCode,
+                catName: catLabel,
+                title: title,
+                body: formattedSeedBody,
+                isSeed: true,
+                status: "pending",
+                completed: false
+            };
+
+            scripts.push(newTopicScript);
+
+            renderScripts();
+            saveToKV();
+            closeAddTopicModal();
+        }
+
+        function filterScripts() {
+            const searchVal = document.getElementById('searchInput').value.toLowerCase();
+            const catVal = document.getElementById('categoryFilter').value;
+            const statusVal = document.getElementById('statusFilter').value;
+
+            const cards = document.querySelectorAll('.script-card');
+
+            cards.forEach(card => {
+                const id = parseInt(card.getAttribute('data-id'));
+                const script = scripts.find(s => s.id === id);
+                if (!script) return;
+
+                const currentStatus = script.status || (script.completed ? 'completed' : 'pending');
+                const displayTitle = sanitizeTitle(script.title);
+
+                const matchesSearch = displayTitle.toLowerCase().includes(searchVal) || script.body.toLowerCase().includes(searchVal);
+                const matchesCategory = (catVal === 'all') || (script.cat === catVal);
+                const matchesStatus = (statusVal === 'all') || (currentStatus === statusVal);
+
+                if (matchesSearch && matchesCategory && matchesStatus) {
+                    card.style.display = 'block';
+                } else {
+                    card.style.display = 'none';
+                }
+            });
+        }
+
+        function sortScripts() {
+            const sortVal = document.getElementById('sortOrder').value;
+
+            if (sortVal === 'clip-asc') {
+                scripts.sort((a, b) => a.id - b.id);
+            } else if (sortVal === 'clip-desc') {
+                scripts.sort((a, b) => b.id - a.id);
+            } else if (sortVal === 'views-desc') {
+                scripts.sort((a, b) => (b.views || 0) - (a.views || 0));
+            } else if (sortVal === 'words-desc') {
+                scripts.sort((a, b) => countWords(b.body) - countWords(a.body));
+            } else if (sortVal === 'words-asc') {
+                scripts.sort((a, b) => countWords(a.body) - countWords(b.body));
+            }
+
+            renderScripts();
+        }
+
+        // Initialize from cloud KV
+        loadScriptsFromKV();
+    </script>
 </body>
 </html>
