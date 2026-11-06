@@ -12,18 +12,13 @@
         .card-completed { opacity: 0.8; border-color: #10b981 !important; }
         .card-uploaded { border-color: #8b5cf6 !important; background: #171026 !important; }
         .card-discarded { opacity: 0.45; border-color: #ef4444 !important; }
+        .card-available { border-color: #0284c7 !important; }
         .card-dragging { opacity: 0.4; border: 2px dashed #3b82f6 !important; }
         .drag-over { border-top: 3px solid #3b82f6 !important; }
-        .tag-a { background: #1e3a8a; color: #93c5fd; }
-        .tag-b { background: #14532d; color: #86efac; }
-        .tag-c { background: #701a75; color: #f0abfc; }
-        .tag-d { background: #7c2d12; color: #fdba74; }
-        .tag-f { background: #312e81; color: #c7d2fe; }
-        .tag-g { background: #365314; color: #bef264; }
-        .tag-h { background: #831843; color: #f472b6; }
-        .tag-i { background: #134e4a; color: #99f6e4; }
-        .tag-j { background: #4c1d95; color: #ddd6fe; }
-        .tag-l { background: #3f6212; color: #d9f99d; }
+        .tag-sfn { background: #1e3a8a; color: #93c5fd; }
+        .tag-sfk { background: #065f46; color: #6ee7b7; }
+        .tag-lfs { background: #581c87; color: #d8b4fe; }
+        .tag-lfk { background: #78350f; color: #fcd34d; }
     </style>
 </head>
 <body class="p-6 max-w-[1400px] mx-auto">
@@ -54,21 +49,16 @@
             
             <select id="categoryFilter" onchange="filterScripts()" class="bg-gray-900 border border-gray-700 text-sm rounded-lg px-3 py-2 text-white focus:outline-none focus:border-blue-500">
                 <option value="all">All Categories</option>
-                <option value="A">Cat A: Personal Journey</option>
-                <option value="B">Cat B: Steam & Publishing</option>
-                <option value="C">Cat C: Team & HR</option>
-                <option value="D">Cat D: Design Philosophy</option>
-                <option value="F">Cat F: Engine & Tech</option>
-                <option value="G">Cat G: Money & Runway</option>
-                <option value="H">Cat H: News & Industry</option>
-                <option value="I">Cat I: Career & Education</option>
-                <option value="J">Cat J: Mindset</option>
-                <option value="L">Cat L: Events & Business</option>
+                <option value="SFN">Short Form News</option>
+                <option value="SFK">Short Form Knowledge</option>
+                <option value="LFS">Long Form Series</option>
+                <option value="LFK">Long Form Knowledge</option>
             </select>
 
             <select id="statusFilter" onchange="filterScripts()" class="bg-gray-900 border border-gray-700 text-sm rounded-lg px-3 py-2 text-white focus:outline-none focus:border-blue-500">
                 <option value="all">All Progress</option>
-                <option value="pending">⏳ Pending</option>
+                <option value="available">📋 Available</option>
+                <option value="working_on">⏳ Working On</option>
                 <option value="completed">✅ Done</option>
                 <option value="uploaded">🚀 Uploaded</option>
                 <option value="discarded">❌ Discarded</option>
@@ -141,16 +131,10 @@
                 <div>
                     <label class="block text-xs text-gray-400 mb-1">Category</label>
                     <select id="newClipCategory" class="w-full bg-gray-950 border border-gray-800 rounded-lg p-2.5 text-white text-sm focus:outline-none focus:border-blue-500">
-                        <option value="A|Personal Journey">Cat A: Personal Journey</option>
-                        <option value="B|Steam & Publishing">Cat B: Steam & Publishing</option>
-                        <option value="C|Team & HR">Cat C: Team & HR</option>
-                        <option value="D|Design Philosophy">Cat D: Design Philosophy</option>
-                        <option value="F|Engine & Tech">Cat F: Engine & Tech</option>
-                        <option value="G|Money & Runway">Cat G: Money & Runway</option>
-                        <option value="H|News & Industry">Cat H: News & Industry</option>
-                        <option value="I|Career & Education">Cat I: Career & Education</option>
-                        <option value="J|Mindset">Cat J: Mindset</option>
-                        <option value="L|Events & Business">Cat L: Events & Business</option>
+                        <option value="SFN|Short Form News">Short Form News</option>
+                        <option value="SFK|Short Form Knowledge">Short Form Knowledge</option>
+                        <option value="LFS|Long Form Series">Long Form Series</option>
+                        <option value="LFK|Long Form Knowledge">Long Form Knowledge</option>
                     </select>
                 </div>
             </div>
@@ -196,16 +180,10 @@
                 <div>
                     <label class="block text-xs text-gray-400 mb-1">Category</label>
                     <select id="newTopicCategory" class="w-full bg-gray-950 border border-gray-800 rounded-lg p-2.5 text-white text-sm focus:outline-none focus:border-amber-500">
-                        <option value="A|Personal Journey">Cat A: Personal Journey</option>
-                        <option value="B|Steam & Publishing">Cat B: Steam & Publishing</option>
-                        <option value="C|Team & HR">Cat C: Team & HR</option>
-                        <option value="D|Design Philosophy">Cat D: Design Philosophy</option>
-                        <option value="F|Engine & Tech">Cat F: Engine & Tech</option>
-                        <option value="G|Money & Runway">Cat G: Money & Runway</option>
-                        <option value="H|News & Industry">Cat H: News & Industry</option>
-                        <option value="I|Career & Education">Cat I: Career & Education</option>
-                        <option value="J|Mindset">Cat J: Mindset</option>
-                        <option value="L|Events & Business">Cat L: Events & Business</option>
+                        <option value="SFN|Short Form News">Short Form News</option>
+                        <option value="SFK|Short Form Knowledge">Short Form Knowledge</option>
+                        <option value="LFS|Long Form Series">Long Form Series</option>
+                        <option value="LFK|Long Form Knowledge">Long Form Knowledge</option>
                     </select>
                 </div>
             </div>
@@ -246,12 +224,51 @@
             return match ? match[1] : null;
         }
 
+        function getCategoryTagClass(cat) {
+            if (!cat) return 'tag-sfn';
+            const c = cat.toLowerCase();
+            if (c === 'sfn' || c.includes('news')) return 'tag-sfn';
+            if (c === 'sfk' || (c.includes('short') && c.includes('know'))) return 'tag-sfk';
+            if (c === 'lfs' || c.includes('series')) return 'tag-lfs';
+            if (c === 'lfk' || (c.includes('long') && c.includes('know'))) return 'tag-lfk';
+            return 'tag-sfn';
+        }
+
+        function getCategoryDisplayName(script) {
+            if (script && script.catName) return script.catName;
+            const cat = script ? (typeof script === 'string' ? script : script.cat) : '';
+            const catMap = {
+                'SFN': 'Short Form News',
+                'SFK': 'Short Form Knowledge',
+                'LFS': 'Long Form Series',
+                'LFK': 'Long Form Knowledge'
+            };
+            return catMap[cat] || cat || 'Short Form News';
+        }
+
         async function loadScriptsFromKV() {
             try {
                 const response = await fetch('/api/get-scripts');
                 const data = await response.json();
                 if (data && data.length > 0) {
                     scripts = data;
+                    let needsSave = false;
+                    scripts.forEach(script => {
+                        // Re-categorize all legacy/existing content to Short Form News if not already a new category
+                        if (!['SFN', 'SFK', 'LFS', 'LFK', 'Short Form News', 'Short Form Knowledge', 'Long Form Series', 'Long Form Knowledge'].includes(script.cat)) {
+                            script.cat = 'SFN';
+                            script.catName = 'Short Form News';
+                            needsSave = true;
+                        }
+                        // Migrate legacy 'pending' status to 'working_on'
+                        if (script.status === 'pending' || (!script.status && !script.completed)) {
+                            script.status = 'working_on';
+                            needsSave = true;
+                        }
+                    });
+                    if (needsSave) {
+                        saveToKV();
+                    }
                 }
                 renderScripts();
             } catch (err) {
@@ -282,7 +299,7 @@
             let topTitle = "None yet";
 
             scripts.forEach(script => {
-                const currentStatus = script.status || (script.completed ? 'completed' : 'pending');
+                const currentStatus = script.status || (script.completed ? 'completed' : 'working_on');
                 if (currentStatus === "uploaded" || script.ytUrl) {
                     uploadedCount++;
                     const views = script.views || 0;
@@ -312,10 +329,11 @@
             let uploadedCount = 0;
 
             scripts.forEach((script, index) => {
-                const currentStatus = script.status || (script.completed ? 'completed' : 'pending');
+                const currentStatus = (script.status === 'pending' ? 'working_on' : script.status) || (script.completed ? 'completed' : 'working_on');
                 const isUploaded = currentStatus === "uploaded";
                 const isDone = currentStatus === "completed" || script.completed === true;
                 const isDiscarded = currentStatus === "discarded";
+                const isAvailable = currentStatus === "available";
 
                 if (isDone) doneCount++;
                 if (isUploaded) uploadedCount++;
@@ -324,15 +342,18 @@
                 const estTime = Math.round((wordCount / 140) * 45);
                 const displayTitle = sanitizeTitle(script.title);
                 const viewsText = script.views !== undefined && script.views > 0 ? `${script.views.toLocaleString()} views` : null;
+                const catTagClass = getCategoryTagClass(script.cat);
+                const catDisplayName = getCategoryDisplayName(script);
 
                 let cardClass = "card rounded-xl overflow-hidden script-card transition-all duration-200";
                 if (isUploaded) cardClass += " card-uploaded";
                 else if (isDone) cardClass += " card-completed";
                 else if (isDiscarded) cardClass += " card-discarded";
+                else if (isAvailable) cardClass += " card-available";
 
                 const card = document.createElement('div');
                 card.className = cardClass;
-                card.setAttribute('data-category', script.cat);
+                card.setAttribute('data-category', script.cat || 'SFN');
                 card.setAttribute('data-id', script.id);
                 card.draggable = true;
 
@@ -382,7 +403,7 @@
                             <span class="cursor-grab text-gray-600 hover:text-gray-300 transition text-sm font-bold" title="Drag to reorder" onclick="event.stopPropagation()">⣿</span>
                             <span id="chevron-${script.id}" class="text-gray-500 font-bold text-xs transition-transform duration-200">►</span>
                             <span class="text-xs font-mono font-bold text-gray-500 w-8">#${script.id}</span>
-                            <span class="text-xs font-semibold px-2.5 py-1 rounded tag-${script.cat.toLowerCase()} shrink-0">Cat ${script.cat}</span>
+                            <span class="text-xs font-semibold px-2.5 py-1 rounded ${catTagClass} shrink-0">${catDisplayName}</span>
                             <h3 id="display-title-${script.id}" class="text-sm font-bold text-white truncate hover:text-blue-400 transition">${displayTitle}</h3>
                         </div>
 
@@ -390,7 +411,8 @@
                             ${viewsText ? `<span class="text-xs text-purple-300 bg-purple-900/40 border border-purple-700/50 px-2.5 py-0.5 rounded font-mono font-semibold">👀 ${viewsText}</span>` : ''}
                             <span class="text-xs text-gray-400 font-mono hidden sm:inline">${wordCount} words (~${estTime}s)</span>
                             <select onchange="changeStatus(${script.id}, this.value)" class="bg-gray-900 border border-gray-700 text-xs rounded px-2 py-1 font-semibold text-gray-200 focus:outline-none focus:border-blue-500 cursor-pointer">
-                                <option value="pending" ${currentStatus === 'pending' ? 'selected' : ''}>⏳ Pending</option>
+                                <option value="available" ${currentStatus === 'available' ? 'selected' : ''}>📋 Available</option>
+                                <option value="working_on" ${currentStatus === 'working_on' || currentStatus === 'pending' ? 'selected' : ''}>⏳ Working On</option>
                                 <option value="completed" ${currentStatus === 'completed' ? 'selected' : ''}>✅ Done</option>
                                 <option value="uploaded" ${currentStatus === 'uploaded' ? 'selected' : ''}>🚀 Uploaded</option>
                                 <option value="discarded" ${currentStatus === 'discarded' ? 'selected' : ''}>❌ Discard</option>
@@ -412,7 +434,7 @@
                             ` : ''}
 
                             <div class="flex items-center justify-between pt-2 border-t border-gray-800/50">
-                                <span class="text-xs text-gray-500">Cat ${script.cat}: ${script.catName}</span>
+                                <span class="text-xs text-gray-500">Category: ${catDisplayName}</span>
                                 <div class="flex gap-2">
                                     <button onclick="copyScriptText(${script.id})" class="bg-gray-800 hover:bg-gray-700 text-white px-3 py-1.5 rounded-lg text-xs font-medium transition">📋 Copy Text</button>
                                     <button onclick="enableInlineEdit(${script.id})" class="bg-blue-900/60 hover:bg-blue-800 text-blue-200 border border-blue-700/50 px-3 py-1.5 rounded-lg text-xs font-semibold transition">✏️ Edit Script</button>
@@ -422,9 +444,20 @@
 
                         <!-- Inline Edit Mode -->
                         <div id="edit-mode-${script.id}" class="hidden flex flex-col gap-3">
-                            <div>
-                                <label class="block text-xs text-gray-400 mb-1">Topic Title</label>
-                                <input type="text" id="edit-title-input-${script.id}" value="${displayTitle}" class="w-full bg-gray-900 border border-gray-700 rounded-lg p-2.5 text-white text-sm font-bold focus:outline-none focus:border-blue-500">
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+                                <div>
+                                    <label class="block text-xs text-gray-400 mb-1">Topic Title</label>
+                                    <input type="text" id="edit-title-input-${script.id}" value="${displayTitle}" class="w-full bg-gray-900 border border-gray-700 rounded-lg p-2.5 text-white text-sm font-bold focus:outline-none focus:border-blue-500">
+                                </div>
+                                <div>
+                                    <label class="block text-xs text-gray-400 mb-1">Category</label>
+                                    <select id="edit-cat-input-${script.id}" class="w-full bg-gray-900 border border-gray-700 rounded-lg p-2.5 text-white text-sm focus:outline-none focus:border-blue-500">
+                                        <option value="SFN|Short Form News" ${(script.cat === 'SFN' || script.catName === 'Short Form News') ? 'selected' : ''}>Short Form News</option>
+                                        <option value="SFK|Short Form Knowledge" ${(script.cat === 'SFK' || script.catName === 'Short Form Knowledge') ? 'selected' : ''}>Short Form Knowledge</option>
+                                        <option value="LFS|Long Form Series" ${(script.cat === 'LFS' || script.catName === 'Long Form Series') ? 'selected' : ''}>Long Form Series</option>
+                                        <option value="LFK|Long Form Knowledge" ${(script.cat === 'LFK' || script.catName === 'Long Form Knowledge') ? 'selected' : ''}>Long Form Knowledge</option>
+                                    </select>
+                                </div>
                             </div>
                             <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
                                 <div>
@@ -535,12 +568,19 @@
                 const newViews = parseInt(document.getElementById(`edit-views-input-${id}`).value) || 0;
                 const newBody = document.getElementById(`edit-body-input-${id}`).value;
 
+                const editCatEl = document.getElementById(`edit-cat-input-${id}`);
+                if (editCatEl) {
+                    const [catCode, catLabel] = editCatEl.value.split('|');
+                    script.cat = catCode;
+                    script.catName = catLabel;
+                }
+
                 script.title = newTitle;
                 script.ytUrl = newYtUrl;
                 script.views = newViews;
                 script.body = newBody;
 
-                if (newYtUrl && (!script.status || script.status === "pending")) {
+                if (newYtUrl && (!script.status || script.status === "working_on" || script.status === "available" || script.status === "pending")) {
                     script.status = "uploaded";
                     script.completed = true;
                 }
@@ -614,7 +654,7 @@
                 ytUrl: ytUrl,
                 views: 0,
                 body: body,
-                status: ytUrl ? "uploaded" : "pending",
+                status: ytUrl ? "uploaded" : "working_on",
                 completed: ytUrl ? true : false
             };
 
@@ -660,7 +700,7 @@
                 title: title,
                 body: formattedSeedBody,
                 isSeed: true,
-                status: "pending",
+                status: "working_on",
                 completed: false
             };
 
@@ -683,11 +723,11 @@
                 const script = scripts.find(s => s.id === id);
                 if (!script) return;
 
-                const currentStatus = script.status || (script.completed ? 'completed' : 'pending');
+                const currentStatus = (script.status === 'pending' ? 'working_on' : script.status) || (script.completed ? 'completed' : 'working_on');
                 const displayTitle = sanitizeTitle(script.title);
 
                 const matchesSearch = displayTitle.toLowerCase().includes(searchVal) || script.body.toLowerCase().includes(searchVal);
-                const matchesCategory = (catVal === 'all') || (script.cat === catVal);
+                const matchesCategory = (catVal === 'all') || (script.cat === catVal) || (script.catName === catVal);
                 const matchesStatus = (statusVal === 'all') || (currentStatus === statusVal);
 
                 if (matchesSearch && matchesCategory && matchesStatus) {
