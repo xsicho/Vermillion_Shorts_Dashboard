@@ -1,44 +1,56 @@
-async function refreshAllViews() {
-    const btn = document.getElementById('refreshAllBtn');
-    const eligibleScripts = scripts.filter(s => s.ytUrl && s.ytUrl.trim().length > 0);
+export default async function handler(req, res) {
+  res.setHeader('Access-Control-Allow-Origin', '*');
+  res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
+  res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
 
-    if (eligibleScripts.length === 0) {
-        alert('No clips with YouTube links found.');
-        return;
-    }
+  if (req.method === 'OPTIONS') return res.status(200).end();
+  if (req.method !== 'POST') return res.status(405).json({ error: 'Method not allowed' });
 
-    btn.disabled = true;
-    btn.innerHTML = `<span>⏳</span> Syncing ${eligibleScripts.length} Shorts...`;
+  const { ytUrl, videoId: providedId } = req.body || {};
+  if (!ytUrl && !providedId) return res.status(400).json({ error: 'Missing ytUrl or videoId parameter' });
 
-    let updatedCount = 0;
+  const match = (ytUrl || '').match(/(?:shorts\/|v=|youtu\.be\/)([a-zA-Z0-9_-]{11})/);
+  const videoId = providedId || (match ? match[1] : null);
 
-    for (const script of eligibleScripts) {
-        try {
-            const match = script.ytUrl.match(/(?:shorts\/|v=|youtu\.be\/)([a-zA-Z0-9_-]{11})/);
-            const videoId = match ? match[1] : null;
+  if (!videoId) return res.status(400).json({ error: 'Invalid YouTube URL format' });
 
-            if (!videoId) continue;
-
-            // Direct fetch via CORS proxy or web page payload
-            const res = await fetch(`https://www.youtube.com/watch?v=${videoId}`);
-            const html = await res.text();
-            
-            const viewMatch = html.match(/"viewCount":"(\d+)"/);
-            if (viewMatch) {
-                script.views = parseInt(viewMatch[1], 10);
-                script.status = "uploaded";
-                script.completed = true;
-                updatedCount++;
-            }
-        } catch (err) {
-            console.warn(`Browser fetch restricted for #${script.id}:`, err);
+  try {
+    // If YOUTUBE_API_KEY is available in Vercel environment variables, use the official API
+    if (process.env.YOUTUBE_API_KEY) {
+      try {
+        const apiRes = await fetch(
+          `https://www.googleapis.com/youtube/v3/videos?part=statistics&id=${videoId}&key=${process.env.YOUTUBE_API_KEY}`
+        );
+        if (apiRes.ok) {
+          const apiData = await apiRes.json();
+          if (apiData.items && apiData.items.length > 0) {
+            const views = parseInt(apiData.items[0].statistics.viewCount, 10) || 0;
+            return res.status(200).json({ videoId, views });
+          }
         }
+      } catch (e) {
+        console.warn('YouTube API call failed, falling back to web scraper:', e.message);
+      }
     }
 
-    renderScripts();
-    await saveToKV();
+    // Scrape view count directly from the public YouTube watch page
+    const pageRes = await fetch(`https://www.youtube.com/watch?v=${videoId}`, {
+      headers: {
+        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36',
+        'Accept-Language': 'en-US,en;q=0.9'
+      }
+    });
 
-    btn.disabled = false;
-    btn.innerHTML = `<span>🔄</span> Refresh All Views`;
-    alert(`Successfully updated ${updatedCount} YouTube Shorts!`);
+    const html = await pageRes.text();
+
+    const viewMatch = html.match(/"viewCount":"(\d+)"/) || 
+                      html.match(/<meta itemprop="interactionCount" content="(\d+)">/) ||
+                      html.match(/"viewCount":\s*"?(\d+)"?/);
+
+    const views = viewMatch ? parseInt(viewMatch[1], 10) : 0;
+    return res.status(200).json({ videoId, views });
+  } catch (error) {
+    console.error('Error fetching YouTube views:', error);
+    return res.status(500).json({ error: error.message });
+  }
 }
